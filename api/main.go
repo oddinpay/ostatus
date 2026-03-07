@@ -83,6 +83,14 @@ var (
 	js               jetstream.JetStream
 	kv               jetstream.KeyValue
 	convexClient     = convex.NewClient(os.Getenv("CONVEX_DB_URL"), nil)
+
+	targetCache = struct {
+		sync.RWMutex
+		targets []HttpRequest
+		lookup  map[string]int
+	}{
+		lookup: make(map[string]int),
+	}
 )
 
 var httpClient = &http.Client{
@@ -155,6 +163,19 @@ func fetchTargets(ctx context.Context) []HttpRequest {
 		out = append(out, r)
 	}
 	return out
+}
+
+func refreshCache(ctx context.Context) {
+	targets := fetchTargets(ctx)
+
+	targetCache.Lock()
+	targetCache.targets = targets
+	targetCache.lookup = make(map[string]int)
+	for i, t := range targets {
+		targetCache.lookup[t.Name] = i
+	}
+	targetCache.Unlock()
+	slog.Debug("Target cache refreshed", "count", len(targets))
 }
 
 // -------------------- MODELS --------------------
@@ -585,108 +606,99 @@ func (s *SlidingSLA) Reset() {
 	s.lastUpdate = time.Now()
 }
 
-func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
-	probeManagerOnce.Do(func() {
-		slog.Info("Starting probe manager...")
+func startProbeWorker(ctx context.Context, wg *sync.WaitGroup, t HttpRequest) {
+	defer wg.Done()
 
-		for _, target := range fetchTargets(ctx) {
+	var probeFn func(HttpRequest) ProbeResult
+	switch strings.ToLower(strings.TrimSpace(t.Protocol)) {
+	case "tcp":
+		probeFn = probeTCP
+	case "dns":
+		probeFn = probeDNS
+	default:
+		probeFn = probeHTTP
+	}
 
-			t := target
+	slaTrackers.Lock()
+	tracker := NewSlidingSLA(0.99999)
+	slaTrackers.m[t.Name] = tracker
 
-			var probeFn func(HttpRequest) ProbeResult
-			switch strings.ToLower(strings.TrimSpace(t.Protocol)) {
-			case "tcp":
-				probeFn = probeTCP
-			case "http", "https":
-				probeFn = probeHTTP
-			case "dns":
-				probeFn = probeDNS
-			}
-
-			if probeFn == nil {
-				slog.Warn("Unsupported protocol", "protocol", t.Protocol)
-				continue
-			}
-
-			wg.Add(1)
-
-			interval := t.Interval
-			if interval <= 0 {
-				interval = 1 * time.Second
-			}
-
-			go func(req HttpRequest, fn func(HttpRequest) ProbeResult, iv time.Duration) {
-				defer wg.Done()
-
-				slaTrackers.Lock()
-				tracker := NewSlidingSLA(0.99999)
-				slaTrackers.m[req.Name] = tracker
-
-				existingData := readFromNATS(req.Name)
-				if existingData != nil {
-					var wrapped map[string]any
-					if err := json.Unmarshal(existingData, &wrapped); err == nil {
-						if payload, ok := wrapped["payload"].(map[string]any); ok {
-							if sla, ok := payload["sla"].(map[string]any); ok {
-								if history, ok := sla["history"].([]any); ok && len(history) > 0 {
-									first := history[0].(map[string]any)
-
-									tSec := parseDurationToSecs(first["total_time_seconds"].(string))
-									dSec := parseDurationToSecs(first["down_time_seconds"].(string))
-
-									tracker.SetState(tSec, dSec)
-									slog.Info("Hydrated existing state", "name", req.Name, "uptime", first["uptime90"])
-								}
-							}
-						}
+	existingData := readFromNATS(t.Name)
+	if existingData != nil {
+		var wrapped map[string]any
+		if err := json.Unmarshal(existingData, &wrapped); err == nil {
+			if p, ok := wrapped["payload"].(map[string]any); ok {
+				if sla, ok := p["sla"].(map[string]any); ok {
+					if history, ok := sla["history"].([]any); ok && len(history) > 0 {
+						first := history[0].(map[string]any)
+						tSec := parseDurationToSecs(first["total_time_seconds"].(string))
+						dSec := parseDurationToSecs(first["down_time_seconds"].(string))
+						tracker.SetState(tSec, dSec)
+						slog.Info("Hydrated existing state", "name", t.Name, "uptime", first["uptime90"])
 					}
 				}
+			}
+		}
+	}
+	slaTrackers.Unlock()
+
+	ticker := time.NewTicker(t.Interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Info("Stopping probe worker", "name", t.Name)
+			return
+		case <-ticker.C:
+			res := probeFn(t)
+
+			slaTrackers.Lock()
+			isDown := len(res.State) > 0 && strings.ToLower(res.State[0]) == hr.Down
+			tracker.Tick(isDown, t.Interval)
+			payload := StatusPayload{Probe: res, SLA: tracker.Snapshot()}
+			slaTrackers.Unlock()
+
+			publishToNATS(ctx, t.Name, &payload, tracker)
+			globalHub.Broadcast(map[string]StatusPayload{t.Name: payload})
+		}
+	}
+}
+
+func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
+	slog.Info("Starting dynamic probe manager...")
+
+	go func() {
+		ticker := time.NewTicker(30 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			refreshCache(ctx)
+
+			targetCache.RLock()
+			targets := targetCache.targets
+			targetCache.RUnlock()
+
+			for _, t := range targets {
+				slaTrackers.Lock()
+				_, isRunning := slaTrackers.m[t.Name]
 				slaTrackers.Unlock()
 
-				ticker := time.NewTicker(iv)
-				defer ticker.Stop()
-
-				for {
-					select {
-					case <-ctx.Done():
-						slog.Info("Stopping probe worker", "name", req.Name)
-						return
-
-					case <-ticker.C:
-						ctx, cancel := context.WithTimeout(ctx, defaultTimeout)
-
-						res := fn(req)
-
-						slaTrackers.Lock()
-						tracker := slaTrackers.m[req.Name]
-						if tracker == nil {
-							tracker = NewSlidingSLA(0.99999)
-							slaTrackers.m[req.Name] = tracker
-						}
-						slaTrackers.Unlock()
-
-						isDown := len(res.State) > 0 && strings.ToLower(res.State[0]) == hr.Down
-						tracker.Tick(isDown, interval)
-
-						payload := StatusPayload{
-							Probe: res,
-							SLA:   tracker.Snapshot(),
-						}
-
-						publishToNATS(ctx, req.Name, &payload, tracker)
-
-						// Broadcast update
-						globalHub.Broadcast(map[string]StatusPayload{req.Name: payload})
-
-						cancel()
-
-					}
+				if !isRunning {
+					slog.Info("New target detected, starting worker", "name", t.Name)
+					wg.Add(1)
+					go startProbeWorker(ctx, wg, t)
 				}
+			}
 
-			}(t, probeFn, interval)
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				continue
+			}
 		}
-	})
-
+	}()
 }
 
 // -------------------- SSE HANDLER --------------------
@@ -734,14 +746,13 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 			return
 		case update := <-clientChan:
 
-			reqLookup := make(map[string]int, len(fetchTargets(ctx)))
-			for i, r := range fetchTargets(ctx) {
-				reqLookup[r.Name] = i
-			}
+			targetCache.RLock()
+			lookup := targetCache.lookup
+			targetCache.RUnlock()
 
 			for name, payload := range update {
 
-				idx, found := reqLookup[name]
+				idx, found := lookup[name]
 				if !found {
 					continue
 				}
@@ -764,14 +775,13 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 
 func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]StatusPayload) error {
 
-	reqLookup := make(map[string]int, len(fetchTargets(ctx)))
-	for i, r := range fetchTargets(ctx) {
-		reqLookup[r.Name] = i
-	}
+	targetCache.RLock()
+	lookup := targetCache.lookup
+	targetCache.RUnlock()
 
 	for name, payload := range update {
 
-		idx, found := reqLookup[name]
+		idx, found := lookup[name]
 		if !found {
 			continue
 		}
