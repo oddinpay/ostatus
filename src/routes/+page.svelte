@@ -75,7 +75,7 @@
   function flushPending() {
     if (!pending.size) return;
 
-    const nextMap: Record<string, ApiData> = { ...(probeMap as ProbeMap) };
+    const nextMap: Record<string, ApiData> = {};
 
     for (const [id, { probe, sla, index }] of pending) {
       const existing = nextMap[id];
@@ -104,7 +104,14 @@
     probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
   }
 
+  let connectionActive = false;
+
   json.subscribe((msg: any) => {
+    if (!connectionActive) {
+      probeMap = {};
+      connectionActive = true;
+    }
+
     const probe = msg?.payload?.probe;
     const sla = msg?.payload?.sla;
     const index = msg?.index;
