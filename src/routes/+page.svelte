@@ -104,14 +104,7 @@
     probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
   }
 
-  let connectionActive = false;
-
   json.subscribe((msg: any) => {
-    if (!connectionActive) {
-      probeMap = {};
-      connectionActive = true;
-    }
-
     const probe = msg?.payload?.probe;
     const sla = msg?.payload?.sla;
     const index = msg?.index;
