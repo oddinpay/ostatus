@@ -1074,7 +1074,6 @@ func readFromNATS(name string) []byte {
 		return nil
 	}
 
-	// Decompress
 	reader, err := gzip.NewReader(bytes.NewReader(entry.Value()))
 	if err != nil {
 		slog.Error("Gzip reader error", "error", err)
