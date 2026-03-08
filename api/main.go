@@ -61,7 +61,7 @@ const (
 	HeaderAllowMethods = "Access-Control-Allow-Methods"
 	HeaderAllowHeaders = "Access-Control-Allow-Headers"
 
-	defaultTimeout = 20 * time.Second
+	defaultTimeout = 8 * time.Second
 	minutes90d     = 90
 )
 
@@ -92,14 +92,14 @@ var (
 )
 
 var httpClient = &http.Client{
-	Timeout: 30 * time.Second,
+	Timeout: 10 * time.Second,
 	Transport: &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   10 * time.Second,
 			KeepAlive: 30 * time.Second,
 		}).DialContext,
 		TLSHandshakeTimeout:   10 * time.Second,
-		ResponseHeaderTimeout: 10 * time.Second,
+		ResponseHeaderTimeout: 5 * time.Second,
 		IdleConnTimeout:       90 * time.Second,
 		MaxIdleConns:          100,
 	},
@@ -718,7 +718,7 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	clientChan := make(chan map[string]StatusPayload, 50)
+	clientChan := make(chan map[string]StatusPayload, 200)
 
 	globalHub.Lock()
 	globalHub.clients[clientChan] = struct{}{}
@@ -1014,11 +1014,13 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		payload.SLA["sla_breached"] = (s.Target >= 1.0 && rootDown > 0) || (rootAvail < s.Target)
 
 		idx := -1
-		for i, r := range fetchTargets(ctx) {
-			if r.Name == name {
-				idx = i
-				break
-			}
+
+		targetCache.RLock()
+		i, ok := targetCache.lookup[name]
+		targetCache.RUnlock()
+
+		if ok {
+			idx = i
 		}
 
 		wrappedPayload := map[string]any{
