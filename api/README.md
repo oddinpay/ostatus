@@ -10,10 +10,10 @@
 ### Commands
 
 ```
-npm start      # run dev server
+pnpm run dev      # run dev server
 # or
 go run .       # run dev server without Wrangler (Cloudflare-related features are not available)
-npm run build  # build Go Wasm binary
-npm run deploy # deploy worker
+pnpm run build  # build Go Wasm binary
+pnpm run deploy # deploy worker
 ```
 
