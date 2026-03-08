@@ -77,7 +77,6 @@ var (
 	probeManagerOnce sync.Once
 	hr               = HealthResponse{Down: "down", Up: "up", Warn: "warn"}
 	nc               *nats.Conn
-	err              error
 	wg               sync.WaitGroup
 	js               jetstream.JetStream
 	kv               jetstream.KeyValue
@@ -114,7 +113,7 @@ var slaTrackers = struct {
 
 func fetchTargets(ctx context.Context) []HttpRequest {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
 	type Status struct {
@@ -1122,6 +1121,8 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	var err error
+
 	nc, err = nats.Connect(
 		serverURL,
 		nats.UserJWTAndSeed(jwt, seed),
@@ -1152,14 +1153,20 @@ func main() {
 
 	if err != nil {
 		slog.Error("JetStream context error", "error", err)
+		os.Exit(1)
 	}
 
 	kv, err = js.KeyValue(context.Background(), "BEEP_STATUS")
 	if err != nil {
-		kv, _ = js.CreateKeyValue(context.Background(), jetstream.KeyValueConfig{
+		kv, err = js.CreateKeyValue(context.Background(), jetstream.KeyValueConfig{
 			Bucket:   "BEEP_STATUS",
 			MaxBytes: 1024 * 1024 * 50,
 		})
+
+		if err != nil {
+			slog.Error("Failed to create KV bucket", "error", err)
+			os.Exit(1)
+		}
 	}
 
 	startProbeManager(ctx, &wg)
