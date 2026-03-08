@@ -896,6 +896,8 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 			gr, err := gzip.NewReader(bytes.NewReader(entry.Value()))
 			if err == nil {
 				decomp, _ := io.ReadAll(gr)
+				gr.Close()
+
 				var wrapped map[string]any
 				json.Unmarshal(decomp, &wrapped)
 				if p, ok := wrapped["payload"].(map[string]any); ok {
