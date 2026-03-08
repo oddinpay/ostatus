@@ -83,20 +83,16 @@
 
     const nextMap = { ...probeMap };
 
-    for (const [id, { probe, sla, index, deleted }] of pending) {
+    for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
 
-      if (deleted) {
-        delete nextMap[stringId];
-        continue;
+      if (Number.isFinite(index)) {
+        Object.keys(nextMap).forEach((key) => {
+          if (nextMap[key].__order === index && key !== stringId) {
+            delete nextMap[key];
+          }
+        });
       }
-
-      Object.keys(nextMap).forEach((key) => {
-        const isSameOrder = nextMap[key].__order === index;
-        if (isSameOrder && key !== stringId) {
-          delete nextMap[key];
-        }
-      });
 
       const existing = nextMap[stringId];
       const order = Number.isFinite(index)
@@ -116,6 +112,7 @@
     const sortedEntries = Object.entries(nextMap).sort(
       ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
     );
+
     probeMap = Object.fromEntries(sortedEntries);
   }
 
