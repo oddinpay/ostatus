@@ -80,31 +80,30 @@ var (
 	wg               sync.WaitGroup
 	js               jetstream.JetStream
 	kv               jetstream.KeyValue
-
-	targetCache = struct {
-		sync.RWMutex
-		targets []HttpRequest
-		lookup  map[string]int
-	}{
-		lookup: make(map[string]int),
+	httpClient       = &http.Client{
+		Timeout: defaultTimeout,
+		Transport: &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout:   defaultTimeout,
+				KeepAlive: 30 * time.Second,
+			}).DialContext,
+			TLSHandshakeTimeout:   defaultTimeout,
+			ResponseHeaderTimeout: defaultTimeout,
+			IdleConnTimeout:       90 * time.Second,
+			MaxIdleConns:          100,
+		},
 	}
 )
 
-var httpClient = &http.Client{
-	Timeout: defaultTimeout,
-	Transport: &http.Transport{
-		DialContext: (&net.Dialer{
-			Timeout:   defaultTimeout,
-			KeepAlive: 30 * time.Second,
-		}).DialContext,
-		TLSHandshakeTimeout:   defaultTimeout,
-		ResponseHeaderTimeout: defaultTimeout,
-		IdleConnTimeout:       90 * time.Second,
-		MaxIdleConns:          100,
-	},
-}
-
 // -------------------- GLOBAL SLA MAP --------------------
+
+var targetCache = struct {
+	sync.RWMutex
+	targets []HttpRequest
+	lookup  map[string]int
+}{
+	lookup: make(map[string]int),
+}
 
 var slaTrackers = struct {
 	sync.Mutex
