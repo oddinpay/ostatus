@@ -1145,8 +1145,6 @@ func main() {
 
 	startProbeManager(ctx, &wg)
 
-	refreshCache(ctx)
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /v1/sse", Sse)
 	// mux.HandleFunc("GET /v1/status/history", HistoryHandler)
