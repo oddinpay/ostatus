@@ -796,33 +796,6 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 	return nil
 }
 
-// -------------------- STATE REQUEST HANDLER --------------------
-
-func StatusHandler(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set(HeaderContentType, ContentTypeJSON)
-
-	monitors := fetchTargets(context.Background())
-
-	hasMonitors := len(monitors) > 0
-	miniMonitors := len(monitors) > 3
-
-	response := map[string]bool{
-		"monitors":     hasMonitors,
-		"miniMonitors": miniMonitors,
-	}
-
-	respJSON, err := json.MarshalIndent(response, "", "  ")
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(respJSON)
-
-}
-
 // -------------------- SLA RESET HANDLER --------------------
 
 func ResetHandler(w http.ResponseWriter, r *http.Request) {
@@ -1176,7 +1149,6 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /v1/sse", Sse)
-	mux.HandleFunc("GET /v1/status", StatusHandler)
 	// mux.HandleFunc("GET /v1/status/history", HistoryHandler)
 	// mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 	// 	w.WriteHeader(http.StatusOK)

@@ -626,13 +626,7 @@
     title?: string;
     description?: string;
     features?: string[];
-    data?: { monitors?: boolean; miniMonitors?: boolean };
   }
-
-  const allProps = $props() as RoadmapProps & Record<string, unknown>;
-
-  const submitMonitors = $derived(allProps.data?.monitors);
-  const miniMonitors = $derived(allProps.data?.miniMonitors);
 
   // $effect(() => {
   // });
@@ -1154,7 +1148,7 @@
                   {#each tabsOrder as t, i}
                     <TabsContent value={t}>
                       {#if i === 0}
-                        {#if submitMonitors && mockData.length === 0}
+                        {#if mockData.length === 0}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="48"
@@ -1283,9 +1277,9 @@
                         <div class="status-page">
                           <div class="left">
                             <h2>System status</h2>
-                            {#if !miniMonitors && monitors.length === 0}
+                            {#if monitors.length < 3 && monitors.length === 0}
                               No monitors available.
-                            {:else if submitMonitors && monitors.length === 0}
+                            {:else if monitors.length === 0}
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -1309,7 +1303,7 @@
                                   />
                                 </path>
                               </svg>
-                            {:else if !submitMonitors}
+                            {:else if monitors.length === 0}
                               No monitors available.
                             {:else}
                               {#each monitors as status}
