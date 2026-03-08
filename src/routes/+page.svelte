@@ -59,12 +59,7 @@
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
 
-  type Buffered = {
-    probe?: ApiData;
-    sla?: any;
-    index?: number;
-    deleted?: boolean;
-  };
+  type Buffered = { probe: ApiData; sla?: any; index?: number };
 
   const pending = new Map<string, Buffered>();
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
@@ -81,28 +76,29 @@
   function flushPending() {
     if (!pending.size) return;
 
-    const nextMap = { ...probeMap };
+    const nextMap: Record<string, ApiData> = { ...probeMap };
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
 
-      if (Number.isFinite(index)) {
-        Object.keys(nextMap).forEach((key) => {
-          if (nextMap[key].__order === index && key !== stringId) {
-            delete nextMap[key];
-          }
-        });
-      }
+      Object.keys(nextMap).forEach((key) => {
+        const isSameOrder = nextMap[key].__order === index;
+        const isOldId = key !== stringId;
+
+        if (isSameOrder && isOldId) {
+          delete nextMap[key];
+        }
+      });
 
       const existing = nextMap[stringId];
       const order = Number.isFinite(index)
         ? index
-        : (existing?.__order ?? Number.POSITIVE_INFINITY);
+        : ((existing as any)?.__order ?? Number.POSITIVE_INFINITY);
 
       nextMap[stringId] = {
         ...(existing ?? {}),
         ...probe,
-        uptime90: sla?.uptime90 ?? existing?.uptime90,
+        uptime90: sla?.uptime90 ?? (existing as any)?.uptime90,
         __order: order,
       };
     }
@@ -110,10 +106,11 @@
     pending.clear();
 
     const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
+      ([, a], [, b]) =>
+        ((a as any).__order ?? 999) - ((b as any).__order ?? 999),
     );
 
-    probeMap = Object.fromEntries(sortedEntries);
+    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
   }
 
   json.subscribe((msg: any) => {
