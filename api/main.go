@@ -804,19 +804,12 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set(HeaderContentType, ContentTypeJSON)
 
-	var hasMonitors bool
-	var miniMonitors bool
-	if len(fetchTargets(context.Background())) == 0 {
-		hasMonitors = false
-	} else {
-		hasMonitors = true
-	}
+	targetCache.RLock()
+	count := len(targetCache.targets)
+	targetCache.RUnlock()
 
-	if len(fetchTargets(context.Background())) > 3 {
-		miniMonitors = true
-	} else {
-		miniMonitors = false
-	}
+	hasMonitors := count > 0
+	miniMonitors := count > 3
 
 	response := map[string]bool{
 		"monitors":     hasMonitors,
