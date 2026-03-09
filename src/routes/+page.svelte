@@ -84,7 +84,6 @@
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
-
       const order = Number.isFinite(index)
         ? index
         : ((probeMap[stringId] as any)?.__order ?? Number.POSITIVE_INFINITY);
