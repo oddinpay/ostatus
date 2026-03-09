@@ -74,7 +74,7 @@
     }, FLUSH_DELAY);
   }
 
-  const PROBE_TTL = 30000;
+  const PROBE_TTL = 3000;
 
   function flushPending() {
     if (!pending.size && !probeMap) return;
