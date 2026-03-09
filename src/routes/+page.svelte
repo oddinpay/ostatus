@@ -77,11 +77,17 @@
     if (!pending.size) return;
 
     const nextMap: Record<string, ApiData> = { ...probeMap };
-    const activeIds = new Set<string>();
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
-      activeIds.add(stringId);
+
+      Object.keys(nextMap).forEach((key) => {
+        const isOldId = key !== stringId;
+
+        if (isOldId) {
+          delete nextMap[key];
+        }
+      });
 
       const existing = nextMap[stringId];
       const order = Number.isFinite(index)
@@ -95,12 +101,6 @@
         __order: order,
       };
     }
-
-    Object.keys(nextMap).forEach((key) => {
-      if (!activeIds.has(key)) {
-        delete nextMap[key];
-      }
-    });
 
     pending.clear();
 
