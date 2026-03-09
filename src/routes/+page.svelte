@@ -54,7 +54,6 @@
     uptime60: string;
     uptime90: string;
     __order?: number;
-    __lastSeen?: number;
   }
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
@@ -81,37 +80,36 @@
   function flushPending() {
     if (pending.size === 0) return;
 
-    const nextMap: Record<string, any> = { ...probeMap };
+    const nextMap = { ...probeMap };
 
-    for (const [id, { probe, sla, index }] of pending) {
+    pending.forEach((update, id) => {
       const stringId = String(id);
 
-      if (probe === null) {
+      if (update.probe === null) {
         delete nextMap[stringId];
-        continue;
+      } else {
+        const existing = nextMap[stringId] || {};
+
+        const order = Number.isFinite(update.index)
+          ? update.index
+          : (existing.__order ?? Number.MAX_SAFE_INTEGER);
+
+        nextMap[stringId] = {
+          ...existing,
+          ...update.probe,
+          uptime90: update.sla?.uptime90 ?? existing.uptime90,
+          __order: order,
+        };
       }
-
-      const existing = nextMap[stringId];
-
-      const order = Number.isFinite(index)
-        ? index
-        : (existing?.__order ?? Number.MAX_SAFE_INTEGER);
-
-      nextMap[stringId] = {
-        ...(existing ?? {}),
-        ...probe,
-        uptime90: sla?.uptime90 ?? existing?.uptime90,
-        __order: order,
-      };
-    }
+    });
 
     pending.clear();
 
-    const sortedEntries = Object.entries(nextMap).sort(
+    const sorted = Object.entries(nextMap).sort(
       ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
     );
 
-    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
+    probeMap = Object.fromEntries(sorted);
   }
 
   json.subscribe((msg: any) => {
