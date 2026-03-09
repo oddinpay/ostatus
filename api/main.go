@@ -698,11 +698,6 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					delete(slaTrackers.m, name)
 					kv.Delete(ctx, name)
 
-					globalHub.Broadcast(map[string]StatusPayload{
-						name: {
-							Probe: ProbeResult{Id: "DELETED", Name: name},
-						},
-					})
 				}
 			}
 			slaTrackers.Unlock()
