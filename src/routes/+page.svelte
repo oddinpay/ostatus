@@ -53,7 +53,6 @@
     uptime30: string;
     uptime60: string;
     uptime90: string;
-    __order?: number;
   }
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
@@ -69,36 +68,9 @@
     if (flushTimer) return;
     flushTimer = setTimeout(() => {
       flushTimer = null;
-      flushPending();
     }, FLUSH_DELAY);
   }
 
-  function flushPending() {
-    if (!pending.size) return;
-
-    // Build next map starting empty (removes missing probes)
-    const nextMap: Record<string, ApiData> = {};
-
-    for (const [id, { probe, sla, index }] of pending) {
-      const stringId = String(id);
-      nextMap[stringId] = {
-        ...probe,
-        uptime90: sla?.uptime90,
-        __order: index ?? 999,
-      };
-    }
-
-    pending.clear();
-
-    // Sort
-    const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
-    );
-
-    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
-  }
-
-  // SSE subscription
   json.subscribe((msg: any) => {
     const probe = msg?.payload?.probe;
     const sla = msg?.payload?.sla;
