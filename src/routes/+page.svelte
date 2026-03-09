@@ -81,11 +81,6 @@
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
 
-      if (probe.id === "DELETED") {
-        delete nextMap[stringId];
-        continue;
-      }
-
       Object.keys(nextMap).forEach((key) => {
         const isSameOrder = nextMap[key].__order === index;
         const isOldId = key !== stringId;
