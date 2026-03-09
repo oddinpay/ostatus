@@ -689,19 +689,21 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 
 				if !found {
 					slog.Info("Target deleted from Convex, stopping worker", "name", name)
-					globalHub.Broadcast(map[string]StatusPayload{
-						name: {
-							Probe: ProbeResult{Id: "DELETED", Name: name},
-						},
-					})
+
 					if cancel, ok := probeCancels[name]; ok {
 						cancel()
 						delete(probeCancels, name)
 					}
 
 					delete(slaTrackers.m, name)
+
 					kv.Delete(ctx, name)
 
+					globalHub.Broadcast(map[string]StatusPayload{
+						name: {
+							Probe: ProbeResult{Id: "DELETED", Name: name},
+						},
+					})
 				}
 			}
 			slaTrackers.Unlock()
