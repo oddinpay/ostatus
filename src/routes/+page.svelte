@@ -79,23 +79,12 @@
     const nextMap: Record<string, ApiData> = { ...probeMap };
 
     for (const [id, { probe, sla, index }] of pending) {
-      const stringId = String(id);
-
-      Object.keys(nextMap).forEach((key) => {
-        const isSameOrder = nextMap[key].__order === index;
-        const isOldId = key !== stringId;
-
-        if (isSameOrder && isOldId) {
-          delete nextMap[key];
-        }
-      });
-
-      const existing = nextMap[stringId];
+      const existing = nextMap[id];
       const order = Number.isFinite(index)
         ? index
         : (existing?.__order ?? Number.POSITIVE_INFINITY);
 
-      nextMap[stringId] = {
+      nextMap[id] = {
         ...(existing ?? {}),
         ...probe,
         uptime90: sla?.uptime90 ?? existing?.uptime90,
