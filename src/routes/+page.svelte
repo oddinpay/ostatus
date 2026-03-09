@@ -105,14 +105,26 @@
   }
 
   json.subscribe((msg: any) => {
+    const incomingProbes: Record<string, ApiData> = {};
+
     const probe = msg?.payload?.probe;
     const sla = msg?.payload?.sla;
     const index = msg?.index;
-    if (!probe?.id) return;
+    if (probe?.id) {
+      incomingProbes[probe.id] = {
+        ...probe,
+        uptime90: sla?.uptime90,
+        __order: index ?? 999,
+      };
+    }
 
-    pending.set(probe.id, { probe, sla, index });
+    const nextMap: ProbeMap = { ...probeMap, ...incomingProbes };
 
-    scheduleFlush();
+    Object.keys(nextMap).forEach((id) => {
+      if (!incomingProbes[id]) delete nextMap[id];
+    });
+
+    probeMap = nextMap;
   });
 
   type ProbeMap = Record<string, ApiData>;
