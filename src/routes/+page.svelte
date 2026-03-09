@@ -76,55 +76,38 @@
   function flushPending() {
     if (!pending.size) return;
 
-    const nextMap: Record<string, ApiData> = { ...probeMap };
+    // Build next map starting empty (removes missing probes)
+    const nextMap: Record<string, ApiData> = {};
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
-
-      const existing = nextMap[stringId];
-      const order = Number.isFinite(index)
-        ? index
-        : ((existing as any)?.__order ?? Number.POSITIVE_INFINITY);
-
       nextMap[stringId] = {
-        ...(existing ?? {}),
-        ...probe,
-        uptime90: sla?.uptime90 ?? (existing as any)?.uptime90,
-        __order: order,
-      };
-    }
-
-    pending.clear();
-
-    const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) =>
-        ((a as any).__order ?? 999) - ((b as any).__order ?? 999),
-    );
-
-    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
-  }
-
-  json.subscribe((msg: any) => {
-    const incomingProbes: Record<string, ApiData> = {};
-
-    const probe = msg?.payload?.probe;
-    const sla = msg?.payload?.sla;
-    const index = msg?.index;
-    if (probe?.id) {
-      incomingProbes[probe.id] = {
         ...probe,
         uptime90: sla?.uptime90,
         __order: index ?? 999,
       };
     }
 
-    const nextMap: ProbeMap = { ...probeMap, ...incomingProbes };
+    pending.clear();
 
-    Object.keys(nextMap).forEach((id) => {
-      if (!incomingProbes[id]) delete nextMap[id];
-    });
+    // Sort
+    const sortedEntries = Object.entries(nextMap).sort(
+      ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
+    );
 
-    probeMap = nextMap;
+    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
+  }
+
+  // SSE subscription
+  json.subscribe((msg: any) => {
+    const probe = msg?.payload?.probe;
+    const sla = msg?.payload?.sla;
+    const index = msg?.index;
+    if (!probe?.id) return;
+
+    pending.set(probe.id, { probe, sla, index });
+
+    scheduleFlush();
   });
 
   type ProbeMap = Record<string, ApiData>;
