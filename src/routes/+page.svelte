@@ -66,49 +66,71 @@
     index?: number;
   };
 
-  type ProbeMap = Record<string, ApiData>;
-
-  let probeMap = $state<ProbeMap>({});
-
   const pending = new Map<string, Buffered>();
+  let flushTimer: ReturnType<typeof setTimeout> | null = null;
+  const FLUSH_DELAY = 50;
+
+  function scheduleFlush() {
+    if (flushTimer) return;
+    flushTimer = setTimeout(() => {
+      flushTimer = null;
+      flushPending();
+    }, FLUSH_DELAY);
+  }
+
+  function flushPending() {
+    if (!pending.size) return;
+
+    const nextMap: Record<string, ApiData> = { ...probeMap };
+
+    Object.keys(nextMap).forEach((key) => {
+      if (!pending.has(key)) {
+        delete nextMap[key];
+      }
+    });
+
+    for (const [id, { probe, sla, index }] of pending) {
+      const stringId = String(id);
+      const existing = nextMap[stringId] ?? {};
+
+      const order = Number.isFinite(index)
+        ? index
+        : (existing.__order ?? Number.POSITIVE_INFINITY);
+
+      nextMap[stringId] = {
+        ...existing,
+        ...(probe.name !== undefined ? { name: probe.name } : {}),
+        ...(probe.state !== undefined ? { state: probe.state } : {}),
+        uptime90: sla?.uptime90 ?? existing.uptime90,
+        __order: order,
+      };
+    }
+
+    pending.clear();
+
+    const sortedEntries = Object.entries(nextMap).sort(
+      ([, a], [, b]) =>
+        (a.__order ?? Number.POSITIVE_INFINITY) -
+        (b.__order ?? Number.POSITIVE_INFINITY),
+    );
+
+    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
+  }
 
   json.subscribe((msg: any) => {
     const probe = msg?.payload?.probe;
     const sla = msg?.payload?.sla;
     const index = msg?.index;
-
     if (!probe?.id) return;
 
-    const stringId = String(probe.id);
+    pending.set(probe.id, { probe, sla, index });
 
-    pending.set(stringId, { probe, sla, index });
-
-    const deletedIds: string[] = msg?.payload?.deletedIds ?? [];
-    for (const delId of deletedIds) {
-      pending.delete(String(delId));
-    }
-
-    const nextMap: ProbeMap = {};
-    for (const [id, { probe: p, sla: s, index: idx }] of pending) {
-      const existing = probeMap[id];
-      const order = Number.isFinite(idx)
-        ? idx
-        : (existing?.__order ?? Infinity);
-
-      nextMap[id] = {
-        ...(existing ?? {}),
-        ...p,
-        uptime90: s?.uptime90 ?? existing?.uptime90,
-        __order: order,
-      };
-    }
-
-    const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) => (a.__order ?? Infinity) - (b.__order ?? Infinity),
-    );
-
-    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
+    scheduleFlush();
   });
+
+  type ProbeMap = Record<string, ApiData>;
+
+  let probeMap = $state<ProbeMap>({});
 
   // const statusStore = localStore<StatusType[]>('status', []);
 
