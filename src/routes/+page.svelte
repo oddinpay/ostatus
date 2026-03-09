@@ -54,7 +54,6 @@
     uptime60: string;
     uptime90: string;
     __order?: number;
-    protocol?: string;
   }
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
@@ -83,25 +82,27 @@
 
     const nextMap: Record<string, ApiData> = { ...probeMap };
 
-    Object.keys(nextMap).forEach((key) => {
-      if (!pending.has(key)) {
-        delete nextMap[key];
-      }
-    });
-
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
-      const existing = nextMap[stringId] ?? {};
 
+      Object.keys(nextMap).forEach((key) => {
+        const isSameOrder = nextMap[key].__order === index;
+        const isOldId = key !== stringId;
+
+        if (isSameOrder && isOldId) {
+          delete nextMap[key];
+        }
+      });
+
+      const existing = nextMap[stringId];
       const order = Number.isFinite(index)
         ? index
-        : (existing.__order ?? Number.POSITIVE_INFINITY);
+        : ((existing as any)?.__order ?? Number.POSITIVE_INFINITY);
 
       nextMap[stringId] = {
-        ...existing,
-        ...(probe.name !== undefined ? { name: probe.name } : {}),
-        ...(probe.state !== undefined ? { state: probe.state } : {}),
-        uptime90: sla?.uptime90 ?? existing.uptime90,
+        ...(existing ?? {}),
+        ...probe,
+        uptime90: sla?.uptime90 ?? (existing as any)?.uptime90,
         __order: order,
       };
     }
@@ -110,8 +111,8 @@
 
     const sortedEntries = Object.entries(nextMap).sort(
       ([, a], [, b]) =>
-        (a.__order ?? Number.POSITIVE_INFINITY) -
-        (b.__order ?? Number.POSITIVE_INFINITY),
+        ((a as any).__order ?? Number.POSITIVE_INFINITY) -
+        ((b as any).__order ?? Number.POSITIVE_INFINITY),
     );
 
     probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
