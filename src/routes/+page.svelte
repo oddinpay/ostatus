@@ -2,6 +2,7 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import Buttong from "$lib/components/Buttong.svelte";
   import Footer from "$lib/components/Footer.svelte";
+  import { writable } from "svelte/store";
   import {
     Tabs,
     TabsContent,
@@ -65,6 +66,11 @@
     index?: number;
   };
 
+  type ProbeMap = Record<string, ApiData>;
+
+  export const probeMapStore = writable<ProbeMap>({});
+
+  let probeMap: ProbeMap = {};
   const pending = new Map<string, Buffered>();
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
   const FLUSH_DELAY = 50;
@@ -80,34 +86,22 @@
   function flushPending() {
     if (!pending.size) return;
 
-    const nextMap: Record<string, ApiData> = { ...probeMap };
+    const nextMap: Record<string, ApiData> = {};
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
 
-      Object.keys(nextMap).forEach((key) => {
-        const isSameOrder = nextMap[key].__order === index;
-        const isOldId = key !== stringId;
-
-        if (isSameOrder && isOldId) {
-          delete nextMap[key];
-        }
-      });
-
-      const existing = nextMap[stringId];
       const order = Number.isFinite(index)
         ? index
-        : ((existing as any)?.__order ?? Number.POSITIVE_INFINITY);
+        : ((probeMap[stringId] as any)?.__order ?? Number.POSITIVE_INFINITY);
 
       nextMap[stringId] = {
-        ...(existing ?? {}),
+        ...probeMap[stringId],
         ...probe,
-        uptime90: sla?.uptime90 ?? (existing as any)?.uptime90,
+        uptime90: sla?.uptime90 ?? (probeMap[stringId] as any)?.uptime90,
         __order: order,
       };
     }
-
-    pending.clear();
 
     const sortedEntries = Object.entries(nextMap).sort(
       ([, a], [, b]) =>
@@ -116,6 +110,10 @@
     );
 
     probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
+
+    probeMapStore.set(probeMap);
+
+    pending.clear();
   }
 
   json.subscribe((msg: any) => {
@@ -128,9 +126,6 @@
 
     scheduleFlush();
   });
-
-  type ProbeMap = Record<string, ApiData>;
-  let probeMap = $state<ProbeMap>({});
 
   // const statusStore = localStore<StatusType[]>('status', []);
 
