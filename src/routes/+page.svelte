@@ -76,27 +76,25 @@
   function flushPending() {
     if (!pending.size) return;
 
-    // 1. Create a copy of the current state to modify
     const nextMap: Record<string, ApiData> = { ...probeMap };
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
 
-      // 2. Handle the "DELETED" signal from Go
       if (probe.id === "DELETED") {
         delete nextMap[stringId];
-        continue; // Move to the next item in pending
+        continue;
       }
 
-      // 3. Prevent Duplicate Rows (Re-indexing check)
-      // If a different ID now has the same index, remove the old one.
       Object.keys(nextMap).forEach((key) => {
-        if (nextMap[key].__order === index && key !== stringId) {
+        const isSameOrder = nextMap[key].__order === index;
+        const isOldId = key !== stringId;
+
+        if (isSameOrder && isOldId) {
           delete nextMap[key];
         }
       });
 
-      // 4. Update or Add the probe
       const existing = nextMap[stringId];
       const order = Number.isFinite(index)
         ? index
@@ -110,10 +108,8 @@
       } as ApiData;
     }
 
-    // 5. Clear the buffer
     pending.clear();
 
-    // 6. Sort by order and update the UI state
     const sortedEntries = Object.entries(nextMap).sort(
       ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
     );
