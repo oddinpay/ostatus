@@ -690,14 +690,20 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 				if !found {
 					slog.Info("Target deleted from Convex, stopping worker", "name", name)
 
-					globalHub.Broadcast(map[string]StatusPayload{
-						name: {
-							Probe: ProbeResult{
-								Name:     name,
-								Protocol: "DELETED",
+					targetCache.RLock()
+					lookup := targetCache.lookup
+					targetCache.RUnlock()
+
+					if _, ok := lookup[name]; ok {
+						globalHub.Broadcast(map[string]StatusPayload{
+							name: {
+								Probe: ProbeResult{
+									Name:  name,
+									State: []string{"DELETED"},
+								},
 							},
-						},
-					})
+						})
+					}
 
 					if cancel, ok := probeCancels[name]; ok {
 						cancel()
@@ -786,14 +792,20 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 			targetCache.RUnlock()
 
 			for name, payload := range update {
-
 				idx, found := lookup[name]
-				if !found {
+				isDeleted := len(payload.Probe.State) > 0 && payload.Probe.State[0] == "DELETED"
+
+				if !found && !isDeleted {
 					continue
 				}
 
+				finalIdx := idx
+				if isDeleted {
+					fmt.Sscanf(payload.Probe.Id, "%d", &finalIdx)
+				}
+
 				out := map[string]any{
-					"index": idx,
+					"index": finalIdx,
 					"payload": map[string]any{
 						"probe": payload.Probe,
 						"sla":   payload.SLA,
