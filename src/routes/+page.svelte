@@ -54,6 +54,7 @@
     uptime60: string;
     uptime90: string;
     __order?: number;
+    __lastSeen?: number;
   }
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
@@ -73,16 +74,16 @@
     }, FLUSH_DELAY);
   }
 
+  const PROBE_TTL = 10000;
+
   function flushPending() {
-    if (!pending.size) return;
+    if (!pending.size && !probeMap) return;
 
+    const now = Date.now();
     const nextMap: Record<string, ApiData> = { ...probeMap };
-
-    const activeIds = new Set<string>();
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
-      activeIds.add(stringId);
 
       const existing = nextMap[stringId];
 
@@ -95,16 +96,18 @@
         ...probe,
         uptime90: sla?.uptime90 ?? existing?.uptime90,
         __order: order,
+        __lastSeen: now,
       };
     }
 
+    pending.clear();
+
     Object.keys(nextMap).forEach((id) => {
-      if (!activeIds.has(id) && !pending.has(id)) {
+      const last = nextMap[id].__lastSeen ?? 0;
+      if (now - last > PROBE_TTL) {
         delete nextMap[id];
       }
     });
-
-    pending.clear();
 
     const sortedEntries = Object.entries(nextMap).sort(
       ([, a], [, b]) =>
