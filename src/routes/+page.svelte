@@ -58,7 +58,10 @@
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
 
-  type Buffered = { probe: ApiData; sla?: any; index?: number };
+  type Buffered = { probe: ApiData };
+  type ProbeMap = Record<string, ApiData>;
+
+  let probeMap = $state<ProbeMap>({});
 
   const pending = new Map<string, Buffered>();
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
@@ -68,23 +71,34 @@
     if (flushTimer) return;
     flushTimer = setTimeout(() => {
       flushTimer = null;
+      flushPending();
     }, FLUSH_DELAY);
   }
 
+  function flushPending() {
+    if (!pending.size) return;
+
+    const nextMap: ProbeMap = {};
+
+    for (const [id, { probe }] of pending) {
+      if (probe?.name) {
+        nextMap[id] = { ...probeMap[id], ...probe };
+      }
+    }
+
+    probeMap = nextMap;
+
+    pending.clear();
+  }
+
+  // SSE subscription
   json.subscribe((msg: any) => {
     const probe = msg?.payload?.probe;
-    const sla = msg?.payload?.sla;
-    const index = msg?.index;
     if (!probe?.id) return;
 
-    pending.set(probe.id, { probe, sla, index });
-
+    pending.set(probe.id, { probe });
     scheduleFlush();
   });
-
-  type ProbeMap = Record<string, ApiData>;
-
-  let probeMap = $state<ProbeMap>({});
 
   // const statusStore = localStore<StatusType[]>('status', []);
 
