@@ -54,12 +54,17 @@
     uptime60: string;
     uptime90: string;
     __order?: number;
+    protocol?: string;
   }
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
 
-  type Buffered = { probe: ApiData; sla?: any; index?: number };
+  type Buffered = {
+    probe: ApiData;
+    sla?: any;
+    index?: number;
+  };
 
   const pending = new Map<string, Buffered>();
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
@@ -79,9 +84,9 @@
     const nextMap: Record<string, ApiData> = { ...probeMap };
 
     for (const [id, { probe, sla, index }] of pending) {
-      const stringId = String(probe.name);
+      const stringId = String(id);
 
-      if (probe.id === "DELETED") {
+      if (probe?.protocol === "DELETED") {
         delete nextMap[stringId];
         continue;
       }
@@ -98,23 +103,24 @@
       const existing = nextMap[stringId];
       const order = Number.isFinite(index)
         ? index
-        : (existing?.__order ?? Number.POSITIVE_INFINITY);
+        : ((existing as any)?.__order ?? Number.POSITIVE_INFINITY);
 
       nextMap[stringId] = {
         ...(existing ?? {}),
         ...probe,
-        uptime90: sla?.uptime90 ?? existing?.uptime90,
+        uptime90: sla?.uptime90 ?? (existing as any)?.uptime90,
         __order: order,
-      } as ApiData;
+      };
     }
 
     pending.clear();
 
     const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
+      ([, a], [, b]) =>
+        ((a as any).__order ?? 999) - ((b as any).__order ?? 999),
     );
 
-    probeMap = Object.fromEntries(sortedEntries);
+    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
   }
 
   json.subscribe((msg: any) => {
