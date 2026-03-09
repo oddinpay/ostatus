@@ -86,8 +86,7 @@
       const stringId = String(id);
 
       Object.keys(nextMap).forEach((key) => {
-        const isSameOrder =
-          index !== undefined && nextMap[key].__order === index;
+        const isSameOrder = nextMap[key].__order === index;
         const isOldId = key !== stringId;
 
         if (isSameOrder && isOldId) {
@@ -96,7 +95,6 @@
       });
 
       const existing = nextMap[stringId];
-
       const order = Number.isFinite(index)
         ? index
         : ((existing as any)?.__order ?? Number.POSITIVE_INFINITY);
@@ -124,16 +122,9 @@
     const sla = msg?.payload?.sla;
     const index = msg?.index;
 
-    if (!probe?.id && !probe?.name) return;
+    if (!probe?.id) return;
 
-    const id = probe.id ?? probe.name;
-
-    if (probe.protocol === "DELETED") {
-      pending.delete(id);
-      delete probeMap[id];
-      return;
-    }
-    pending.set(id, { probe, sla, index });
+    pending.set(probe.id, { probe, sla, index });
 
     scheduleFlush();
   });

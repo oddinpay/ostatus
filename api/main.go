@@ -665,8 +665,7 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 	slog.Info("Starting dynamic probe manager...")
 
 	go func() {
-
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(30 * time.Second)
 		defer ticker.Stop()
 
 		probeCancels := make(map[string]context.CancelFunc)
@@ -678,21 +677,20 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 			targets := targetCache.targets
 			targetCache.RUnlock()
 
-			targetMap := make(map[string]HttpRequest, len(targets))
-			for _, t := range targets {
-				targetMap[t.Name] = t
-			}
+			slaTrackers.Lock()
+			for name := range slaTrackers.m {
+				found := false
+				for _, t := range targets {
+					if t.Name == name {
+						found = true
+						break
+					}
+				}
 
-			// ------------------------------------------------
-			// Stop deleted probes
-			// ------------------------------------------------
-			for name, cancel := range probeCancels {
-
-				if _, exists := targetMap[name]; !exists {
-
+				if !found {
 					slog.Info("Target deleted from Convex, stopping worker", "name", name)
 
-					globalHub.Broadcast(map[string]StatusPayload{
+					sendUpdateToConn(context.Background(), nil, map[string]StatusPayload{
 						name: {
 							Probe: ProbeResult{
 								Name:     name,
@@ -701,43 +699,38 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 						},
 					})
 
-					cancel()
-					delete(probeCancels, name)
+					if cancel, ok := probeCancels[name]; ok {
+						cancel()
+						delete(probeCancels, name)
+					}
 
-					slaTrackers.Lock()
 					delete(slaTrackers.m, name)
-					slaTrackers.Unlock()
-
 					kv.Delete(ctx, name)
+
 				}
 			}
+			slaTrackers.Unlock()
 
-			// ------------------------------------------------
-			// Start new probes
-			// ------------------------------------------------
-			for name, t := range targetMap {
+			for _, t := range targets {
+				slaTrackers.Lock()
+				_, isRunning := slaTrackers.m[t.Name]
+				slaTrackers.Unlock()
 
-				if _, running := probeCancels[name]; !running {
-
-					slog.Info("New target detected, starting worker", "name", name)
-
+				if !isRunning {
+					slog.Info("New target detected, starting worker", "name", t.Name)
 					probeCtx, cancel := context.WithCancel(ctx)
-					probeCancels[name] = cancel
+					probeCancels[t.Name] = cancel
 
 					wg.Add(1)
 					go startProbeWorker(probeCtx, wg, t)
 				}
 			}
 
-			// ------------------------------------------------
-			// wait
-			// ------------------------------------------------
 			select {
 			case <-ctx.Done():
-				slog.Info("Stopping probe manager")
 				return
-
 			case <-ticker.C:
+				continue
 			}
 		}
 	}()
