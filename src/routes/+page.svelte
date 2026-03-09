@@ -59,11 +59,7 @@
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
 
-  type Buffered = {
-    probe: ApiData;
-    sla?: any;
-    index?: number;
-  };
+  type Buffered = { probe: ApiData; sla?: any; index?: number };
 
   const pending = new Map<string, Buffered>();
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
@@ -80,30 +76,45 @@
   function flushPending() {
     if (!pending.size) return;
 
-    const nextMap: Record<string, ApiData> = {};
+    const nextMap: Record<string, ApiData> = { ...probeMap };
 
     for (const [id, { probe, sla, index }] of pending) {
       const stringId = String(id);
+
+      if (probe.id === "DELETED") {
+        delete nextMap[stringId];
+        continue;
+      }
+
+      Object.keys(nextMap).forEach((key) => {
+        const isSameOrder = nextMap[key].__order === index;
+        const isOldId = key !== stringId;
+
+        if (isSameOrder && isOldId) {
+          delete nextMap[key];
+        }
+      });
+
+      const existing = nextMap[stringId];
       const order = Number.isFinite(index)
         ? index
-        : ((probeMap[stringId] as any)?.__order ?? Number.POSITIVE_INFINITY);
+        : (existing?.__order ?? Number.POSITIVE_INFINITY);
 
       nextMap[stringId] = {
-        ...probeMap[stringId],
+        ...(existing ?? {}),
         ...probe,
-        uptime90: sla?.uptime90 ?? (probeMap[stringId] as any)?.uptime90,
+        uptime90: sla?.uptime90 ?? existing?.uptime90,
         __order: order,
-      };
+      } as ApiData;
     }
 
+    pending.clear();
+
     const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) =>
-        ((a as any).__order ?? Number.POSITIVE_INFINITY) -
-        ((b as any).__order ?? Number.POSITIVE_INFINITY),
+      ([, a], [, b]) => (a.__order ?? 999) - (b.__order ?? 999),
     );
 
-    probeMap = Object.fromEntries(sortedEntries) as ProbeMap;
-    pending.clear();
+    probeMap = Object.fromEntries(sortedEntries);
   }
 
   json.subscribe((msg: any) => {
@@ -113,6 +124,7 @@
     if (!probe?.id) return;
 
     pending.set(probe.id, { probe, sla, index });
+
     scheduleFlush();
   });
 
