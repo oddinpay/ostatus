@@ -82,9 +82,10 @@
       const stringId = String(id);
 
       Object.keys(nextMap).forEach((key) => {
+        const isSameOrder = nextMap[key].__order === index;
         const isOldId = key !== stringId;
 
-        if (isOldId) {
+        if (isSameOrder && isOldId) {
           delete nextMap[key];
         }
       });
