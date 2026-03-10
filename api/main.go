@@ -178,6 +178,7 @@ func refreshCache(ctx context.Context) {
 // -------------------- MODELS --------------------
 
 type HttpRequest struct {
+	ID       string        `json:"_id,omitempty"`
 	Host     string        `json:"host,omitempty"`
 	Protocol string        `json:"protocol,omitempty"`
 	Interval time.Duration `json:"interval,omitempty"`
@@ -733,34 +734,15 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 				var found bool
 				var updated HttpRequest
 				for _, t := range targets {
-					if t.Name == name {
+					if t.ID == name {
 						found = true
 						updated = t
 						break
 					}
 				}
+				
+				if running.Name != updated.Name || running.Host != updated.Host || running.Protocol != updated.Protocol {
 
-				if !found {
-					slog.Info("Target deleted from Convex, stopping worker", "name", name)
-
-					// if cancel, ok := probeCancels[name]; ok {
-					// 	cancel()
-					// 	delete(probeCancels, name)
-					// }
-
-					// globalHub.Broadcast(map[string]StatusPayload{
-					// 	name: {Probe: ProbeResult{Name: name, State: []string{"deleted"}}},
-					// })
-
-					// delete(slaTrackers.m, name)
-					// delete(runningTargets, name)
-					// kv.Delete(ctx, name)
-
-					// targetCache.Lock()
-					// delete(targetCache.lookup, name)
-					// targetCache.Unlock()
-
-				} else if running.Name != updated.Name || running.Host != updated.Host || running.Protocol != updated.Protocol {
 					slog.Info("Target updated, restarting worker", "name", name, "oldHost", running.Host, "newHost", updated.Name)
 
 					if cancel, ok := probeCancels[name]; ok {
@@ -774,6 +756,28 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					go startProbeWorker(probeCtx, wg, updated)
 
 					runningTargets[name] = updated
+
+				} else if !found {
+
+					slog.Info("Target deleted from Convex, stopping worker", "name", name)
+
+					if cancel, ok := probeCancels[name]; ok {
+						cancel()
+						delete(probeCancels, name)
+					}
+
+					globalHub.Broadcast(map[string]StatusPayload{
+						name: {Probe: ProbeResult{Name: name, State: []string{"deleted"}}},
+					})
+
+					delete(slaTrackers.m, name)
+					delete(runningTargets, name)
+					kv.Delete(ctx, name)
+
+					targetCache.Lock()
+					delete(targetCache.lookup, name)
+					targetCache.Unlock()
+
 				}
 			}
 			slaTrackers.Unlock()
