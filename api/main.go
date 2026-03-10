@@ -751,17 +751,16 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					delete(runningTargets, id)
 					kv.Delete(ctx, id)
 
-					targetCache.Lock()
-					delete(targetCache.lookup, id)
-					targetCache.Unlock()
-
 				} else if running.Host != updated.Host || running.Protocol != updated.Protocol || running.Name != updated.Name {
 
 					slog.Info("Target updated, restarting worker", "name", id)
-
 					if cancel, ok := probeCancels[id]; ok {
 						cancel()
 					}
+
+					globalHub.Broadcast(map[string]StatusPayload{
+						id: {Probe: ProbeResult{Name: id, State: []string{"updated"}}},
+					})
 
 					probeCtx, cancel := context.WithCancel(ctx)
 					probeCancels[id] = cancel
@@ -769,10 +768,6 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					go startProbeWorker(probeCtx, wg, updated)
 
 					runningTargets[id] = updated
-
-					globalHub.Broadcast(map[string]StatusPayload{
-						id: {Probe: ProbeResult{Name: id, State: []string{"updated"}}},
-					})
 
 				}
 			}
@@ -848,9 +843,9 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 			lookup := targetCache.lookup
 			targetCache.RUnlock()
 
-			for id, payload := range update {
+			for name, payload := range update {
 
-				idx, found := lookup[id]
+				idx, found := lookup[name]
 
 				out := map[string]any{
 					"index": idx,
@@ -860,10 +855,8 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 					},
 				}
 
-				if found && len(payload.Probe.State) > 0 && payload.Probe.State[0] == "deleted" {
+				if !found {
 					out["deleted"] = true
-				} else if !found {
-					out["updated"] = true
 				}
 
 				if err := conn.SendData(ctx, out); err != nil {
@@ -880,9 +873,9 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 	lookup := targetCache.lookup
 	targetCache.RUnlock()
 
-	for id, payload := range update {
+	for name, payload := range update {
 
-		idx, found := lookup[id]
+		idx, found := lookup[name]
 
 		out := map[string]any{
 			"index": idx,
@@ -892,10 +885,8 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 			},
 		}
 
-		if found && len(payload.Probe.State) > 0 && payload.Probe.State[0] == "deleted" {
+		if !found {
 			out["deleted"] = true
-		} else if !found {
-			out["updated"] = true
 		}
 
 		if err := conn.SendData(ctx, out); err != nil {
