@@ -1,4 +1,4 @@
-name = "beep-api"
+name = "oddin-status-api"
 main = "./build/worker.mjs"
 compatibility_date = "2025-11-17"
 
