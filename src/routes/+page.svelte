@@ -56,20 +56,20 @@
     uptime90: string;
   }
 
-  type Buffered = { probe: ApiData; sla?: any; index?: number };
-  type ProbeMap = Record<string, ApiData>;
-
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
 
   const pending = new Map<string, Buffered>();
   const FLUSH_DELAY = 50;
 
+  type Buffered = { probe: ApiData; sla?: any; index?: number };
+  type ProbeMap = Record<string, ApiData>;
+
   let probeMap = $state<ProbeMap>({});
-  let flushTimer: ReturnType<typeof setTimeout> | null = null;
+  let flushTimer: any = null;
 
   function scheduleFlush() {
-    if (flushTimer || pending.size === 0) return;
+    if (flushTimer) return;
 
     flushTimer = setTimeout(() => {
       flushTimer = null;
@@ -80,17 +80,17 @@
   function flushPending() {
     if (pending.size === 0) return;
 
-    const nextMap: ProbeMap = { ...probeMap };
+    const nextMap = { ...probeMap };
 
     for (const [id, { probe, sla, index }] of pending) {
       const existing = nextMap[id];
 
       const order = Number.isFinite(index)
         ? (index as number)
-        : (existing?.__order ?? Number.POSITIVE_INFINITY);
+        : (existing?.__order ?? Number.MAX_SAFE_INTEGER);
 
       nextMap[id] = {
-        ...(existing ?? {}),
+        ...existing,
         ...probe,
         uptime90: sla?.uptime90 ?? existing?.uptime90,
         __order: order,
@@ -100,29 +100,32 @@
     pending.clear();
 
     const sortedEntries = Object.entries(nextMap).sort(
-      ([, a], [, b]) => (a.__order ?? Infinity) - (b.__order ?? Infinity),
+      ([, a], [, b]) => (a.__order ?? 0) - (b.__order ?? 0),
     );
 
     probeMap = Object.fromEntries(sortedEntries);
   }
 
+  $effect(() => {
+    return () => {
+      if (flushTimer) clearTimeout(flushTimer);
+    };
+  });
+
   json.subscribe((msg: any) => {
-    const probe = msg?.payload?.probe;
-    const sla = msg?.payload?.sla;
+    const { probe, sla } = msg?.payload || {};
     const index = msg?.index;
     const targetId = probe?.id;
 
     if (!targetId) return;
 
-    if (msg?.deleted) {
+    if (msg.deleted) {
       pending.delete(targetId);
-
       if (probeMap[targetId]) {
         const next = { ...probeMap };
         delete next[targetId];
         probeMap = next;
       }
-
       return;
     }
 
