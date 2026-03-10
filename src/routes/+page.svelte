@@ -60,10 +60,13 @@
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
 
   type Buffered = { probe: ApiData; sla?: any; index?: number };
+  type ProbeMap = Record<string, ApiData>;
 
   const pending = new Map<string, Buffered>();
-  let flushTimer: ReturnType<typeof setTimeout> | null = null;
   const FLUSH_DELAY = 50;
+
+  let flushTimer: ReturnType<typeof setTimeout> | null = null;
+  let probeMap = $state<ProbeMap>({});
 
   function scheduleFlush() {
     if (flushTimer) return;
@@ -127,9 +130,6 @@
     pending.set(targetId, { probe, sla, index });
     scheduleFlush();
   });
-
-  type ProbeMap = Record<string, ApiData>;
-  let probeMap = $state<ProbeMap>({});
 
   // const statusStore = localStore<StatusType[]>('status', []);
 
