@@ -771,10 +771,6 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 
 					runningTargets[id] = updated
 
-					targetCache.Lock()
-					delete(targetCache.lookup, id)
-					targetCache.Unlock()
-
 				}
 			}
 			slaTrackers.Unlock()
