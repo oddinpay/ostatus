@@ -743,25 +743,25 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 				if !found {
 					slog.Info("Target deleted from Convex, stopping worker", "name", name)
 
-					if cancel, ok := probeCancels[name]; ok {
-						cancel()
-						delete(probeCancels, name)
-					}
+					// if cancel, ok := probeCancels[name]; ok {
+					// 	cancel()
+					// 	delete(probeCancels, name)
+					// }
 
-					globalHub.Broadcast(map[string]StatusPayload{
-						name: {Probe: ProbeResult{Name: name, State: []string{"deleted"}}},
-					})
+					// globalHub.Broadcast(map[string]StatusPayload{
+					// 	name: {Probe: ProbeResult{Name: name, State: []string{"deleted"}}},
+					// })
 
-					delete(slaTrackers.m, name)
-					delete(runningTargets, name)
-					kv.Delete(ctx, name)
+					// delete(slaTrackers.m, name)
+					// delete(runningTargets, name)
+					// kv.Delete(ctx, name)
 
-					targetCache.Lock()
-					delete(targetCache.lookup, name)
-					targetCache.Unlock()
+					// targetCache.Lock()
+					// delete(targetCache.lookup, name)
+					// targetCache.Unlock()
 
-				} else if running.Host != updated.Host || running.Protocol != updated.Protocol {
-					slog.Info("Target updated, restarting worker", "name", name, "oldHost", running.Host, "newHost", updated.Host)
+				} else if running.Name != updated.Name || running.Host != updated.Host || running.Protocol != updated.Protocol {
+					slog.Info("Target updated, restarting worker", "name", name, "oldHost", running.Host, "newHost", updated.Name)
 
 					if cancel, ok := probeCancels[name]; ok {
 						cancel()
