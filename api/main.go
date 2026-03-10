@@ -743,9 +743,14 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 						delete(probeCancels, id)
 					}
 
-					if err := kv.Delete(ctx, running.Name); err != nil {
-						slog.Error("Failed to delete KV", "name", running.Name, "error", err)
-					}
+					done := make(chan struct{})
+
+					go func() {
+						kv.Delete(ctx, running.Name)
+						close(done)
+					}()
+
+					<-done
 
 					globalHub.Broadcast(map[string]StatusPayload{
 						id: {Probe: ProbeResult{Id: id, Action: []string{"deleted"}}},
