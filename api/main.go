@@ -117,6 +117,7 @@ func fetchTargets(ctx context.Context) []HttpRequest {
 	defer cancel()
 
 	type Status struct {
+		ID       string `json:"_id"`
 		Name     string `json:"name"`
 		Protocol string `json:"protocol"`
 		Host     string `json:"host"`
@@ -140,6 +141,7 @@ func fetchTargets(ctx context.Context) []HttpRequest {
 	raw := []HttpRequest{}
 	for _, u := range statuses {
 		raw = append(raw, HttpRequest{
+			ID:       u.ID,
 			Name:     u.Name,
 			Protocol: u.Protocol,
 			Host:     u.Host,
@@ -332,11 +334,6 @@ func (h *Hub) Broadcast(update map[string]StatusPayload) {
 		default:
 		}
 	}
-}
-
-func monitorId() string {
-	monitorId := typeid.MustGenerate("monitor")
-	return monitorId.String()
 }
 
 func slaId() string {
@@ -982,7 +979,7 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		}
 
 		if payload.Probe.Id == "" {
-			payload.Probe.Id = monitorId()
+			payload.Probe.Id = fetchTargets(ctx)[0].ID
 		}
 		if payload.SLA["id"] == nil || payload.SLA["id"] == "" {
 			payload.SLA["id"] = slaId()
