@@ -737,11 +737,6 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 
 				if !found {
 					slog.Info("Target deleted from Convex, stopping worker", "name", id)
-
-					globalHub.Lock()
-					delete(globalHub.cache, id)
-					globalHub.Unlock()
-
 					if cancel, ok := probeCancels[id]; ok {
 						cancel()
 						delete(probeCancels, id)
