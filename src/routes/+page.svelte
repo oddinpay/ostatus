@@ -80,6 +80,7 @@
 
     for (const [id, { probe, sla, index }] of pending) {
       const existing = nextMap[id];
+
       const order = Number.isFinite(index)
         ? index
         : (existing?.__order ?? Number.POSITIVE_INFINITY);
@@ -87,6 +88,7 @@
       nextMap[id] = {
         ...(existing ?? {}),
         ...probe,
+        id: probe.id,
         uptime90: sla?.uptime90 ?? existing?.uptime90,
         __order: order,
       } as ApiData;
@@ -108,19 +110,15 @@
     const sla = msg?.payload?.sla;
     const index = msg?.index;
 
-    if (msg?.deleted && probe?.name) {
-      Object.keys(probeMap).forEach((key) => {
-        if (probeMap[key].name === probe.name) {
-          delete probeMap[key];
-        }
-      });
-
-      pending.forEach((_, key) => {
-        if (pending.get(key)?.probe.name === probe.name) {
-          pending.delete(key);
-        }
-      });
-
+    if (msg?.deleted) {
+      if (probe?.id) {
+        delete probeMap[probe.id];
+        pending.delete(probe.id);
+      } else if (probe?.name) {
+        Object.keys(probeMap).forEach((key) => {
+          if (probeMap[key].name === probe.name) delete probeMap[key];
+        });
+      }
       return;
     }
 
