@@ -61,6 +61,7 @@
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
+
   const pending = new Map<string, Buffered>();
   const FLUSH_DELAY = 50;
 
@@ -68,7 +69,8 @@
   let flushTimer: ReturnType<typeof setTimeout> | null = null;
 
   function scheduleFlush() {
-    if (flushTimer) return;
+    if (flushTimer || pending.size === 0) return;
+
     flushTimer = setTimeout(() => {
       flushTimer = null;
       flushPending();
@@ -79,8 +81,10 @@
     if (pending.size === 0) return;
 
     const nextMap: ProbeMap = { ...probeMap };
+
     for (const [id, { probe, sla, index }] of pending) {
       const existing = nextMap[id];
+
       const order = Number.isFinite(index)
         ? (index as number)
         : (existing?.__order ?? Number.POSITIVE_INFINITY);
@@ -107,15 +111,18 @@
     const sla = msg?.payload?.sla;
     const index = msg?.index;
     const targetId = probe?.id;
+
     if (!targetId) return;
 
     if (msg?.deleted) {
-      if (probeMap[targetId]) {
-        const updatedMap = { ...probeMap };
-        delete updatedMap[targetId];
-        probeMap = updatedMap;
-      }
       pending.delete(targetId);
+
+      if (probeMap[targetId]) {
+        const next = { ...probeMap };
+        delete next[targetId];
+        probeMap = next;
+      }
+
       return;
     }
 
