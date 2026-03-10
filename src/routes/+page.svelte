@@ -69,19 +69,21 @@
 
     if (!probe?.id) return;
 
+    const id = probe.id.trim();
+
     if (probe.action?.[0] === "deleted") {
-      delete probeMap[probe.id];
-      probeMap = { ...probeMap };
+      const { [id]: _, ...rest } = probeMap;
+      probeMap = rest;
       return;
     }
 
     const next: ProbeMap = {
       ...probeMap,
-      [probe.id]: {
-        ...(probeMap[probe.id] ?? {}),
+      [id]: {
+        ...(probeMap[id] ?? {}),
         ...probe,
-        uptime90: sla?.uptime90 ?? probeMap[probe.id]?.uptime90,
-        __order: index ?? probeMap[probe.id]?.__order ?? Infinity,
+        uptime90: sla?.uptime90 ?? probeMap[id]?.uptime90,
+        __order: index ?? probeMap[id]?.__order ?? Infinity,
       },
     };
 
