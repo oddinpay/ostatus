@@ -842,7 +842,6 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 			for name, payload := range update {
 
 				idx, found := lookup[name]
-
 				out := map[string]any{
 					"index": idx,
 					"payload": map[string]any{
