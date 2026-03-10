@@ -58,7 +58,6 @@
 
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
-
   const pending = new Map<string, Buffered>();
   const FLUSH_DELAY = 50;
 
