@@ -62,46 +62,27 @@
   type ProbeMap = Record<string, ApiData>;
   let probeMap = $state<ProbeMap>({});
 
-  function updateProbe(id: string, probe: ApiData, sla?: any, index?: number) {
-    const existing = probeMap[id];
-
-    const order = Number.isFinite(index)
-      ? index!
-      : (existing?.__order ?? Number.POSITIVE_INFINITY);
-
-    probeMap[id] = {
-      ...(existing ?? {}),
-      ...probe,
-      uptime90: sla?.uptime90 ?? existing?.uptime90,
-      __order: order,
-    } as ApiData;
-
-    sortProbeMap();
-  }
-
-  function sortProbeMap() {
-    const sorted = Object.entries(probeMap).sort(
-      ([, a], [, b]) => (a.__order ?? Infinity) - (b.__order ?? Infinity),
-    );
-    probeMap = Object.fromEntries(sorted);
-  }
-
   json.subscribe((msg: any) => {
-    const { payload, index, deleted } = msg;
-    const probe = payload?.probe;
-    const id = probe?.id;
+    const probe = msg?.payload?.probe;
+    const sla = msg?.payload?.sla;
 
-    if (!id) return;
+    if (!probe?.id) return;
 
-    if (deleted) {
-      delete probeMap[id];
+    if (msg?.deleted) {
+      delete probeMap[probe.id];
+      probeMap = { ...probeMap };
       return;
     }
 
-    updateProbe(id, probe, payload?.sla, index);
+    probeMap = {
+      ...probeMap,
+      [probe.id]: {
+        ...(probeMap[probe.id] ?? {}),
+        ...probe,
+        uptime90: sla?.uptime90 ?? probeMap[probe.id]?.uptime90,
+      },
+    };
   });
-
-  // const statusStore = localStore<StatusType[]>('status', []);
 
   function coerceStatus(s?: StatusType): StatusType {
     return s === "up" || s === "down" || s === "warn" ? s : "warn";
