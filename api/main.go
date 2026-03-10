@@ -743,13 +743,16 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 						delete(probeCancels, id)
 					}
 
+					if err := kv.Delete(ctx, running.Name); err != nil {
+						slog.Error("Failed to delete KV", "name", running.Name, "error", err)
+					}
+
 					globalHub.Broadcast(map[string]StatusPayload{
 						id: {Probe: ProbeResult{Id: id, Action: []string{"deleted"}}},
 					})
 
 					delete(slaTrackers.m, id)
 					delete(runningTargets, id)
-					kv.Delete(ctx, running.Name)
 
 				} else if running.Host != updated.Host || running.Protocol != updated.Protocol || running.Name != updated.Name {
 					slog.Info("Target updated, restarting worker", "name", id)
