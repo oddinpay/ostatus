@@ -90,7 +90,8 @@ var (
 			TLSHandshakeTimeout:   defaultTimeout,
 			ResponseHeaderTimeout: defaultTimeout,
 			IdleConnTimeout:       90 * time.Second,
-			MaxIdleConns:          100,
+			MaxIdleConns:          200,
+			MaxIdleConnsPerHost:   20,
 		},
 	}
 )
@@ -342,37 +343,65 @@ func probeHTTP(re HttpRequest) ProbeResult {
 
 	url := fmt.Sprintf("%s://%s", re.Protocol, re.Host)
 
-	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
-	defer cancel()
-
-	r, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		slog.Error("Failed to create HTTP request", "error", err)
-	}
+	maxRetries := 3
 
 	if userAgent == "" {
 		userAgent = "OddinStatus/1.0"
 	}
 
-	r.Header.Set("User-Agent", userAgent)
+	for attempt := 1; attempt <= maxRetries; attempt++ {
 
-	resp, err := httpClient.Do(r)
-	if err != nil {
-		return ProbeResult{
-			Id:          "",
-			Name:        re.Name,
-			Protocol:    strings.ToUpper(re.Protocol),
-			Description: fmt.Sprintf("%s - %s", re.Host, err.Error()),
-			Timestamp:   time.Now().Format("15:04:05.000"),
-			Date:        getRecentDates(),
-			State:       []string{hr.Down},
+		ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			cancel()
+			slog.Error("Failed to create HTTP request", "error", err)
+			continue
 		}
-	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode < StatusOK || resp.StatusCode >= StatusBadRequest {
+		req.Header.Set("User-Agent", userAgent)
+
+		resp, err := httpClient.Do(req)
+
+		if err != nil {
+			cancel()
+
+			if attempt < maxRetries {
+				time.Sleep(200 * time.Millisecond)
+				continue
+			}
+
+			return ProbeResult{
+				Name:        re.Name,
+				Protocol:    strings.ToUpper(re.Protocol),
+				Description: fmt.Sprintf("%s - %s", re.Host, err.Error()),
+				Timestamp:   time.Now().Format("15:04:05.000"),
+				Date:        getRecentDates(),
+				State:       []string{hr.Down},
+			}
+		}
+
+		resp.Body.Close()
+		cancel()
+
+		if resp.StatusCode >= StatusOK && resp.StatusCode < StatusBadRequest {
+			return ProbeResult{
+				Name:        re.Name,
+				Protocol:    strings.ToUpper(re.Protocol),
+				Description: fmt.Sprintf("%s - %d", re.Host, resp.StatusCode),
+				Timestamp:   time.Now().Format("15:04:05.000"),
+				Date:        getRecentDates(),
+				State:       []string{hr.Up},
+			}
+		}
+
+		if attempt < maxRetries {
+			time.Sleep(200 * time.Millisecond)
+			continue
+		}
+
 		return ProbeResult{
-			Id:          "",
 			Name:        re.Name,
 			Protocol:    strings.ToUpper(re.Protocol),
 			Description: fmt.Sprintf("%s - %d", re.Host, resp.StatusCode),
@@ -381,80 +410,85 @@ func probeHTTP(re HttpRequest) ProbeResult {
 			State:       []string{hr.Down},
 		}
 	}
-	return ProbeResult{
-		Id:          "",
-		Name:        re.Name,
-		Protocol:    strings.ToUpper(re.Protocol),
-		Description: fmt.Sprintf("%s - %d", re.Host, resp.StatusCode),
-		Timestamp:   time.Now().Format("15:04:05.000"),
-		Date:        getRecentDates(),
-		State:       []string{hr.Up},
-	}
+
+	return ProbeResult{}
 }
 
 func probeTCP(req HttpRequest) ProbeResult {
-	conn, err := net.DialTimeout("tcp", req.Host, defaultTimeout)
+	maxRetries := 3
 
-	if err != nil {
-		return ProbeResult{
-			Id:          "",
-			Name:        req.Name,
-			Protocol:    strings.ToUpper(req.Protocol),
-			Description: err.Error(),
-			Timestamp:   time.Now().Format("15:04:05.000"),
-			Date:        getRecentDates(),
-			State:       []string{hr.Down},
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		conn, err := net.DialTimeout("tcp", req.Host, defaultTimeout)
+		if err != nil {
+			if attempt < maxRetries {
+				time.Sleep(200 * time.Millisecond)
+				continue
+			}
+			return ProbeResult{
+				Name:        req.Name,
+				Protocol:    strings.ToUpper(req.Protocol),
+				Description: err.Error(),
+				Timestamp:   time.Now().Format("15:04:05.000"),
+				Date:        getRecentDates(),
+				State:       []string{hr.Down},
+			}
 		}
-	}
-	defer conn.Close()
 
-	_, err = conn.Write([]byte("ping\n"))
-	if err != nil {
-		return ProbeResult{
-			Id:          "",
-			Name:        req.Name,
-			Protocol:    strings.ToUpper(req.Protocol),
-			Description: "write failed: " + err.Error(),
-			Timestamp:   time.Now().Format("15:04:05.000"),
-			Date:        getRecentDates(),
-			State:       []string{hr.Down},
+		_, err = conn.Write([]byte("ping\n"))
+		if err != nil {
+			conn.Close()
+			if attempt < maxRetries {
+				time.Sleep(200 * time.Millisecond)
+				continue
+			}
+			return ProbeResult{
+				Name:        req.Name,
+				Protocol:    strings.ToUpper(req.Protocol),
+				Description: "write failed: " + err.Error(),
+				Timestamp:   time.Now().Format("15:04:05.000"),
+				Date:        getRecentDates(),
+				State:       []string{hr.Down},
+			}
 		}
-	}
 
-	buf := make([]byte, 64)
-	_ = conn.SetReadDeadline(time.Now().Add(1 * time.Second))
-	n, err := conn.Read(buf)
-	if err != nil || n == 0 {
+		buf := make([]byte, 64)
+		_ = conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+		n, err := conn.Read(buf)
+		conn.Close()
+
+		if err != nil || n == 0 {
+			if attempt < maxRetries {
+				time.Sleep(200 * time.Millisecond)
+				continue
+			}
+			return ProbeResult{
+				Name:        req.Name,
+				Protocol:    strings.ToUpper(req.Protocol),
+				Description: "no response after connect",
+				Timestamp:   time.Now().Format("15:04:05.000"),
+				Date:        getRecentDates(),
+				State:       []string{hr.Down},
+			}
+		}
+
 		return ProbeResult{
-			Id:          "",
 			Name:        req.Name,
 			Protocol:    strings.ToUpper(req.Protocol),
-			Description: "no response after connect",
+			Description: fmt.Sprintf("response received %s", strings.TrimSpace(string(buf[:n]))),
 			Timestamp:   time.Now().Format("15:04:05.000"),
 			Date:        getRecentDates(),
 			State:       []string{hr.Up},
 		}
 	}
 
-	return ProbeResult{
-		Id:          "",
-		Name:        req.Name,
-		Protocol:    strings.ToUpper(req.Protocol),
-		Description: fmt.Sprintf("response received %s", strings.TrimSpace(string(buf[:n]))),
-		Timestamp:   time.Now().Format("15:04:05.000"),
-		Date:        getRecentDates(),
-		State:       []string{hr.Up},
-	}
+	return ProbeResult{}
 }
 
 func probeDNS(req HttpRequest) ProbeResult {
-
-	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
-	defer cancel()
+	maxRetries := 3
 
 	if net.ParseIP(req.Host) != nil {
 		return ProbeResult{
-			Id:          "",
 			Name:        req.Name,
 			Protocol:    strings.ToUpper(req.Protocol),
 			Description: "Input is already an IP, DNS lookup skipped",
@@ -464,28 +498,37 @@ func probeDNS(req HttpRequest) ProbeResult {
 		}
 	}
 
-	addrs, err := net.DefaultResolver.LookupHost(ctx, req.Host)
-	if err != nil {
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+		addrs, err := net.DefaultResolver.LookupHost(ctx, req.Host)
+		cancel()
+
+		if err != nil {
+			if attempt < maxRetries {
+				time.Sleep(200 * time.Millisecond)
+				continue
+			}
+			return ProbeResult{
+				Name:        req.Name,
+				Protocol:    strings.ToUpper(req.Protocol),
+				Description: fmt.Sprintf("DNS error: %s", err.Error()),
+				Timestamp:   time.Now().Format("15:04:05.000"),
+				Date:        getRecentDates(),
+				State:       []string{hr.Down},
+			}
+		}
+
 		return ProbeResult{
-			Id:          "",
 			Name:        req.Name,
 			Protocol:    strings.ToUpper(req.Protocol),
-			Description: fmt.Sprintf("DNS error: %s", err.Error()),
+			Description: fmt.Sprintf("resolved %v", addrs),
 			Timestamp:   time.Now().Format("15:04:05.000"),
 			Date:        getRecentDates(),
-			State:       []string{hr.Down},
+			State:       []string{hr.Up},
 		}
 	}
 
-	return ProbeResult{
-		Id:          "",
-		Name:        req.Name,
-		Protocol:    strings.ToUpper(req.Protocol),
-		Description: fmt.Sprintf("resolved %v", addrs),
-		Timestamp:   time.Now().Format("15:04:05.000"),
-		Date:        getRecentDates(),
-		State:       []string{hr.Up, "up"},
-	}
+	return ProbeResult{}
 }
 
 // -------------------- 90-DAY SLA --------------------
@@ -512,7 +555,7 @@ func (s *SlidingSLA) rotateTo(now time.Time) {
 	if !minNow.After(s.currentMinute) {
 		return
 	}
-	steps := int(minNow.Sub(s.currentMinute) / 24 * time.Hour)
+	steps := int(minNow.Sub(s.currentMinute) / (24 * time.Hour))
 	if steps > days90 {
 		for i := range s.buckets {
 			s.buckets[i] = bucket{}
