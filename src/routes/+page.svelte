@@ -88,20 +88,27 @@
     for (const [id, { probe, sla, index, isDeleted }] of pending) {
       if (isDeleted) {
         delete nextMap[id];
-        continue;
+      } else {
+        const existing = nextMap[id];
+        const order = Number.isFinite(index)
+          ? index
+          : (existing?.__order ?? Number.POSITIVE_INFINITY);
+
+        nextMap[id] = {
+          ...(existing ?? {}),
+          ...probe,
+          uptime90: sla?.uptime90 ?? existing?.uptime90,
+          __order: order,
+        } as ApiData;
       }
+    }
 
-      const existing = nextMap[id];
-      const order = Number.isFinite(index)
-        ? index
-        : (existing?.__order ?? Number.POSITIVE_INFINITY);
+    const currentBatchIds = new Set(pending.keys());
 
-      nextMap[id] = {
-        ...(existing ?? {}),
-        ...probe,
-        uptime90: sla?.uptime90 ?? existing?.uptime90,
-        __order: order,
-      } as ApiData;
+    for (const id in nextMap) {
+      if (!currentBatchIds.has(id)) {
+        delete nextMap[id];
+      }
     }
 
     pending.clear();
