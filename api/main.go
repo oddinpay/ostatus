@@ -744,7 +744,7 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					}
 
 					globalHub.Broadcast(map[string]StatusPayload{
-						id: {Probe: ProbeResult{Name: running.Name, Id: id, Action: []string{"deleted"}}},
+						id: {Probe: ProbeResult{Id: id, Action: []string{"deleted"}}},
 					})
 
 					delete(slaTrackers.m, id)
@@ -758,7 +758,7 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					}
 
 					globalHub.Broadcast(map[string]StatusPayload{
-						id: {Probe: ProbeResult{Name: updated.Name, Id: id, Action: []string{"updated"}}},
+						id: {Probe: ProbeResult{Id: id, Action: []string{"updated"}}},
 					})
 
 					probeCtx, cancel := context.WithCancel(ctx)
