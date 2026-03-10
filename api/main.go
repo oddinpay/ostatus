@@ -995,7 +995,14 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		}
 
 		if payload.Probe.Id == "" {
-			payload.Probe.Id = fetchTargets(ctx)[0].ID
+			targetCache.RLock()
+			for _, t := range targetCache.targets {
+				if t.Name == name {
+					payload.Probe.Id = t.ID
+					break
+				}
+			}
+			targetCache.RUnlock()
 		}
 		if payload.SLA["id"] == nil || payload.SLA["id"] == "" {
 			payload.SLA["id"] = slaId()
