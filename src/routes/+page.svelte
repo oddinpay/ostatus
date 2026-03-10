@@ -59,17 +59,18 @@
   const beepHost = env.PUBLIC_ODDIN_HOST;
   const json = source(`https://${beepHost}/v1/sse`).select("").json<ApiData>();
   const pending = new Map<string, Buffered>();
-  const FLUSH_DELAY = 50;
 
   type Buffered = { probe: ApiData; sla?: any; index?: number };
-  type ProbeMap = Record<string, ApiData>;
+  type ProbeMap = Record<string, ApiData & { lastSeen: number }>; // Added lastSeen
 
   let probeMap = $state<ProbeMap>({});
-  let flushTimer: any = null;
+  let flushTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const FLUSH_DELAY = 100;
+  const STALE_TIMEOUT = 30000;
 
   function scheduleFlush() {
     if (flushTimer) return;
-
     flushTimer = setTimeout(() => {
       flushTimer = null;
       flushPending();
@@ -77,26 +78,33 @@
   }
 
   function flushPending() {
-    if (pending.size === 0) return;
+    const nextMap: ProbeMap = { ...probeMap };
+    const now = Date.now();
 
-    const nextMap = { ...probeMap };
-
-    for (const [id, { probe, sla, index }] of pending) {
-      const existing = nextMap[id];
-
-      const order = Number.isFinite(index)
-        ? (index as number)
-        : (existing?.__order ?? Number.MAX_SAFE_INTEGER);
-
-      nextMap[id] = {
-        ...existing,
-        ...probe,
-        uptime90: sla?.uptime90 ?? existing?.uptime90,
-        __order: order,
-      } as ApiData;
+    for (const id in nextMap) {
+      if (now - nextMap[id].lastSeen > STALE_TIMEOUT) {
+        delete nextMap[id];
+      }
     }
 
-    pending.clear();
+    if (pending.size > 0) {
+      for (const [id, { probe, sla, index }] of pending) {
+        const existing = nextMap[id];
+
+        const order = Number.isFinite(index)
+          ? index
+          : (existing?.__order ?? Number.POSITIVE_INFINITY);
+
+        nextMap[id] = {
+          ...(existing ?? {}),
+          ...probe,
+          uptime90: sla?.uptime90 ?? existing?.uptime90,
+          __order: order,
+          lastSeen: now,
+        } as ApiData & { lastSeen: number };
+      }
+      pending.clear();
+    }
 
     const sortedEntries = Object.entries(nextMap).sort(
       ([, a], [, b]) => (a.__order ?? 0) - (b.__order ?? 0),
@@ -105,32 +113,31 @@
     probeMap = Object.fromEntries(sortedEntries);
   }
 
-  $effect(() => {
-    return () => {
-      if (flushTimer) clearTimeout(flushTimer);
-    };
-  });
-
   json.subscribe((msg: any) => {
-    const { probe, sla } = msg?.payload || {};
-    const index = msg?.index;
-    const targetId = probe?.id;
+    const probe = msg?.payload?.probe;
+    const id = probe?.id;
 
-    if (!targetId) return;
+    if (!id) return;
 
-    if (msg.deleted) {
-      pending.delete(targetId);
-      if (probeMap[targetId]) {
-        const next = { ...probeMap };
-        delete next[targetId];
-        probeMap = next;
-      }
+    if (msg?.deleted) {
+      delete probeMap[id];
+      probeMap = { ...probeMap };
+      pending.delete(id);
       return;
     }
 
-    pending.set(targetId, { probe, sla, index });
+    pending.set(id, {
+      probe,
+      sla: msg?.payload?.sla,
+      index: msg?.index,
+    });
+
     scheduleFlush();
   });
+
+  setInterval(() => {
+    flushPending();
+  }, 10000);
 
   // const statusStore = localStore<StatusType[]>('status', []);
 
