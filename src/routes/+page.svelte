@@ -116,7 +116,7 @@
       });
 
       pending.forEach((_, key) => {
-        if (pending.get(key)?.probe.name === probe.name) {
+        if (pending.get(key)?.probe.id === probe.id) {
           pending.delete(key);
         }
       });
