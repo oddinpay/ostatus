@@ -108,15 +108,15 @@
     const sla = msg?.payload?.sla;
     const index = msg?.index;
 
-    if (msg?.deleted && probe?.id) {
+    if (msg?.deleted && probe?.name) {
       Object.keys(probeMap).forEach((key) => {
-        if (probeMap[key].id === probe.id) {
+        if (probeMap[key].name === probe.name) {
           delete probeMap[key];
         }
       });
 
       pending.forEach((_, key) => {
-        if (pending.get(key)?.probe.id === probe.id) {
+        if (pending.get(key)?.probe.name === probe.name) {
           pending.delete(key);
         }
       });
