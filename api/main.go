@@ -744,16 +744,12 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					}
 
 					globalHub.Broadcast(map[string]StatusPayload{
-						id: {Probe: ProbeResult{Name: id, State: []string{"updated"}}},
+						id: {Probe: ProbeResult{Name: id, State: []string{"deleted"}}},
 					})
-
-					globalHub.Lock()
-					delete(globalHub.cache, id)
-					globalHub.Unlock()
 
 					delete(slaTrackers.m, id)
 					delete(runningTargets, id)
-					// kv.Delete(ctx, id)
+					kv.Delete(ctx, id)
 
 					targetCache.Lock()
 					delete(targetCache.lookup, id)
