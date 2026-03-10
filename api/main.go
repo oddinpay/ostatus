@@ -770,6 +770,10 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 
 					runningTargets[id] = updated
 
+					globalHub.Broadcast(map[string]StatusPayload{
+						id: {Probe: ProbeResult{Name: id, State: []string{"updated"}}},
+					})
+
 				}
 			}
 			slaTrackers.Unlock()
@@ -856,8 +860,10 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 					},
 				}
 
-				if !found {
+				if found && len(payload.Probe.State) > 0 && payload.Probe.State[0] == "deleted" {
 					out["deleted"] = true
+				} else if !found {
+					out["updated"] = true
 				}
 
 				if err := conn.SendData(ctx, out); err != nil {
@@ -886,8 +892,10 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 			},
 		}
 
-		if !found {
+		if found && len(payload.Probe.State) > 0 && payload.Probe.State[0] == "deleted" {
 			out["deleted"] = true
+		} else if !found {
+			out["updated"] = true
 		}
 
 		if err := conn.SendData(ctx, out); err != nil {
