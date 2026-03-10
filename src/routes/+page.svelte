@@ -79,9 +79,7 @@
     if (pending.size === 0) return;
 
     const nextMap: ProbeMap = { ...probeMap };
-    
     for (const [id, { probe, sla, index }] of pending) {
-      
       const existing = nextMap[id];
       const order = Number.isFinite(index)
         ? (index as number)
