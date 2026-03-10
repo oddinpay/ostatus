@@ -320,11 +320,11 @@ func (h *Hub) Broadcast(update map[string]StatusPayload) {
 	h.Lock()
 	defer h.Unlock()
 
-	for name, payload := range update {
+	for id, payload := range update {
 		if len(payload.Probe.State) > 0 && payload.Probe.State[0] == "deleted" {
-			delete(h.cache, name)
+			delete(h.cache, id)
 		} else {
-			h.cache[name] = payload
+			h.cache[id] = payload
 		}
 	}
 
@@ -737,19 +737,29 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 				}
 
 				if !found {
+					slog.Info("Target deleted from Convex, stopping worker", "name", id)
 					if cancel, ok := probeCancels[id]; ok {
 						cancel()
 						delete(probeCancels, id)
+
 					}
+
+					globalHub.Broadcast(map[string]StatusPayload{
+						id: {Probe: ProbeResult{Name: id, State: []string{"deleted"}}},
+					})
+
 					delete(slaTrackers.m, id)
 					delete(runningTargets, id)
-					kv.Delete(ctx, running.Name)
+					kv.Delete(ctx, id)
 
 					targetCache.Lock()
 					delete(targetCache.lookup, id)
 					targetCache.Unlock()
 
 				} else if running.Host != updated.Host || running.Protocol != updated.Protocol || running.Name != updated.Name {
+
+					slog.Info("Target updated, restarting worker", "name", id)
+
 					if cancel, ok := probeCancels[id]; ok {
 						cancel()
 					}
