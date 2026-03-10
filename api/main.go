@@ -741,12 +741,15 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 					if cancel, ok := probeCancels[id]; ok {
 						cancel()
 						delete(probeCancels, id)
-
 					}
 
 					globalHub.Broadcast(map[string]StatusPayload{
 						id: {Probe: ProbeResult{Name: id, State: []string{"deleted"}}},
 					})
+
+					globalHub.Lock()
+					delete(globalHub.cache, id)
+					globalHub.Unlock()
 
 					delete(slaTrackers.m, id)
 					delete(runningTargets, id)
