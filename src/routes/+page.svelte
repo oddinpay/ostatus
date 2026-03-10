@@ -108,7 +108,7 @@
     const sla = msg?.payload?.sla;
     const index = msg?.index;
 
-    if (msg?.deleted) {
+    if (msg?.deleted && probe?.id) {
       const targetId = probe?.id;
       if (!targetId) return;
 
