@@ -1,7 +1,6 @@
 package main
 
 import (
-	"maps"
 	"bytes"
 	"compress/gzip"
 	"context"
@@ -10,6 +9,7 @@ import (
 	"io"
 	"log"
 	"log/slog"
+	"maps"
 	"net"
 	"net/http"
 	"os"
@@ -841,32 +841,33 @@ func hydrateSnapshotFromKV(ctx context.Context) {
 	}
 
 	for _, key := range keys {
-		entry, err := kv.Get(ctx, key)
-		if err != nil || entry == nil {
-			continue
-		}
+		func() {
+			entry, err := kv.Get(ctx, key)
+			if err != nil || entry == nil {
+				return
+			}
 
-		gr, err := gzip.NewReader(bytes.NewReader(entry.Value()))
-		if err != nil {
-			continue
-		}
+			gr, err := gzip.NewReader(bytes.NewReader(entry.Value()))
+			if err != nil {
+				return
+			}
+			defer gr.Close()
 
-		var wrapped map[string]any
-		if err := json.NewDecoder(gr).Decode(&wrapped); err != nil {
-			gr.Close()
-			continue
-		}
-		gr.Close()
+			var wrapped map[string]any
+			if err := json.NewDecoder(gr).Decode(&wrapped); err != nil {
+				return
+			}
 
-		payload := StatusPayload{}
-		if p, ok := wrapped["payload"].(map[string]any); ok {
-			b, _ := json.Marshal(p)
-			json.Unmarshal(b, &payload)
-		}
+			payload := StatusPayload{}
+			if p, ok := wrapped["payload"].(map[string]any); ok {
+				b, _ := json.Marshal(p)
+				json.Unmarshal(b, &payload)
+			}
 
-		globalHub.mu.Lock()
-		globalHub.cache[key] = payload
-		globalHub.mu.Unlock()
+			globalHub.mu.Lock()
+			globalHub.cache[key] = payload
+			globalHub.mu.Unlock()
+		}()
 	}
 
 	slog.Info("SSE snapshot cache hydrated", "items", len(globalHub.cache))
@@ -1015,22 +1016,19 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		if getErr == nil && entry != nil {
 			revision = entry.Revision()
 			gr, err := gzip.NewReader(bytes.NewReader(entry.Value()))
-
 			if err != nil {
 				slog.Error("failed to create gzip reader", "error", err)
 			} else {
-				defer gr.Close()
 				var wrapped map[string]any
 				if err := json.NewDecoder(gr).Decode(&wrapped); err != nil {
 					slog.Error("failed to decode JSON from gzip", "error", err)
 				} else {
-					if payload, ok := wrapped["payload"].(map[string]any); ok {
-						payloadBytes, _ := json.Marshal(payload)
-						if err := json.Unmarshal(payloadBytes, &oldPayload); err != nil {
-							slog.Error("failed to parse payload to StatusPayload", "error", err)
-						}
+					if payloadMap, ok := wrapped["payload"].(map[string]any); ok {
+						payloadBytes, _ := json.Marshal(payloadMap)
+						_ = json.Unmarshal(payloadBytes, &oldPayload)
 					}
 				}
+				gr.Close()
 			}
 		}
 
