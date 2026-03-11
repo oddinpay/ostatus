@@ -856,6 +856,7 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 				idx := currentLookup[name]
 
 				payload.Probe.Id = ""
+				delete(payload.SLA, "id")
 
 				out := map[string]any{
 					"index": idx,
