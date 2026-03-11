@@ -929,8 +929,6 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 			idx = i
 		}
 
-		payload.Probe.Id = ""
-
 		out := map[string]any{
 			"index":   idx,
 			"payload": map[string]any{"probe": payload.Probe, "sla": payload.SLA},
