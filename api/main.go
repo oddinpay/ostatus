@@ -929,7 +929,7 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 			idx = i
 		}
 
-		payload.SLA["id"] = ""
+		payload.Probe.Id = name
 
 		out := map[string]any{
 			"index":   idx,
