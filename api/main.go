@@ -876,10 +876,6 @@ func hydrateSnapshotFromKV(ctx context.Context) {
 // -------------------- SSE HANDLER --------------------
 
 func Sse(w http.ResponseWriter, r *http.Request) {
-	if r.Method != MethodGet {
-		http.Error(w, "Method not allowed", StatusMethodNotAllowed)
-		return
-	}
 
 	ctx := r.Context()
 	w.Header().Set(HeaderAllowOrigin, "*")
