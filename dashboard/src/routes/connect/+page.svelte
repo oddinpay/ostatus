@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Connect from '$lib/components/Connect.svelte';
+	// import Connect from '$lib/components/Connect.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
 	import { Unplug, House } from 'lucide-svelte';
