@@ -21,9 +21,8 @@
   let title = "Status • Oddinpay";
   let description =
     "Real-time and historical data on OddinPay system performance.";
-
-  const badge = "Last updated";
   let ready = $state(false);
+  const badge = "Last updated";
 
   onMount(() => (ready = true));
   const clock = timer();
