@@ -875,6 +875,49 @@ func hydrateSnapshotFromKV(ctx context.Context) {
 
 // -------------------- SSE HANDLER --------------------
 
+type UnboundedChan[T any] struct {
+	InCh  chan T
+	OutCh chan T
+}
+
+func NewUnboundedChan[T any]() *UnboundedChan[T] {
+	uc := &UnboundedChan[T]{
+		InCh:  make(chan T),
+		OutCh: make(chan T),
+	}
+
+	go func() {
+		queue := []T{}
+		var outCh chan T
+		var next T
+		for {
+			if len(queue) > 0 {
+				outCh = uc.OutCh
+				next = queue[0]
+			} else {
+				outCh = nil
+			}
+
+			select {
+			case v, ok := <-uc.InCh:
+				if !ok {
+					close(uc.OutCh)
+					return
+				}
+				queue = append(queue, v)
+			case outCh <- next:
+				queue = queue[1:]
+			}
+		}
+	}()
+
+	return uc
+}
+
+func (uc *UnboundedChan[T]) Close() {
+	close(uc.InCh)
+}
+
 func Sse(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
@@ -890,9 +933,12 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	clientChan := make(chan map[string]StatusPayload, 200)
+	uc := NewUnboundedChan[map[string]StatusPayload]()
+
+	clientChan := uc.OutCh
 	globalHub.AddClient(clientChan)
 	defer globalHub.RemoveClient(clientChan)
+	defer uc.Close()
 
 	heartbeat := time.NewTicker(25 * time.Second)
 	defer heartbeat.Stop()
