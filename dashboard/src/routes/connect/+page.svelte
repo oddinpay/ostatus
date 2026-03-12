@@ -43,7 +43,7 @@
 				<div
 					class="relative col-span-1 rounded-lg border border-border bg-zinc-900 p-8 md:col-span-2 md:min-h-[480px] md:overflow-y-hidden"
 				>
-					<TabsContent value="tab-5" class="h-auto min-h-[300px]">
+					<!-- <TabsContent value="tab-5" class="h-auto min-h-[300px]">
 						<Tabs value="tab-5" class=" items-center">
 							<TabsList
 								class="h-auto gap-2 rounded-full border-b border-border bg-zinc-800 px-10 py-2 text-zinc-400"
@@ -68,7 +68,7 @@
 								<p class="p-4 text-center text-xs text-white">Content for Tab 2</p>
 							</TabsContent>
 						</Tabs>
-					</TabsContent>
+					</TabsContent> -->
 				</div>
 			</div>
 		</Tabs>
