@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { useQuery } from 'convex-svelte';
 	import { api } from '../../convex/_generated/api';
-
-	const query = useQuery(api.status.get, {});
+	import { env } from '$env/dynamic/public';
+	
+	const query = useQuery(api.status.get, {apiKey: env.PUBLIC_API_KEY});
 </script>
 
 {#if query.isLoading}
