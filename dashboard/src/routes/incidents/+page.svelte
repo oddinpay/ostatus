@@ -112,11 +112,12 @@
 						</Tabs>
 					</TabsContent>
 				</div>
+
 				<div
-					class="min-h-[250px] rounded-lg border border-border bg-zinc-900 p-8 md:overflow-y-hidden"
+					class="min-h-62.5 rounded-lg border border-border bg-zinc-900 p-8 md:overflow-y-hidden"
 				>
-					<TabsContent value="tab-2" class="h-auto min-h-[150px]">
-						<p class="text-base font-semibold text-zinc-200">Active Incidents</p>
+					<TabsContent value="tab-2" class="h-auto min-h-37.5">
+						<p class="text-base font-semibold text-zinc-200">Total Incidents</p>
 						<Gauge
 							colors={{ primary: 'stroke-green-700', secondary: 'stroke-green-200' }}
 							class="text-white"
@@ -126,12 +127,11 @@
 						/>
 					</TabsContent>
 				</div>
-
 				<div
-					class="min-h-[250px] rounded-lg border border-border bg-zinc-900 p-8 md:overflow-y-hidden"
+					class="min-h-62.5 rounded-lg border border-border bg-zinc-900 p-8 md:overflow-y-hidden"
 				>
-					<TabsContent value="tab-2" class="h-auto min-h-[150px]">
-						<p class="text-base font-semibold text-zinc-200">Total Incidents</p>
+					<TabsContent value="tab-2" class="h-auto min-h-37.5">
+						<p class="text-base font-semibold text-zinc-200">Active Incidents</p>
 						<Gauge
 							colors={{ primary: 'stroke-yellow-700', secondary: 'stroke-yellow-200' }}
 							class="text-white"
