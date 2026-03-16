@@ -381,12 +381,12 @@ func probeHTTP(re HttpRequest) ProbeResult {
 
 	url := fmt.Sprintf("%s://%s", re.Protocol, re.Host)
 
-	maxRetries := 3
+	maxRetries := 5
 
 	if userAgent == "" {
 		userAgent = "OddinStatus/1.0"
 	}
-
+	
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 
 		ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
@@ -453,7 +453,7 @@ func probeHTTP(re HttpRequest) ProbeResult {
 }
 
 func probeTCP(req HttpRequest) ProbeResult {
-	maxRetries := 3
+	maxRetries := 5
 
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		conn, err := net.DialTimeout("tcp", req.Host, defaultTimeout)
@@ -523,7 +523,7 @@ func probeTCP(req HttpRequest) ProbeResult {
 }
 
 func probeDNS(req HttpRequest) ProbeResult {
-	maxRetries := 3
+	maxRetries := 5
 
 	if net.ParseIP(req.Host) != nil {
 		return ProbeResult{
