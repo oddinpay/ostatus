@@ -58,14 +58,14 @@
 		</Empty.Media>
 		<Empty.Title class=" text-gray-200">Let’s Get Started</Empty.Title>
 		<Empty.Description class="text-gray-400">
-			Start by changing the incident status. You can also add notes to the incident.
+			Start by creating a new incident. You can also update an existing incident.
 		</Empty.Description>
 	</Empty.Header>
 	<Empty.Content>
 		<div class="flex gap-2">
 			<Dialog.Root>
 				<Dialog.Trigger class={cn('cursor-pointer', buttonVariants({ variant: 'outline' }))}
-					>Update incident</Dialog.Trigger
+					>Manage Incident</Dialog.Trigger
 				>
 				<Dialog.Content class="bg-zinc-900">
 					<div class="flex flex-col items-center gap-2">
@@ -77,9 +77,9 @@
 						</div>
 
 						<Dialog.Header>
-							<Dialog.Title class=" text-gray-300 sm:text-center">Update Incident</Dialog.Title>
+							<Dialog.Title class=" text-gray-300 sm:text-center">Manage Incident</Dialog.Title>
 							<Dialog.Description class="text-gray-400 sm:text-center">
-								Modify your incident details.
+								Create or update an incident.
 							</Dialog.Description>
 						</Dialog.Header>
 					</div>
@@ -149,7 +149,7 @@
 							</div>
 						</div>
 						<Button class="mt-2 w-full cursor-pointer" type="submit" variant="outline"
-							>Create</Button
+							>Save</Button
 						>
 					</form>
 				</Dialog.Content>

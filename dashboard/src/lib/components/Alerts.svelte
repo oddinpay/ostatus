@@ -92,9 +92,9 @@
 						</div>
 
 						<Dialog.Header>
-							<Dialog.Title class=" text-gray-300 sm:text-center">Send New Alert</Dialog.Title>
+							<Dialog.Title class=" text-gray-300 sm:text-center">Create Alert Rule</Dialog.Title>
 							<Dialog.Description class="text-gray-400 sm:text-center">
-								Send an alert to notify your team.
+								Create an alert rule to notify your team.
 							</Dialog.Description>
 						</Dialog.Header>
 					</div>
@@ -192,7 +192,7 @@
 							</div>
 						</div>
 						<Button class="mt-2 w-full cursor-pointer" type="submit" variant="outline"
-							>Send</Button
+							>Save</Button
 						>
 					</form>
 				</Dialog.Content>
