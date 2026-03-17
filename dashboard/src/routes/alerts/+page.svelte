@@ -115,7 +115,7 @@
               <TabsContent value="tab-5">
                 <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div
-                    class="flex h-80 w-60 xl:w-80 flex-col overflow-hidden rounded-xl border border-zinc-700 shadow-sm"
+                    class="flex h-80 w-30 360:w-60 xl:w-80 flex-col overflow-hidden rounded-xl border border-zinc-700 shadow-sm"
                   >
                     <div class="flex-1 p-6">
                       <h3 class="font-medium text-zinc-300">Email</h3>
@@ -124,7 +124,7 @@
                   </div>
 
                   <div
-                    class="flex h-80 w-60 xl:w-80 flex-col overflow-hidden rounded-xl border border-zinc-700 shadow-sm"
+                    class="flex h-80 w-30 360:w-60 xl:w-80 flex-col overflow-hidden rounded-xl border border-zinc-700 shadow-sm"
                   >
                     <div class="flex-1 p-6">
                       <h3 class="font-medium text-zinc-300">RSS</h3>
