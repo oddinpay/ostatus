@@ -104,7 +104,7 @@
           >Favicon</Dialog.Title
         >
         <Dialog.Description class="text-gray-400 sm:text-center">
-          Set up and update your status page.
+          Update your status page.
         </Dialog.Description>
       </Dialog.Header>
     </div>
