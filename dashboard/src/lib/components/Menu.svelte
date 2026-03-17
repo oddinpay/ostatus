@@ -77,14 +77,21 @@
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-40" align="end">
     <DropdownMenu.Group>
-      <DropdownMenu.Item class="cursor-pointer" onSelect={() => (open = true)}>
-        Edit
-      </DropdownMenu.Item>
       <DropdownMenu.Item
         class="cursor-pointer"
         onSelect={() => (showShareDialog = true)}
       >
         Visit
+      </DropdownMenu.Item>
+      <DropdownMenu.Item class="cursor-pointer" onSelect={() => (open = true)}>
+        Edit
+      </DropdownMenu.Item>
+
+      <DropdownMenu.Item
+        class="cursor-pointer"
+        onSelect={() => (showShareDialog = true)}
+      >
+        Delete
       </DropdownMenu.Item>
     </DropdownMenu.Group>
   </DropdownMenu.Content>
@@ -217,7 +224,7 @@
         >{#if $submitting}
           <Loader2 class="size-4 animate-spin" />
         {:else}
-          Update 
+          Update
         {/if}
       </Form.Button>
     </form>
