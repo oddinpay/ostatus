@@ -116,7 +116,7 @@
                 value="tab-1"
               >
                 <!-- <NotPage /> -->
-                <Card />
+                <Card title="Security Alert" description="New login detected from unknown device." />
               </TabsContent>
 
               <TabsContent value="tab-2">
