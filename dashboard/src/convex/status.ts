@@ -32,6 +32,6 @@ export const post = mutation({
       name: args.name,
       protocol: args.protocol,
     });
-    return monitor;
+    return true;
   },
 });
