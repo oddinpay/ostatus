@@ -45,14 +45,14 @@
   interface ApiData {
     id?: string;
     name?: string;
-    date?: string | Date;
-    state?: string;
-    __order?: number;
+    date?: string[];
+    state?: string[];
     statuses: StatusEntry[];
     uptime15: string;
     uptime30: string;
     uptime60: string;
     uptime90: string;
+    __order?: number;
   }
 
   const oddinHost = env.PUBLIC_ODDIN_HOST;
@@ -61,9 +61,11 @@
   onMount(() => {
     if (!browser) return;
 
-    const json = source(`https://${oddinHost}/v1/sse`).select("").json<any>();
+    const json = source(`https://${oddinHost}/v1/sse`)
+      .select("")
+      .json<ApiData>();
 
-    unsubscribe = json.subscribe((msg) => {
+    unsubscribe = json.subscribe((msg: any) => {
       const probe = msg?.payload?.probe;
       const sla = msg?.payload?.sla;
       const index = msg?.index;
