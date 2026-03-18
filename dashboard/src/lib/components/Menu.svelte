@@ -21,6 +21,11 @@
   import ImagePlus from "@lucide/svelte/icons/image-plus";
   import Loader2 from "@lucide/svelte/icons/loader-2";
 
+  import { useQuery } from "convex-svelte";
+  import { api } from "../../convex/_generated/api";
+
+  const query = useQuery(api.site.get);
+
   let open = $state(false);
   let showShareDialog = $state(false);
 
@@ -119,6 +124,28 @@
 
     <form method="POST" class="space-y-5" use:enhance>
       <div class="space-y-4">
+        <div class="space-y-2">
+          <Form.Field {form} name="_id">
+            <Form.Control>
+              {#snippet children({ props })}
+                <Form.Label class="font-bold text-gray-300">ID</Form.Label>
+                {#if query.data && query.data.length > 0}
+                  {#each query.data as site}
+                    <Input
+                      class="border-zinc-700 bg-transparent text-white"
+                      placeholder="OddinPay system performance."
+                      type="text"
+                      {...props}
+                      value={site._id}
+                    />
+                  {/each}
+                {/if}
+              {/snippet}
+            </Form.Control>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
+
         <div class="space-y-2">
           <Form.Field {form} name="title">
             <Form.Control>

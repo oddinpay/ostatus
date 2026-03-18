@@ -52,7 +52,7 @@ export const actions: Actions = {
 
     const convex = getConvexClient();
     await convex.mutation(api.site.patch, {
-      id: form.data.id as any,
+      id: form.data._id as any,
       title: form.data.title,
       image: form.data.image,
       description: form.data.description,

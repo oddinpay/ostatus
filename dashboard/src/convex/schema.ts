@@ -14,5 +14,6 @@ export default defineSchema({
     textLogo: v.string(),
     signupUrl: v.string(),
     signinUrl: v.string(),
+    image: v.optional(v.string()),
   }),
 });
