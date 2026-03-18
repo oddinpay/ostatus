@@ -23,6 +23,9 @@
   import { Spinner } from "$lib/components/ui/spinner/index.js";
   import { env } from "$env/dynamic/public";
 
+  let baseUrl = env.PUBLIC_BASE_URL
+    ? env.PUBLIC_BASE_URL
+    : "https://status.oddinpay.com";
   let currentTab = "tab-0";
   const query = useQuery(api.site.get);
   let siteLive = $state(false);
@@ -133,7 +136,13 @@
                   failed to load: {query.error.toString()}
                 {:else if siteLive}
                   {#each query.data as site}
-                    <Card title={site.title} description={site.description} />
+                    <a
+                      href={`${baseUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Card title={site.title} description={site.description} />
+                    </a>
                   {/each}
                 {:else}
                   <NotPage />
