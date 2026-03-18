@@ -127,7 +127,7 @@
                 </TabsTrigger>
               </TabsList>
               <TabsContent
-                class="flex items-center justify-center min-h-50"
+                class="flex items-center hover:opacity-95 justify-center min-h-50"
                 value="tab-1"
               >
                 {#if query.isLoading}

@@ -8,31 +8,13 @@ importers:
 
   .:
     dependencies:
+      '@convex-dev/aggregate':
+        specifier: ^0.2.1
+        version: 0.2.1(convex@1.33.1)
+    devDependencies:
       '@fontsource-variable/inter':
         specifier: ^5.2.8
         version: 5.2.8
-      '@sveltejs/enhanced-img':
-        specifier: ^0.10.4
-        version: 0.10.4(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(rollup@4.59.0)(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1))
-      '@tabler/icons-svelte':
-        specifier: ^3.35.0
-        version: 3.40.0(svelte@5.53.12)
-      '@tanstack/table-core':
-        specifier: ^8.21.3
-        version: 8.21.3
-      convex:
-        specifier: ^1.32.0
-        version: 1.33.1
-      lucide-svelte:
-        specifier: ^0.545.0
-        version: 0.545.0(svelte@5.53.12)
-      svelte-sonner:
-        specifier: ^1.0.5
-        version: 1.1.0(svelte@5.53.12)
-      unplugin-icons:
-        specifier: ^22.4.2
-        version: 22.5.0(svelte@5.53.12)
-    devDependencies:
       '@internationalized/date':
         specifier: ^3.10.0
         version: 3.12.0
@@ -45,12 +27,18 @@ importers:
       '@sveltejs/adapter-node':
         specifier: ^5.3.2
         version: 5.5.4(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))
+      '@sveltejs/enhanced-img':
+        specifier: ^0.10.4
+        version: 0.10.4(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(rollup@4.59.0)(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1))
       '@sveltejs/kit':
         specifier: ^2.55.0
         version: 2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.0.0
         version: 7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1))
+      '@tabler/icons-svelte':
+        specifier: ^3.35.0
+        version: 3.40.0(svelte@5.53.12)
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@4.2.1)
@@ -60,12 +48,18 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.13
         version: 4.2.1(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1))
+      '@tanstack/table-core':
+        specifier: ^8.21.3
+        version: 8.21.3
       bits-ui:
         specifier: ^2.14.4
         version: 2.16.3(@internationalized/date@3.12.0)(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      convex:
+        specifier: ^1.32.0
+        version: 1.33.1
       convex-svelte:
         specifier: ^0.0.12
         version: 0.0.12(convex@1.33.1)(svelte@5.53.12)
@@ -75,6 +69,9 @@ importers:
       formsnap:
         specifier: ^2.0.1
         version: 2.0.1(svelte@5.53.12)(sveltekit-superforms@2.30.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(@types/json-schema@7.0.15)(svelte@5.53.12)(typescript@5.9.3))
+      lucide-svelte:
+        specifier: ^0.545.0
+        version: 0.545.0(svelte@5.53.12)
       prettier:
         specifier: ^3.6.2
         version: 3.8.1
@@ -90,6 +87,9 @@ importers:
       svelte-check:
         specifier: ^4.3.2
         version: 4.4.5(picomatch@4.0.3)(svelte@5.53.12)(typescript@5.9.3)
+      svelte-sonner:
+        specifier: ^1.0.5
+        version: 1.1.0(svelte@5.53.12)
       sveltekit-superforms:
         specifier: ^2.28.0
         version: 2.30.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(@types/json-schema@7.0.15)(svelte@5.53.12)(typescript@5.9.3)
@@ -108,6 +108,9 @@ importers:
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
+      unplugin-icons:
+        specifier: ^22.4.2
+        version: 22.5.0(svelte@5.53.12)
       vite:
         specifier: ^8.0.0
         version: 8.0.0(esbuild@0.27.0)(jiti@2.6.1)
@@ -132,6 +135,11 @@ packages:
   '@babel/runtime@7.28.6':
     resolution: {integrity: sha512-05WQkdpL9COIMz4LjTxGpPNCdlpyimKppYNoJ5Di5EUObifl8t4tuLuUBBZEpoLYOmfvIWrsp9fCl0HoPRVTdA==}
     engines: {node: '>=6.9.0'}
+
+  '@convex-dev/aggregate@0.2.1':
+    resolution: {integrity: sha512-z8GeUC+cIZEgtMXecX6WTBQHNW4E2ioRsc5IkO8BWnCjgDOru/Mw8zXe9JPe35JkqDjlSVKuwxiQHKs/jaYAyA==}
+    peerDependencies:
+      convex: ^1.24.8
 
   '@emnapi/core@1.9.0':
     resolution: {integrity: sha512-0DQ98G9ZQZOxfUcQn1waV2yS8aWdZ6kJMbYCJB3oUBecjWYO1fqJ+a1DRfPF3O5JEkwqwP1A9QEN/9mYm2Yd0w==}
@@ -2125,6 +2133,10 @@ snapshots:
 
   '@babel/runtime@7.28.6':
     optional: true
+
+  '@convex-dev/aggregate@0.2.1(convex@1.33.1)':
+    dependencies:
+      convex: 1.33.1
 
   '@emnapi/core@1.9.0':
     dependencies:
