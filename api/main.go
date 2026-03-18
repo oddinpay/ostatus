@@ -9,14 +9,12 @@ import (
 	"io"
 	"log"
 	"log/slog"
-	"maps"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -308,63 +306,31 @@ func getRecentDates() []string {
 // -------------------- BROADCAST HUB --------------------
 
 type Hub struct {
-	clients atomic.Value
+	sync.RWMutex
+	clients map[chan map[string]StatusPayload]struct{}
 	cache   map[string]StatusPayload
-	mu      sync.RWMutex
 }
 
-func NewHub() *Hub {
-	h := &Hub{
-		cache: make(map[string]StatusPayload),
-	}
-	h.clients.Store([]chan map[string]StatusPayload{})
-	return h
-}
-
-var globalHub = NewHub()
-
-func (h *Hub) AddClient(ch chan map[string]StatusPayload) {
-	old := h.clients.Load().([]chan map[string]StatusPayload)
-
-	newClients := make([]chan map[string]StatusPayload, len(old)+1)
-	copy(newClients, old)
-	newClients[len(old)] = ch
-
-	h.clients.Store(newClients)
-}
-
-func (h *Hub) RemoveClient(ch chan map[string]StatusPayload) {
-	old := h.clients.Load().([]chan map[string]StatusPayload)
-
-	newClients := make([]chan map[string]StatusPayload, 0, len(old)-1)
-
-	for _, c := range old {
-		if c != ch {
-			newClients = append(newClients, c)
-		}
-	}
-
-	h.clients.Store(newClients)
+var globalHub = &Hub{
+	clients: make(map[chan map[string]StatusPayload]struct{}),
+	cache:   make(map[string]StatusPayload),
 }
 
 func (h *Hub) Broadcast(update map[string]StatusPayload) {
+	h.Lock()
+	defer h.Unlock()
 
-	h.mu.Lock()
 	for id, payload := range update {
-
-		if len(payload.Probe.Action) > 0 && payload.Probe.Action[0] == "deleted" {
+		if len(payload.Probe.State) > 0 && payload.Probe.State[0] == "deleted" {
 			delete(h.cache, id)
 		} else {
 			h.cache[id] = payload
 		}
 	}
 
-	h.mu.Unlock()
-	clients := h.clients.Load().([]chan map[string]StatusPayload)
-
-	for _, ch := range clients {
+	for clientChan := range h.clients {
 		select {
-		case ch <- update:
+		case clientChan <- update:
 		default:
 		}
 	}
@@ -640,6 +606,7 @@ func (s *SlidingSLA) Snapshot() map[string]any {
 
 	if total <= 0 {
 		return map[string]any{
+			"id":                 "",
 			"sla_target":         "99.999%",
 			"uptime90":           "99.999%",
 			"up_time_seconds":    formatDurationFull(0),
@@ -661,6 +628,7 @@ func (s *SlidingSLA) Snapshot() map[string]any {
 	up := total - down
 
 	return map[string]any{
+		"id":                 "",
 		"sla_target":         "99.999%",
 		"uptime90":           uptimeStr,
 		"up_time_seconds":    formatDurationFull(up),
@@ -775,21 +743,13 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 						delete(probeCancels, id)
 					}
 
-					done := make(chan struct{})
-
-					go func() {
-						kv.Delete(ctx, running.Name)
-						close(done)
-					}()
-
-					<-done
-
 					globalHub.Broadcast(map[string]StatusPayload{
 						id: {Probe: ProbeResult{Id: id, Action: []string{"deleted"}}},
 					})
 
 					delete(slaTrackers.m, id)
 					delete(runningTargets, id)
+					kv.Delete(ctx, id)
 
 				} else if running.Host != updated.Host || running.Protocol != updated.Protocol || running.Name != updated.Name {
 					slog.Info("Target updated, restarting worker", "name", id)
@@ -833,51 +793,11 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 	}()
 }
 
-func hydrateSnapshotFromKV(ctx context.Context) {
-	keys, err := kv.Keys(ctx)
-	if err != nil {
-		slog.Error("failed to list KV keys", "error", err)
-		return
-	}
-
-	for _, key := range keys {
-		func() {
-			entry, err := kv.Get(ctx, key)
-			if err != nil || entry == nil {
-				return
-			}
-
-			gr, err := gzip.NewReader(bytes.NewReader(entry.Value()))
-			if err != nil {
-				return
-			}
-			defer gr.Close()
-
-			var wrapped map[string]any
-			if err := json.NewDecoder(gr).Decode(&wrapped); err != nil {
-				return
-			}
-
-			payload := StatusPayload{}
-			if p, ok := wrapped["payload"].(map[string]any); ok {
-				b, _ := json.Marshal(p)
-				json.Unmarshal(b, &payload)
-			}
-
-			globalHub.mu.Lock()
-			globalHub.cache[key] = payload
-			globalHub.mu.Unlock()
-		}()
-	}
-
-	slog.Info("SSE snapshot cache hydrated", "items", len(globalHub.cache))
-}
-
 // -------------------- SSE HANDLER --------------------
 
 func Sse(w http.ResponseWriter, r *http.Request) {
-
 	ctx := r.Context()
+
 	w.Header().Set(HeaderAllowOrigin, "*")
 	w.Header().Set(HeaderCacheControl, "no-cache")
 	w.Header().Set(HeaderConnection, "keep-alive")
@@ -891,47 +811,76 @@ func Sse(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 
 	clientChan := make(chan map[string]StatusPayload, 200)
-	globalHub.AddClient(clientChan)
-	defer globalHub.RemoveClient(clientChan)
+
+	globalHub.Lock()
+	globalHub.clients[clientChan] = struct{}{}
 
 	targetCache.RLock()
-	lookup := make(map[string]int, len(targetCache.lookup))
-	maps.Copy(lookup, targetCache.lookup)
+	lookup := targetCache.lookup
 	targetCache.RUnlock()
 
 	initialData := make(map[string]StatusPayload)
-	globalHub.mu.RLock()
 	for name, payload := range globalHub.cache {
 		if _, exists := lookup[name]; exists {
 			initialData[name] = payload
 		}
 	}
-	globalHub.mu.RUnlock()
+	globalHub.Unlock()
 
 	if len(initialData) > 0 {
-		_ = sendUpdateToConn(ctx, conn, initialData, lookup)
+		sendUpdateToConn(ctx, conn, initialData)
 	}
+
+	defer func() {
+		globalHub.Lock()
+		delete(globalHub.clients, clientChan)
+		globalHub.Unlock()
+	}()
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case update := <-clientChan:
-			_ = sendUpdateToConn(ctx, conn, update, lookup)
+			targetCache.RLock()
+			currentLookup := targetCache.lookup
+			targetCache.RUnlock()
+
+			for name, payload := range update {
+				idx := currentLookup[name]
+
+				out := map[string]any{
+					"index": idx,
+					"payload": map[string]any{
+						"probe": payload.Probe,
+						"sla":   payload.SLA,
+					},
+				}
+
+				if err := conn.SendData(ctx, out); err != nil {
+					return
+				}
+			}
 		}
 	}
 }
 
-func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]StatusPayload, lookup map[string]int) error {
+func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]StatusPayload) error {
+
+	targetCache.RLock()
+	lookup := targetCache.lookup
+	targetCache.RUnlock()
+
 	for name, payload := range update {
-		idx := -1
-		if i, ok := lookup[name]; ok {
-			idx = i
-		}
+
+		idx := lookup[name]
 
 		out := map[string]any{
-			"index":   idx,
-			"payload": map[string]any{"probe": payload.Probe, "sla": payload.SLA},
+			"index": idx,
+			"payload": map[string]any{
+				"probe": payload.Probe,
+				"sla":   payload.SLA,
+			},
 		}
 
 		if err := conn.SendData(ctx, out); err != nil {
@@ -1009,20 +958,29 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		var revision uint64 = 0
 		var oldPayload StatusPayload
 
-		if getErr == nil && entry != nil {
+		if getErr == nil {
 			revision = entry.Revision()
 			gr, err := gzip.NewReader(bytes.NewReader(entry.Value()))
-			if err != nil {
-				slog.Error("failed to create gzip reader", "error", err)
-			} else {
+			if err == nil {
+				decomp, _ := io.ReadAll(gr)
+				gr.Close()
+
 				var wrapped map[string]any
-				if err := json.NewDecoder(gr).Decode(&wrapped); err != nil {
-					slog.Error("failed to decode JSON from gzip", "error", err)
-				} else {
-					if payloadMap, ok := wrapped["payload"].(map[string]any); ok {
-						payloadBytes, _ := json.Marshal(payloadMap)
-						_ = json.Unmarshal(payloadBytes, &oldPayload)
+				json.Unmarshal(decomp, &wrapped)
+				if p, ok := wrapped["payload"].(map[string]any); ok {
+
+					existingProbeID, _ := p["probe"].(map[string]any)["id"].(string)
+					existingSlaID, _ := p["sla"].(map[string]any)["id"].(string)
+
+					if existingProbeID != "" {
+						payload.Probe.Id = existingProbeID
 					}
+					if existingSlaID != "" {
+						payload.SLA["id"] = existingSlaID
+					}
+
+					pBytes, _ := json.Marshal(p)
+					json.Unmarshal(pBytes, &oldPayload)
 				}
 				gr.Close()
 			}
@@ -1286,7 +1244,6 @@ func main() {
 		}
 	}
 
-	hydrateSnapshotFromKV(ctx)
 	startProbeManager(ctx, &wg)
 
 	mux := http.NewServeMux()
