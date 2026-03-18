@@ -11,7 +11,7 @@
   import { zod4 } from "sveltekit-superforms/adapters";
   import { toast } from "svelte-sonner";
   import * as Form from "$lib/components/ui/form/index.js";
-  import { formSchema } from "$lib/types/form";
+  import { formUpdate } from "$lib/types/form";
   import { cn } from "$lib/utils";
   import { page } from "$app/state";
   import * as Empty from "$lib/components/ui/empty/index.js";
@@ -33,7 +33,7 @@
   const form = superForm(page.data.form, {
     id:"update-status-page",
     resetForm: true,
-    validators: zod4(formSchema),
+    validators: zod4(formUpdate),
     onSubmit: async () => {
       await new Promise((resolve) => setTimeout(resolve, 800));
     },

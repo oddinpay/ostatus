@@ -1,5 +1,5 @@
 import { zod4 } from "sveltekit-superforms/adapters";
-import { formSchema } from "$lib/types/form";
+import { formSchema, formUpdate } from "$lib/types/form";
 import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { superValidate, message } from "sveltekit-superforms";
@@ -20,7 +20,7 @@ export const actions: Actions = {
 
   update: async (e) => {
     console.log("update action called");
-    const form = await superValidate(e, zod4(formSchema));
+    const form = await superValidate(e, zod4(formUpdate));
     if (!form.valid) return fail(400, { form });
     return { form };
   },
