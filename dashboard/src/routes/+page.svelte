@@ -22,9 +22,21 @@
   import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   import Card from "$lib/components/Card.svelte";
+  import { useQuery } from "convex-svelte";
+  import { api } from "../convex/_generated/api";
+  import { env } from "$env/dynamic/public";
 
   let currentTab = "tab-0";
+  const query = useQuery(api.site.get);
   let siteLive = $state(false);
+
+  $effect(() => {
+    if (query.data && query.data.length > 0) {
+      siteLive = true;
+    } else {
+      siteLive = false;
+    }
+  });
 </script>
 
 <div
@@ -116,12 +128,16 @@
                 class="flex items-center justify-center min-h-50"
                 value="tab-1"
               >
-                <NotPage />
-                {#if siteLive}
-                  <Card
-                    title="Security Alert"
-                    description="New login detected from unknown device."
-                  />
+                {#if query.isLoading}
+                  Loading...
+                {:else if query.error}
+                  failed to load: {query.error.toString()}
+                {:else if siteLive}
+                  {#each query.data as site}
+                    <Card title={site.title} description={site.description} />
+                  {/each}
+                {:else}
+                  <NotPage />
                 {/if}
               </TabsContent>
 
