@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button/index.js";
   import Buttong from "$lib/components/Buttong.svelte";
+  import { Skeleton } from "$lib/components/ui/skeleton/index.js";
   import Footer from "$lib/components/Footer.svelte";
   import {
     Tabs,
@@ -859,7 +860,7 @@
         <div class="oddin-status hover:opacity-50">
           <a href={slug} target="_blank" rel="noopener noreferrer">
             {#if query.isLoading}
-              loading...
+              <Skeleton class="h-8 w-40 bg-gray-300 rounded-md" />
             {:else}
               {#each query.data as site}
                 {site.textLogo}
@@ -887,12 +888,12 @@
       <!-- LEFT NAV -->
       <aside
         id="leftNav"
-        class="relative xl:sticky xl:top-14 xl:h-[885px] overflow-auto border-gray-100 px-4 py-6 hidden xl:block"
+        class="relative xl:sticky xl:top-14 xl:h-221.25 overflow-auto border-gray-100 px-4 py-6 hidden xl:block"
       >
         <div class="absolute right-0 top-0 h-full w-1 bg-gray-100">
           <span
             aria-hidden="true"
-            class="absolute bottom-[20em] -translate-y-1/2 h-10 w-full bg-gradient-to-b from-green-400 via-green-600 to-green-500 rounded-md shadow-md"
+            class="absolute bottom-[20em] -translate-y-1/2 h-10 w-full bg-linear-to-b from-green-400 via-green-600 to-green-500 rounded-md shadow-md"
           ></span>
         </div>
       </aside>
@@ -1091,7 +1092,7 @@
                 <div aria-hidden="true">
                   <div class="relative left-1/2 -translate-x-1/2 w-screen">
                     <div
-                      class="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent"
+                      class="h-px w-full bg-linear-to-r from-transparent via-gray-200 to-transparent"
                     ></div>
                   </div>
                 </div>
