@@ -11,9 +11,18 @@ export default defineSchema({
   site: defineTable({
     title: v.string(),
     description: v.string(),
-    textLogo: v.string(),
-    signupUrl: v.string(),
-    signinUrl: v.string(),
+    textLogo: v.optional(v.string()),
+    signupUrl: v.optional(v.string()),
+    signinUrl: v.optional(v.string()),
     image: v.optional(v.string()),
+  }),
+  update: defineTable({
+    id: v.id("site"),
+    image: v.optional(v.string()),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    textLogo: v.optional(v.string()),
+    signupUrl: v.optional(v.string()),
+    signinUrl: v.optional(v.string()),
   }),
 });
