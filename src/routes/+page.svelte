@@ -62,31 +62,36 @@
   type ProbeMap = Record<string, ApiData>;
   let probeMap = $state<ProbeMap>({});
 
-  let sortedProbes = $derived(
-    Object.values(probeMap).sort((a, b) =>
-      (a.name ?? "").localeCompare(b.name ?? ""),
-    ),
-  );
-
   json.subscribe((msg: any) => {
     const probe = msg?.payload?.probe;
     const sla = msg?.payload?.sla;
     const index = msg?.index;
 
     if (!probe?.id) return;
+
     const id = probe.id;
 
     if (probe.action?.[0] === "deleted") {
-      delete probeMap[id];
+      const { [id]: _, ...rest } = probeMap;
+      probeMap = rest;
       return;
     }
 
-    probeMap[id] = {
-      ...(probeMap[id] ?? {}),
-      ...probe,
-      uptime90: sla?.uptime90 ?? probeMap[id]?.uptime90,
-      __order: index ?? probeMap[id]?.__order ?? Infinity,
+    const next: ProbeMap = {
+      ...probeMap,
+      [id]: {
+        ...(probeMap[id] ?? {}),
+        ...probe,
+        uptime90: sla?.uptime90 ?? probeMap[id]?.uptime90,
+        __order: index ?? probeMap[id]?.__order ?? Infinity,
+      },
     };
+
+    probeMap = Object.fromEntries(
+      Object.entries(next).sort(
+        ([, a], [, b]) => (a.__order ?? Infinity) - (b.__order ?? Infinity),
+      ),
+    ) as ProbeMap;
   });
 
   function coerceStatus(s?: StatusType): StatusType {
@@ -168,7 +173,7 @@
   }
 
   let mockData = $derived.by(() => {
-    const probes = sortedProbes;
+    const probes = Object.values(probeMap) as ApiData[];
 
     const unique = new Map<string, ApiData>();
     for (const p of probes) {
@@ -223,7 +228,7 @@
       string,
       { title: string; description: string; status: string }
     >();
-    const probes = sortedProbes;
+    const probes = Object.values(probeMap) as any[];
     const unique = new Map<string, any>();
 
     for (const p of probes) {
