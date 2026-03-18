@@ -24,6 +24,7 @@
   import Card from "$lib/components/Card.svelte";
   import { useQuery } from "convex-svelte";
   import { api } from "../convex/_generated/api";
+  import { Spinner } from "$lib/components/ui/spinner/index.js";
 
   let currentTab = "tab-0";
   const query = useQuery(api.site.get);
@@ -128,7 +129,7 @@
                 value="tab-1"
               >
                 {#if query.isLoading}
-                  Loading...
+                  <Spinner class="text-white size-8" />
                 {:else if query.error}
                   failed to load: {query.error.toString()}
                 {:else if siteLive}
