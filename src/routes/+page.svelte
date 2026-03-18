@@ -23,9 +23,6 @@
   let signup = "https://oddinpay.com/signup";
   let slug = "https://oddinpay.com";
   let logo = "oddin status";
-  let title = "Status • Oddinpay";
-  let description =
-    "Real-time and historical data on OddinPay system performance.";
   let ready = $state(false);
   const badge = "Last updated";
 
