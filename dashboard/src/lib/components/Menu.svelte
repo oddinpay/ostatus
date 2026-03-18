@@ -24,6 +24,7 @@
   import { useQuery } from "convex-svelte";
   import { api } from "../../convex/_generated/api";
 
+  const statusQuery = useQuery(api.status.get);
   const query = useQuery(api.site.get);
 
   let open = $state(false);
@@ -83,12 +84,6 @@
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-40" align="end">
     <DropdownMenu.Group>
-      <DropdownMenu.Item
-        class="cursor-pointer"
-        onSelect={() => (showShareDialog = true)}
-      >
-        Visit
-      </DropdownMenu.Item>
       <DropdownMenu.Item class="cursor-pointer" onSelect={() => (open = true)}>
         Edit
       </DropdownMenu.Item>
