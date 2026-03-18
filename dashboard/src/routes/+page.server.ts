@@ -2,11 +2,10 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { formSchema, formUpdate } from "$lib/types/form";
 import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { superValidate, message } from "sveltekit-superforms";
+import { superValidate } from "sveltekit-superforms";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api";
 import { env } from "$env/dynamic/private";
-import { tr } from "zod/v4/locales";
 
 export const load: PageServerLoad = async (event) => {
   const form = await superValidate(event, zod4(formSchema));
@@ -16,9 +15,9 @@ export const load: PageServerLoad = async (event) => {
 };
 
 const getConvexClient = () => {
-  const url = env.PUBLIC_CONVEX_URL;
+  const url = env.CONVEX_URL;
   if (!url) {
-    throw new Error("PUBLIC_CONVEX_URL environment variable is not set");
+    throw new Error("CONVEX_URL environment variable is not set");
   }
   return new ConvexHttpClient(url);
 };
@@ -35,7 +34,7 @@ export const actions: Actions = {
       throw new Error("API_KEY environment variable is not set");
     }
 
-    const result = await convex.mutation(api.site.post, {
+    await convex.mutation(api.site.post, {
       apiKey,
       title: form.data.title ?? "",
       description: form.data.description ?? "",
@@ -44,7 +43,7 @@ export const actions: Actions = {
       signinUrl: form.data.signin ?? "",
     });
 
-    return { form, result: true };
+    return { form };
   },
 
   update: async (e) => {
