@@ -6,6 +6,7 @@ import { superValidate, message } from "sveltekit-superforms";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api";
 import { env } from "$env/dynamic/private";
+import { tr } from "zod/v4/locales";
 
 export const load: PageServerLoad = async (event) => {
   const form = await superValidate(event, zod4(formSchema));
@@ -25,12 +26,11 @@ const getConvexClient = () => {
 export const actions: Actions = {
   create: async (e) => {
     const form = await superValidate(e, zod4(formSchema));
-    console.log("Form data:", form.data);
-
     if (!form.valid) return fail(400, { form });
 
     const convex = getConvexClient();
     const apiKey = env.API_KEY;
+
     if (!apiKey) {
       throw new Error("API_KEY environment variable is not set");
     }
@@ -44,7 +44,7 @@ export const actions: Actions = {
       signinUrl: form.data.signin ?? "",
     });
 
-    return { form, message: message(form, "Site created successfully!") };
+    return { form, result: true };
   },
 
   update: async (e) => {
