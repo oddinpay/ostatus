@@ -8,7 +8,7 @@ export const get = query({
   },
 });
 
-export const site = mutation({
+export const post = mutation({
   args: {
     apiKey: v.string(),
     title: v.string(),
