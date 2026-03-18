@@ -129,17 +129,15 @@
             <Form.Control>
               {#snippet children({ props })}
                 <Form.Label class="font-bold text-gray-300">ID</Form.Label>
-                {#if query.data && query.data.length > 0}
-                  {#each query.data as site}
-                    <Input
-                      class="border-zinc-700 bg-transparent text-white"
-                      placeholder="OddinPay system performance."
-                      type="text"
-                      {...props}
-                      value={site._id}
-                    />
-                  {/each}
-                {/if}
+                {#each query.data as site}
+                  <Input
+                    class="border-zinc-700 bg-transparent text-white"
+                    placeholder="60f5a3c2e1b2c3d4e5f67890"
+                    type="text"
+                    {...props}
+                    bind:value={site._id}
+                  />
+                {/each}
               {/snippet}
             </Form.Control>
             <Form.FieldErrors />

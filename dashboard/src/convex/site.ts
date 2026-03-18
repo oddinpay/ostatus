@@ -1,3 +1,4 @@
+import { id } from "zod/v4/locales";
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -34,20 +35,15 @@ export const post = mutation({
 export const patch = mutation({
   args: {
     id: v.id("site"),
-    image: v.optional(v.string()),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     textLogo: v.optional(v.string()),
     signupUrl: v.optional(v.string()),
     signinUrl: v.optional(v.string()),
+    image: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...rest } = args;
-
-    const existing = await ctx.db.get(id);
-    if (!existing) {
-      throw new Error("Site not found");
-    }
     await ctx.db.patch(id, rest);
   },
 });

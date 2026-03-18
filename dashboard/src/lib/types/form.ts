@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
 export const formUpdate = z.object({
-  _id: z.string(),
+  _id: z.string().trim().optional(),
   image: z.string().trim().optional(),
   title: z
     .string()
