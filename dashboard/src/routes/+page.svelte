@@ -38,7 +38,7 @@
     if (monitorCount.data !== undefined) {
       totalCount = monitorCount.data;
     } else {
-      console.log("Monitor count is undefined");
+      totalCount = 0;
     }
 
     if (query.data && query.data.length > 0) {
