@@ -5,11 +5,11 @@ import type { DataModel } from "./_generated/dataModel";
 import { TableAggregate } from "@convex-dev/aggregate";
 
 export const monitorAggregate = new TableAggregate<{
-  Key: null;
+  Key: string;
   DataModel: DataModel;
   TableName: "status";
 }>(components.monitorCount, {
-  sortKey: () => null,
+  sortKey: (doc) => doc.name,
 });
 
 export const get = query({
