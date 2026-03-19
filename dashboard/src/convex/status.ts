@@ -41,11 +41,9 @@ export const post = mutation({
     });
 
     const doc = await ctx.db.get(id);
-
     if (doc) {
       await monitorAggregate.insert(ctx, doc);
     }
-
     return id;
   },
 });
