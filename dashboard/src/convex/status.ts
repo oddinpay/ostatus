@@ -59,15 +59,13 @@ export const backfill = mutation({
   handler: async (ctx) => {
     await monitorAggregate.clear(ctx);
     const existing = await ctx.db.query("status").collect();
-    
     for (const doc of existing) {
       try {
         await monitorAggregate.insert(ctx, doc);
       } catch (e) {
-        console.error("Sync error:", doc._id);
+        return `Error backfilling monitor ${doc._id}: ${e}`;
       }
     }
-
     return `Synced ${existing.length} monitors.`;
   },
 });
