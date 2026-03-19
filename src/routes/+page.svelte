@@ -1504,11 +1504,18 @@
 {/if}
 
 <svelte:head>
-  {#each query.data as site}
-    <title>{site.title}</title>
-    <meta name="description" content={site.description} />
-  {/each}
-
+  {#if oddinHost === "beep.oddinpay.com"}
+    <title>Status • OddinPay</title>
+    <meta
+      name="description"
+      content="Real-time and historical data on OddinPay system performance."
+    />
+  {:else}
+    {#each query.data as site}
+      <title>{site.title}</title>
+      <meta name="description" content={site.description} />
+    {/each}
+  {/if}
   <style>
     #navToggle {
       display: none !important;
