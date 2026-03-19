@@ -859,9 +859,11 @@
 
         <div class="oddin-status hover:opacity-50">
           <a href={slug} target="_blank" rel="noopener noreferrer">
-            {#if query.isLoading}
+            {#if oddinHost === "beep.oddinpay.com"}
+              {logo}
+            {:else if query.isLoading}
               <Skeleton class="h-8 w-30 bg-gray-300 rounded-md" />
-            {:else}
+            {:else if query.data}
               {#each query.data as site}
                 {site.textLogo}
               {/each}
