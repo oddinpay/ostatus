@@ -1,5 +1,5 @@
-import { browser } from '$app/environment';
-import { writable, readable, type Readable, type Writable } from 'svelte/store';
+import { browser } from "$app/environment";
+import { writable, readable, type Readable, type Writable } from "svelte/store";
 
 type Stored<T> = { v: T; e?: number | null };
 
@@ -26,14 +26,14 @@ function unpack<T>(raw: string | null): Stored<T> | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as Stored<T>;
-    return parsed && typeof parsed === 'object' ? parsed : null;
+    return parsed && typeof parsed === "object" ? parsed : null;
   } catch {
     return null;
   }
 }
 
 export function localStore<T>(key: string, initial: T, ttlMs?: number): LocalStore<T> {
-  const hasTTL = typeof ttlMs === 'number' && ttlMs > 0;
+  const hasTTL = typeof ttlMs === "number" && ttlMs > 0;
 
   const load = (): { value: T; expired: boolean } => {
     if (!browser) return { value: initial, expired: false };
@@ -60,7 +60,7 @@ export function localStore<T>(key: string, initial: T, ttlMs?: number): LocalSto
     let timer: number | undefined;
     const tick = () => {
       const s = unpack<T>(localStorage.getItem(key));
-      const isExp = !!(s?.e) && now() > (s!.e as number);
+      const isExp = !!s?.e && now() > (s!.e as number);
       set(isExp);
       timer = window.setTimeout(tick, 250);
     };
@@ -78,15 +78,13 @@ export function localStore<T>(key: string, initial: T, ttlMs?: number): LocalSto
       if (hasTTL) {
         if (opts?.preserveExpiry) {
           const existing = unpack<T>(localStorage.getItem(key));
-          expiry = (existing?.e as number | null) ?? (now() + (ttlMs as number));
+          expiry = (existing?.e as number | null) ?? now() + (ttlMs as number);
         } else {
           expiry = now() + (ttlMs as number);
         }
       }
       localStorage.setItem(key, pack(value, expiry));
-    } catch {
-     
-    }
+    } catch {}
   };
 
   const api: LocalStore<T> = {
@@ -116,8 +114,8 @@ export function localStore<T>(key: string, initial: T, ttlMs?: number): LocalSto
     isExpired(): boolean {
       if (!browser) return false;
       const s = unpack<T>(localStorage.getItem(key));
-      return !!(s?.e) && now() > (s!.e as number);
-    }
+      return !!s?.e && now() > (s!.e as number);
+    },
   };
 
   if (browser) {
@@ -132,4 +130,3 @@ export function localStore<T>(key: string, initial: T, ttlMs?: number): LocalSto
 
   return api;
 }
-

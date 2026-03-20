@@ -164,7 +164,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   @keyframes caret-blink {
-
     0%,
     70%,
     100% {
@@ -372,7 +371,6 @@
 }
 
 @layer base {
-
   *,
   ::after,
   ::before,
@@ -897,7 +895,6 @@ input[type="number"] {
 }
 
 @keyframes pulse-check {
-
   0%,
   100% {
     transform: scale(1);
@@ -1059,7 +1056,7 @@ input[type="number"] {
 }
 
 .prose {
-  :where(ul > li):not( :where([class~="not-prose"], [class~="not-prose"] *))::marker {
+  :where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *))::marker {
     color: rgb(184, 182, 182);
   }
 }
@@ -1081,11 +1078,11 @@ input[type="number"] {
   border-left: 0.25em solid var(--github-alert-default-color);
 }
 
-.markdown-alert> :first-child {
+.markdown-alert > :first-child {
   margin-top: 0;
 }
 
-.markdown-alert> :last-child {
+.markdown-alert > :last-child {
   margin-bottom: 0;
 }
 
@@ -1115,7 +1112,7 @@ input[type="number"] {
   align-items: center;
 }
 
-.markdown-alert-title>svg {
+.markdown-alert-title > svg {
   margin-right: 8px;
 }
 
@@ -1140,27 +1137,27 @@ input[type="number"] {
 }
 
 /* Note */
-.markdown-alert-note .markdown-alert-title>svg {
+.markdown-alert-note .markdown-alert-title > svg {
   fill: var(--github-alert-note-color);
 }
 
 /* Tip */
-.markdown-alert-tip .markdown-alert-title>svg {
+.markdown-alert-tip .markdown-alert-title > svg {
   fill: var(--github-alert-tip-color);
 }
 
 /* Important */
-.markdown-alert-important .markdown-alert-title>svg {
+.markdown-alert-important .markdown-alert-title > svg {
   fill: var(--github-alert-important-color);
 }
 
 /* Warning */
-.markdown-alert-warning .markdown-alert-title>svg {
+.markdown-alert-warning .markdown-alert-title > svg {
   fill: var(--github-alert-warning-color);
 }
 
 /* Caution */
-.markdown-alert-caution .markdown-alert-title>svg {
+.markdown-alert-caution .markdown-alert-title > svg {
   fill: var(--github-alert-caution-color);
 }
 

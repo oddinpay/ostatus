@@ -16,4 +16,3 @@ go run .       # run dev server without Wrangler (Cloudflare-related features ar
 pnpm run build  # build Go Wasm binary
 pnpm run deploy # deploy worker
 ```
-
