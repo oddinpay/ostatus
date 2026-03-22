@@ -41,6 +41,14 @@ export const formUpdate = z.object({
     .refine((val) => !val || z.url().safeParse(val).success, {
       message: "Sign in URL must be a valid URL",
     }),
+
+  slug: z
+    .string()
+    .trim()
+    .optional()
+    .refine((val) => !val || z.url().safeParse(val).success, {
+      message: "Slug must be a valid URL",
+    }),
 });
 
 export const formSchema = z.object({
@@ -78,5 +86,13 @@ export const formSchema = z.object({
     .optional()
     .refine((val) => !val || z.url().safeParse(val).success, {
       message: "Sign in URL must be a valid URL",
+    }),
+
+  slug: z
+    .string()
+    .trim()
+    .optional()
+    .refine((val) => !val || z.url().safeParse(val).success, {
+      message: "Slug must be a valid URL",
     }),
 });

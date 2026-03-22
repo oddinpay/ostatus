@@ -15,5 +15,6 @@ export default defineSchema({
     signupUrl: v.optional(v.string()),
     signinUrl: v.optional(v.string()),
     image: v.optional(v.string()),
+    slug: v.optional(v.string()),
   }),
 });

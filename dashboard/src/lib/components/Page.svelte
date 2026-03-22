@@ -143,6 +143,26 @@
               </div>
 
               <div class="space-y-2">
+                <Form.Field {form} name="slug">
+                  <Form.Control>
+                    {#snippet children({ props })}
+                      <Form.Label class="font-bold text-gray-300"
+                        >Slug</Form.Label
+                      >
+                      <Input
+                        class="border-zinc-700 bg-transparent text-white"
+                        placeholder="https://oddinpay.com"
+                        type="text"
+                        {...props}
+                        bind:value={$formData.slug}
+                      />
+                    {/snippet}
+                  </Form.Control>
+                  <Form.FieldErrors />
+                </Form.Field>
+              </div>
+
+              <div class="space-y-2">
                 <Form.Field {form} name="textLogo">
                   <Form.Control>
                     {#snippet children({ props })}

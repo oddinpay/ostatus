@@ -15,7 +15,7 @@
   import timer from "$lib/timer";
   import { env } from "$env/dynamic/public";
   import { useQuery } from "convex-svelte";
-  import { api } from "../convex/_generated/api";
+  import { api } from "../../dashboard/src/convex/_generated/api";
 
   let currentTab = "tab-0";
   const query = useQuery(api.site.get);
@@ -858,17 +858,19 @@
         </button>
 
         <div class="oddin-status hover:opacity-50">
-          <a href={slug} target="_blank" rel="noopener noreferrer">
-            {#if oddinHost === oddinHost}
-              {logo}
-            {:else if query.isLoading}
-              <Skeleton class="h-8 w-30 bg-gray-300 rounded-md" />
-            {:else if query.data}
-              {#each query.data as site}
-                {site.textLogo}
-              {/each}
-            {/if}
-          </a>
+          {#if query.isLoading}
+            <Skeleton class="h-8 w-30 bg-gray-300 rounded-md" />
+          {:else if query.data}
+            {#each query.data as site}
+              <a href={site.slug} target="_blank" rel="noopener noreferrer">
+                {#if oddinHost === oddinHost}
+                  {logo}
+                {:else}
+                  {site.textLogo}
+                {/if}
+              </a>
+            {/each}
+          {/if}
         </div>
 
         <div id="themeBtn" class="ml-auto"></div>

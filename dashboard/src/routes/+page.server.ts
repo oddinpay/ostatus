@@ -41,6 +41,7 @@ export const actions: Actions = {
       textLogo: form.data.textLogo ?? "",
       signupUrl: form.data.signup ?? "",
       signinUrl: form.data.signin ?? "",
+      slug: form.data.slug ?? "",
     });
 
     return { form };
@@ -59,6 +60,7 @@ export const actions: Actions = {
       textLogo: form.data.textLogo,
       signupUrl: form.data.signup,
       signinUrl: form.data.signin,
+      slug: form.data.slug,
     });
 
     return { form };

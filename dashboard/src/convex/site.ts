@@ -16,6 +16,7 @@ export const post = mutation({
     textLogo: v.string(),
     signupUrl: v.string(),
     signinUrl: v.string(),
+    slug: v.string(),
   },
   handler: async (ctx, args) => {
     if (args.apiKey !== process.env.API_KEY) {
@@ -27,6 +28,7 @@ export const post = mutation({
       textLogo: args.textLogo,
       signupUrl: args.signupUrl,
       signinUrl: args.signinUrl,
+      slug: args.slug,
     });
   },
 });
@@ -40,6 +42,7 @@ export const patch = mutation({
     signupUrl: v.optional(v.string()),
     signinUrl: v.optional(v.string()),
     image: v.optional(v.string()),
+    slug: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...rest } = args;
