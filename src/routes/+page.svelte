@@ -1521,13 +1521,17 @@
     </div>
   </div>
 
-  {#if oddinHost !== "beep.oddinpay.com"}
-    <Footer privacy={""} site={""} />
-  {:else}
+  {#if oddinHost === "beep.oddinpay.com"}
     <Footer
       privacy={"https://oddinpay.com/privacy"}
       site={"https://oddinpay.com"}
     />
+  {:else if query.isLoading}
+    <Skeleton class="h-8 w-20 bg-gray-300 rounded-md" />
+  {:else if query.data}
+    {#each query.data as site}
+      <Footer privacy={site.slug + "/privacy"} site={site.slug} />
+    {/each}
   {/if}
 {/if}
 
