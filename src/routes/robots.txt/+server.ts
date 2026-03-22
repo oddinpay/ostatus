@@ -7,8 +7,6 @@ export const GET = async ({ url }) => {
   return new Response(body, {
     headers: {
       "Content-Type": "text/plain",
-      // Cache for 604800 seconds (1 week)
-      "Cache-Control": "public, max-age=604800, immutable",
     },
   });
 };
