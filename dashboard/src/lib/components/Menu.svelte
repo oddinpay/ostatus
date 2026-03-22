@@ -260,24 +260,24 @@
   >
     <MoreHorizontal />
   </DropdownMenu.Trigger>
-  <DropdownMenu.Content class="w-40" align="end">
+  <DropdownMenu.Content class="w-40 " align="end">
     <DropdownMenu.Group>
       <DropdownMenu.Item
-        class="cursor-pointer text-black data-highlighted:bg-zinc-200"
+        class="cursor-pointer text-black data-highlighted:bg-zinc-200 data-highlighted:text-black"
         onSelect={() => (open = true)}
       >
         Edit
       </DropdownMenu.Item>
 
       <DropdownMenu.Item
-        class="cursor-pointer text-red-400 data-highlighted:bg-red-100 data-highlighted:text-red-400"
+        class="cursor-pointer text-red-600 data-highlighted:bg-red-100 data-highlighted:text-red-600"
         onSelect={() => {
           confirmDelete({
             title: "Delete Status Page",
             description:
               "Are you sure you want to delete this item? This action cannot be undone.",
             input: {
-              confirmationText: "Please",
+              confirmationText: "please",
             },
             onConfirm: async () => {
               await sleep(500);
