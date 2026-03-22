@@ -292,7 +292,7 @@
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<ConfirmDeleteDialog />
+<ConfirmDeleteDialog  />
 
 {#snippet Avatar()}
   <label class="mt-10 cursor-pointer px-6" aria-label="Upload profile picture">
