@@ -3,6 +3,8 @@
   const brand = "ODDIN STATUS";
   const company = "ODDINPAY";
   const entity = "LLC";
+  export let privacy;
+  export let site;
 </script>
 
 <footer>
@@ -19,8 +21,8 @@
     </div>
 
     <div class="footer-right">
-      <a href="https://oddinpay.com">Visit our full website</a>
-      <a href="https://oddinpay.com/privacy">Privacy &amp; terms</a>
+      <a href={site} target="_blank" rel="noopener noreferrer">Visit our full website</a>
+      <a href={privacy} target="_blank" rel="noopener noreferrer">Privacy &amp; terms</a>
     </div>
   </div>
 </footer>

@@ -1521,7 +1521,14 @@
     </div>
   </div>
 
-  <Footer />
+  {#if oddinHost !== "beep.oddinpay.com"}
+    <Footer privacy={""} site={""} />
+  {:else}
+    <Footer
+      privacy={"https://oddinpay.com/privacy"}
+      site={"https://oddinpay.com"}
+    />
+  {/if}
 {/if}
 
 <svelte:head>
