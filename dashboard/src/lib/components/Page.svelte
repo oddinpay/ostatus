@@ -36,7 +36,10 @@
         toast.success("Status page created successfully!");
       } else {
         open = false;
-        toast.error("Something went wrong. Please try again.");
+        const serverMessage = f.errors._errors?.[0];
+        const finalMessage =
+          serverMessage || "Something went wrong. Please try again.";
+        toast.error(finalMessage);
       }
     },
   });

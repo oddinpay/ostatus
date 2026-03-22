@@ -2,7 +2,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { formSchema, formUpdate } from "$lib/types/form";
 import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { superValidate } from "sveltekit-superforms";
+import { setError, superValidate } from "sveltekit-superforms";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api";
 import { env } from "$env/dynamic/private";
@@ -27,22 +27,26 @@ export const actions: Actions = {
     const form = await superValidate(e, zod4(formSchema));
     if (!form.valid) return fail(400, { form });
 
-    const convex = getConvexClient();
-    const apiKey = env.API_KEY;
+    try {
+      const convex = getConvexClient();
+      const apiKey = env.API_KEY;
 
-    if (!apiKey) {
-      throw new Error("API_KEY environment variable is not set");
+      if (!apiKey) {
+        return setError(form, "", "API_KEY environment variable is not set");
+      }
+
+      await convex.mutation(api.site.post, {
+        apiKey,
+        title: form.data.title ?? "",
+        description: form.data.description ?? "",
+        textLogo: form.data.textLogo ?? "",
+        signupUrl: form.data.signup ?? "",
+        signinUrl: form.data.signin ?? "",
+        slug: form.data.slug ?? "",
+      });
+    } catch (error) {
+      return setError(form, "", "A site already exists");
     }
-
-    await convex.mutation(api.site.post, {
-      apiKey,
-      title: form.data.title ?? "",
-      description: form.data.description ?? "",
-      textLogo: form.data.textLogo ?? "",
-      signupUrl: form.data.signup ?? "",
-      signinUrl: form.data.signin ?? "",
-      slug: form.data.slug ?? "",
-    });
 
     return { form };
   },
