@@ -857,11 +857,11 @@
         </button>
 
         <div class="oddin-status hover:opacity-50">
-          {#if oddinHost === "beep.oddinpay.com"}
+          <!-- {#if oddinHost === "beep.oddinpay.com"}
             <a href={slug} target="_blank" rel="noopener noreferrer">
               {logo}
-            </a>
-          {:else if query.isLoading}
+            </a> -->
+          {#if query.isLoading}
             <Skeleton class="h-8 w-30 bg-gray-300 rounded-md" />
           {:else if query.data}
             {#each query.data as site}
