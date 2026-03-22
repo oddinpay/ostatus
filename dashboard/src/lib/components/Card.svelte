@@ -24,7 +24,7 @@
       </Item.Description>
     </Item.Content>
 
-    <Item.Actions class="shrink-0 -mr-2 -mt-1">
+    <Item.Actions class="ml-auto">
       <Menu />
     </Item.Actions>
   </Item.Root>
