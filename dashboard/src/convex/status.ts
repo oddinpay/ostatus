@@ -55,6 +55,34 @@ export const count = query({
   },
 });
 
+export const patch = mutation({
+  args: {
+    id: v.id("status"),
+    apiKey: v.string(),
+    host: v.string(),
+    interval: v.number(),
+    name: v.string(),
+    protocol: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (args.apiKey !== process.env.API_KEY) {
+      throw new Error("Unauthorized");
+    }
+    const { id, apiKey, ...rest } = args;
+    await ctx.db.patch(id, rest);
+  },
+});
+
+export const deleteById = mutation({
+  args: { id: v.id("status"), apiKey: v.string() },
+  handler: async (ctx, args) => {
+    if (args.apiKey !== process.env.API_KEY) {
+      throw new Error("Unauthorized");
+    }
+    await ctx.db.delete(args.id);
+  },
+});
+
 export const backfill = mutation({
   handler: async (ctx) => {
     await monitorAggregate.clear(ctx);

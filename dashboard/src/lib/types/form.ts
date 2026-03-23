@@ -96,3 +96,25 @@ export const formSchema = z.object({
       message: "Slug must be a valid URL",
     }),
 });
+
+export const formCreate = z.object({
+  _id: z.string().trim().optional(),
+  name: z
+    .string()
+    .trim()
+    .min(2, "Name must be at least 2 characters long")
+    .max(50, "Name must not exceed 50 characters"),
+  protocol: z.enum(["https", "http", "tcp", "dns"], {
+    message: "Protocol must be either http or https",
+  }),
+  host: z
+    .string()
+    .trim()
+    .min(2, "Host must be at least 2 characters long")
+    .max(50, "Host must not exceed 50 characters"),
+  interval: z
+    .number()
+    .min(0, "Interval must be a positive number")
+    .default(10)
+    .optional(),
+});

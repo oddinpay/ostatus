@@ -58,8 +58,11 @@ export const patch = mutation({
 });
 
 export const deleteById = mutation({
-  args: { id: v.id("site") },
+  args: { id: v.id("site"), apiKey: v.string() },
   handler: async (ctx, args) => {
+    if (args.apiKey !== process.env.API_KEY) {
+      throw new Error("Unauthorized");
+    }
     await ctx.db.delete(args.id);
   },
 });

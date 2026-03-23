@@ -200,7 +200,7 @@
               <Input
                 class=" border-zinc-700 text-white"
                 id="{id}-logo"
-                placeholder="5s"
+                placeholder="10s"
                 type="number"
                 bind:value={interval}
                 required
@@ -209,6 +209,7 @@
             <Button
               class="mt-2 w-full cursor-pointer"
               type="submit"
+              formaction="?/create"
               variant="outline">Save</Button
             >
           </form>

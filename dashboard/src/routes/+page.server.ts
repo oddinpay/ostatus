@@ -79,7 +79,18 @@ export const actions: Actions = {
 
     try {
       const convex = getConvexClient();
+      const apiKey = env.API_KEY;
+
+      if (!apiKey) {
+        return setError(
+          formData as any,
+          "",
+          "API_KEY environment variable is not set",
+        );
+      }
+
       await convex.mutation(api.site.deleteById, {
+        apiKey,
         id: formData.get("_id") as any,
       });
 
