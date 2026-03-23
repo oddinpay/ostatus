@@ -59,7 +59,7 @@
 
     <Tabs
       value={currentTab}
-      class="flex max-h-[calc(100dvh-3rem)]  w-full flex-col gap-8 900:flex-row"
+      class="flex max-h-[calc(100dvh-3rem)] w-full flex-col gap-8 900:flex-row"
     >
       <TabsList
         class="sticky top-6 flex w-80 flex-col gap-2 self-start bg-transparent p-4 max-[900px]:top-0 max-[900px]:z-50 max-[900px]:w-full max-[900px]:flex-row max-[900px]:justify-around max-[900px]:bg-black/80 max-[900px]:backdrop-blur-md"
