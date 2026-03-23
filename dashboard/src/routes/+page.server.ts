@@ -71,8 +71,6 @@ export const actions: Actions = {
   },
 
   delete: async ({ request }) => {
-    console.log("delete action called");
-
     const formData = await request.formData();
     const id = formData.get("_id");
     if (!id) {
