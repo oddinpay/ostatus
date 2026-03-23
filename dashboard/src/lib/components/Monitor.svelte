@@ -155,17 +155,17 @@
                 <Form.Control>
                   {#snippet children({ props })}
                     <Form.Label class="font-bold text-gray-300">
-                      {$formData.monitorType === "TCP" ||
-                      $formData.monitorType === "DNS"
+                      {$formData.monitorType === "tcp" ||
+                      $formData.monitorType === "dns"
                         ? "Host"
                         : "URL"}
                     </Form.Label>
                     <Input
                       {...props}
                       class="border-zinc-700 text-white"
-                      placeholder={$formData.monitorType === "TCP"
+                      placeholder={$formData.monitorType === "tcp"
                         ? "127.0.0.1"
-                        : "https://oddinpay.com"}
+                        : "www.oddinpay.com"}
                       bind:value={$formData.url}
                     />
                   {/snippet}
@@ -173,7 +173,7 @@
                 <Form.FieldErrors />
               </Form.Field>
 
-              {#if $formData.monitorType === "TCP"}
+              {#if $formData.monitorType === "tcp"}
                 <Form.Field {form} name="port">
                   <Form.Control>
                     {#snippet children({ props })}
@@ -184,7 +184,7 @@
                         {...props}
                         type="number"
                         class="border-zinc-700 text-white"
-                        placeholder="443"
+                        placeholder="5785"
                         bind:value={$formData.port}
                       />
                     {/snippet}

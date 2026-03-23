@@ -106,14 +106,10 @@ export const formCreate = z.object({
     .max(50, "Name must not exceed 50 characters"),
   protocol: z
     .enum(["https", "http", "tcp", "dns"], {
-      message: "Protocol must be either http or https",
+      message: "Protocol must be one of: https, http, tcp, dns",
     })
     .default("https"),
-  host: z
-    .string()
-    .trim()
-    .min(1, "Host must be at least 1 character long")
-    .max(50, "Host must not exceed 50 characters"),
+  host: z.string().trim(),
   interval: z
     .number()
     .min(0, "Interval must be a positive number")
