@@ -110,6 +110,11 @@ export const formCreate = z.object({
     })
     .default("https"),
   host: z.string().trim(),
+  port: z
+    .number()
+    .min(1, "Port must be a positive number")
+    .max(65535, "Port must be less than 65536")
+    .optional(),
   interval: z
     .number()
     .min(0, "Interval must be a positive number")
