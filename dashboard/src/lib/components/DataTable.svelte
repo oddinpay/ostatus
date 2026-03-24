@@ -128,42 +128,33 @@
         });
       },
     },
-    // {
-    //   accessorKey: "amount",
-    //   header: () => {
-    //     const amountHeaderSnippet = createRawSnippet(() => {
-    //       return {
-    //         render: () => `<div class="text-end">Amount</div>`,
-    //       };
-    //     });
-    //     return renderSnippet(amountHeaderSnippet);
-    //   },
-    //   cell: ({ row }) => {
-    //     const formatter = new Intl.NumberFormat("en-US", {
-    //       style: "currency",
-    //       currency: "USD",
-    //     });
 
-    //     const amountCellSnippet = createRawSnippet<[{ amount: number }]>(
-    //       (getAmount) => {
-    //         const { amount } = getAmount();
-    //         const formatted = formatter.format(amount);
-    //         return {
-    //           render: () =>
-    //             `<div class="text-end font-medium">${formatted}</div>`,
-    //         };
-    //       },
-    //     );
-    //     return renderSnippet(amountCellSnippet, {
-    //       amount: row.original.amount,
-    //     });
-    //   },
-    // },
     {
       id: "actions",
-      enableHiding: false,
+      header: ({ table }) => {
+        return renderComponent(Button, {
+          variant: "outline",
+          size: "icon",
+          class:
+            "size-8 bg-zinc-800 cursor-pointer  text-red-500 hover:bg-red-950/30 hover:text-red-400 disabled:opacity-30 transition-color disabled:pointer-events-none disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500",
+          disabled: table.getFilteredSelectedRowModel().rows.length === 0,
+          onclick: () => {
+            const selectedIds = table
+              .getSelectedRowModel()
+              .rows.map((row) => row.original.id);
+            console.log("Delete items:", selectedIds);
+            // Your deletion logic here
+          },
+          children: createRawSnippet(() => ({
+            render: () =>
+              `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+`,
+          })),
+        });
+      },
       cell: ({ row }) =>
         renderComponent(DataTableActions, { id: row.original.id }),
+      enableHiding: false,
     },
   ];
 
@@ -287,17 +278,6 @@
       />
     </div>
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
-        <!-- {#snippet child({ props })}
-          <Button
-            {...props}
-            variant="outline"
-            class="ml-2.5 bg-zinc-800 text-white border-zinc-700 ms-auto hover:bg-zinc-800 hover:text-white cursor-pointer"
-          >
-            Columns <ChevronDownIcon class="ms-2 size-4" />
-          </Button>
-        {/snippet} -->
-      </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
         {#each table
           .getAllColumns()
