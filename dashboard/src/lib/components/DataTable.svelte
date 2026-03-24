@@ -39,7 +39,8 @@
       id: "m5gr84i9",
       amount: 316,
       status: "Success",
-      email: "ken99@yaho0000000000000000000000000000000000000000000000000000000000000000000000000000000o.com",
+      email:
+        "ken99@yaho0000000000000000000000000000000000000000000000000000000000000000000000000000000o.com",
     },
     {
       id: "3u1reuv4",
@@ -114,7 +115,8 @@
           (getEmail) => {
             const { email } = getEmail();
             return {
-              render: () => `<div class="lowercase truncate max-w-[150px]">${email}</div>`,
+              render: () =>
+                `<div class="lowercase truncate max-w-[150px]">${email}</div>`,
             };
           },
         );
