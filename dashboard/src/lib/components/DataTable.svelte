@@ -285,7 +285,7 @@
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   </div>
-  <div class="rounded-md border border-zinc-700">
+  <div class="rounded-md">
     <Table.Root>
       <Table.Header>
         {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
