@@ -425,3 +425,32 @@ input[type="text"] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
+
+/*** Works on common browsers ***/
+::selection {
+  background-color: #ffff;
+  color: black;
+}
+
+/*** Mozilla based browsers ***/
+::-moz-selection {
+  background-color: #ffff;
+  color: black;
+}
+
+/***For Other Browsers ***/
+::-o-selection {
+  background-color: #ffff;
+  color: black;
+}
+
+::-ms-selection {
+  background-color: #ffff;
+  color: black;
+}
+
+/*** For Webkit ***/
+::-webkit-selection {
+  background-color: #ffff;
+  color: black;
+}

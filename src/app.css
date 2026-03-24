@@ -151,8 +151,10 @@
   --animate-exit-to-left: exit-to-left 0.2s ease;
   --animate-exit-to-right: exit-to-right 0.2s ease;
 
-  --animate-accordion-down: accordion-down 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  --animate-accordion-up: accordion-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-accordion-down: accordion-down 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+    forwards;
+  --animate-accordion-up: accordion-up 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+    forwards;
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -1056,7 +1058,9 @@ input[type="number"] {
 }
 
 .prose {
-  :where(ul > li):not(:where([class~="not-prose"], [class~="not-prose"] *))::marker {
+  :where(ul > li):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    )::marker {
     color: rgb(184, 182, 182);
   }
 }
