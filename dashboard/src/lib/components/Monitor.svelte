@@ -121,7 +121,7 @@
               <Form.Field {form} name="protocol">
                 <Form.Control>
                   {#snippet children({ props })}
-                    <Form.Label class="font-bold  text-gray-300"
+                    <Form.Label class="font-bold text-gray-300"
                       >Monitor Type</Form.Label
                     >
                     <Select.Root
@@ -129,9 +129,12 @@
                       bind:value={$formData.monitorType}
                       name={props.name}
                     >
-                      <Select.Trigger class="w-full border-zinc-700 text-white">
+                      <Select.Trigger
+                        class="w-full cursor-pointer border-zinc-700 text-white"
+                      >
                         {triggerContent}
                       </Select.Trigger>
+
                       <Select.Content
                         class="bg-zinc-800 border-zinc-700 text-white"
                       >
