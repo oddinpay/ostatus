@@ -247,7 +247,7 @@
       color: white;
     }
 
-    tbody tr td,
+    thead tbody tr td,
     thead tr th {
       transition: background-color 0.2s ease;
     }
@@ -347,7 +347,7 @@
   <div class="flex items-center justify-end space-x-2 pt-4">
     <div class="text-muted-foreground flex-1 text-sm">
       {table.getFilteredSelectedRowModel().rows.length} of
-      {table.getFilteredRowModel().rows.length} row(s) selected.
+      {table.getFilteredRowModel().rows.length} monitor(s) selected.
     </div>
     <div class="space-x-2">
       <Button
