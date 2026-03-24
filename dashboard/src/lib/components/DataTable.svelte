@@ -235,6 +235,19 @@
   });
 </script>
 
+<svelte:head>
+  <style>
+    tbody tr td {
+      transition: background-color 0.2s ease;
+    }
+
+    tbody tr:hover td {
+      background-color: #3f3f46;
+      color: white;
+    }
+  </style>
+</svelte:head>
+
 <div class="-mb-8 w-full">
   <div class="flex items-center py-4">
     <Input
