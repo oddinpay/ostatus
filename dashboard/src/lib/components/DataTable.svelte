@@ -264,7 +264,7 @@
 <div class="-mb-8 w-full">
   <div class="flex items-center py-4">
     <Input
-      placeholder="Filter emails..."
+      placeholder="Filter monitors..."
       value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
       oninput={(e) =>
         table.getColumn("email")?.setFilterValue(e.currentTarget.value)}
