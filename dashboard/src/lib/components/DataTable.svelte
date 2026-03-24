@@ -39,26 +39,26 @@
   const data: Payment[] = [
     {
       id: "m5gr84i9",
-      amount: 316,
+      amount: 1,
       status: "Success",
       email:
         "ken99@yaho0000000000000000000000000000000000000000000000000000000000000000000000000000000o.com",
     },
     {
       id: "3u1reuv4",
-      amount: 242,
+      amount: 2,
       status: "Success",
       email: "www.oddinpay.com",
     },
     {
       id: "derv1ws0",
-      amount: 837,
+      amount: 3,
       status: "Processing",
       email: "Monserrat44@gmail.com",
     },
     {
       id: "5kma53ae",
-      amount: 874,
+      amount: 4,
       status: "Success",
       email: "Silas22@gmail.com",
     },
