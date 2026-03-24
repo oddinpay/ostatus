@@ -85,7 +85,7 @@
           onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
           "aria-label": "Select all",
           class:
-            "border border-zinc-500 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900",
+            "border cursor-pointer border-zinc-500 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900",
         }),
       cell: ({ row }) =>
         renderComponent(DataTableCheckbox, {
@@ -93,7 +93,7 @@
           onCheckedChange: (value) => row.toggleSelected(!!value),
           "aria-label": "Select row",
           class:
-            "border border-zinc-500 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900",
+            "border cursor-pointer border-zinc-500 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900",
         }),
       enableSorting: false,
       enableHiding: false,
