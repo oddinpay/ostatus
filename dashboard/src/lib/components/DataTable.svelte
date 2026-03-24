@@ -84,12 +84,16 @@
             !table.getIsAllPageRowsSelected(),
           onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
           "aria-label": "Select all",
+          class:
+            "border border-zinc-500 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900",
         }),
       cell: ({ row }) =>
         renderComponent(DataTableCheckbox, {
           checked: row.getIsSelected(),
           onCheckedChange: (value) => row.toggleSelected(!!value),
           "aria-label": "Select row",
+          class:
+            "border border-zinc-500 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900",
         }),
       enableSorting: false,
       enableHiding: false,
@@ -303,7 +307,10 @@
       </Table.Header>
       <Table.Body>
         {#each table.getRowModel().rows as row (row.id)}
-          <Table.Row data-state={row.getIsSelected() && "selected"}>
+          <Table.Row
+            data-state={row.getIsSelected() && "selected"}
+            class="data-[state=selected]:bg-zinc-700/50"
+          >
             {#each row.getVisibleCells() as cell (cell.id)}
               <Table.Cell
                 class="text-white border-b border-zinc-700 cursor-pointer hover:bg-zinc-800 [&:has([role=checkbox])]:ps-3"
