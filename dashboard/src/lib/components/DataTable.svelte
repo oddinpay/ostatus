@@ -270,7 +270,7 @@
           .getAllColumns()
           .filter((col) => col.getCanHide()) as column (column)}
           <DropdownMenu.CheckboxItem
-            class="capitalize"
+            class="capitalize cursor-pointer"
             bind:checked={
               () => column.getIsVisible(), (v) => column.toggleVisibility(!!v)
             }
