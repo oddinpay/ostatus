@@ -327,7 +327,7 @@
           {#each Array(totalCount) as _}
             <Table.Row>
               {#each columns as _}
-                <Table.Cell class="border-b border-zinc-700 py-4">
+                <Table.Cell class="border-b border-zinc-700">
                   <Skeleton class="h-8 w-full bg-zinc-700/50" />
                 </Table.Cell>
               {/each}
