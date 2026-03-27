@@ -272,7 +272,7 @@
               const formData = new FormData();
 
               if (query.data && query.data.length > 0) {
-                formData.append("_id", query.data[0]._id);
+                formData.append("_id", id);
               }
 
               formData.append("confirmation", "please");
