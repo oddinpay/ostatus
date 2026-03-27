@@ -12,16 +12,6 @@
     confirmDelete,
   } from "$lib/components/ui/confirm-delete-dialog";
 
-  import { useQuery } from "convex-svelte";
-  import { api } from "../../../../convex/_generated/api";
-  import { env } from "$env/dynamic/public";
-
-  const apiKey = env.PUBLIC_API_KEY ;
-
-  const query = useQuery(api.status.get, {
-    apiKey,
-  });
-
   let { id }: { id: string } = $props();
 
   let open = $state(false);
@@ -77,9 +67,7 @@
             onConfirm: async () => {
               const formData = new FormData();
 
-              if (query.data && query.data.length > 0) {
-                formData.append("_id", id);
-              }
+              formData.append("_id", id);
 
               formData.append("confirmation", "please");
 

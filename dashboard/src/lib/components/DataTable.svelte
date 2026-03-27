@@ -23,6 +23,12 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
+
+  import {
+    ConfirmDeleteDialog,
+    confirmDelete,
+  } from "$lib/components/ui/confirm-delete-dialog";
+
   import {
     FlexRender,
     createSvelteTable,
@@ -33,6 +39,7 @@
   import { useQuery } from "convex-svelte";
   import { api } from "../../convex/_generated/api";
   import { env } from "$env/dynamic/public";
+  import { toast } from "svelte-sonner";
 
   const monitorCount = useQuery(api.status.count, {});
   let totalCount = $state(0);
@@ -147,11 +154,34 @@
             "size-8 bg-transparent cursor-pointer text-red-500 hover:bg-red-950/30 hover:text-red-400 disabled:opacity-30 transition-color disabled:pointer-events-none disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500",
           disabled: table.getFilteredSelectedRowModel().rows.length === 0,
           onclick: () => {
-            const selectedIds = table
-              .getSelectedRowModel()
-              .rows.map((row) => row.original.id);
-            console.log("Delete items:", selectedIds);
-            // Your deletion logic here
+            const selectedRows = table.getSelectedRowModel().rows;
+            const selectedIds = selectedRows.map((row) => row.original.id);
+
+            confirmDelete({
+              title: "Delete monitor",
+              description:
+                "Are you sure you want to delete this monitor? This action cannot be undone.",
+              input: {
+                confirmationText: "please",
+              },
+              onConfirm: async () => {
+                const formData = new FormData();
+
+                formData.append("ids", JSON.stringify(selectedIds));
+                formData.append("confirmation", "please");
+
+                const response = await fetch("?/delete", {
+                  method: "POST",
+                  body: formData,
+                });
+
+                if (response.ok) {
+                  toast.success("Deleted successfully.");
+                } else {
+                  toast.error("Failed to delete.");
+                }
+              },
+            });
           },
           children: createRawSnippet(() => ({
             render: () =>
