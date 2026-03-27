@@ -76,7 +76,7 @@
 
   const columns: ColumnDef<Payment>[] = [
     {
-      id: "_id",
+      id: "select",
       header: ({ table }) =>
         renderComponent(DataTableCheckbox, {
           checked: table.getIsAllPageRowsSelected(),
@@ -177,6 +177,7 @@
       return allData;
     },
     columns,
+    getRowId: (row) => row.id,
     state: {
       get pagination() {
         return pagination;
