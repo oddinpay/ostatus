@@ -34,6 +34,17 @@
   import { api } from "../../convex/_generated/api";
   import { env } from "$env/dynamic/public";
 
+  let totalCount = $state(0);
+  const monitorCount = useQuery(api.status.count, {});
+
+  $effect(() => {
+    if (monitorCount.data !== undefined) {
+      totalCount = monitorCount.data;
+    } else {
+      totalCount = 0;
+    }
+  });
+
   type Payment = {
     id: string;
     name: string;
@@ -313,7 +324,7 @@
       </Table.Header>
       <Table.Body>
         {#if monitors.isLoading}
-          {#each Array(1) as _}
+          {#each Array(totalCount) as _}
             <Table.Row>
               {#each columns as _}
                 <Table.Cell class="border-b border-zinc-700 py-4">
