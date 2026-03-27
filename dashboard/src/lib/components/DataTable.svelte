@@ -437,3 +437,5 @@
     </div>
   </div>
 </div>
+
+<ConfirmDeleteDialog />
