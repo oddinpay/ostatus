@@ -334,7 +334,7 @@
               {/each}
             </Table.Row>
           {/each}
-        {:else if table.getRowModel().rows.length === 0}
+        {:else if table.getFilteredRowModel().rows.length === 0}
           <Table.Row>
             <Table.Cell
               colspan={columns.length}
