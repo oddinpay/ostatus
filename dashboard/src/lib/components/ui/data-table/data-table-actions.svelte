@@ -14,8 +14,13 @@
 
   import { useQuery } from "convex-svelte";
   import { api } from "../../../../convex/_generated/api";
+  import { env } from "$env/dynamic/public";
 
-  const query = useQuery(api.site.get);
+  const apiKey = env.PUBLIC_API_KEY ;
+
+  const query = useQuery(api.status.get, {
+    apiKey,
+  });
 
   let { id }: { id: string } = $props();
 
@@ -73,7 +78,7 @@
               const formData = new FormData();
 
               if (query.data && query.data.length > 0) {
-                formData.append("_id", query.data[0]._id);
+                formData.append("_id", id);
               }
 
               formData.append("confirmation", "please");
