@@ -160,7 +160,7 @@
                     <Form.Label class="font-bold text-gray-300">
                       {$formData.monitorType === "tcp" ||
                       $formData.monitorType === "dns"
-                        ? "Host"
+                        ? "Domain"
                         : "Domain"}
                     </Form.Label>
                     <Input
