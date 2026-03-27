@@ -34,8 +34,8 @@
   import { api } from "../../convex/_generated/api";
   import { env } from "$env/dynamic/public";
 
-  let totalCount = $state(0);
   const monitorCount = useQuery(api.status.count, {});
+  let totalCount = $state(0);
 
   $effect(() => {
     if (monitorCount.data !== undefined) {
