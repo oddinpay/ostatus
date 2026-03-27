@@ -31,7 +31,7 @@
     onUpdate: async ({ form: f }) => {
       if (f.valid) {
         open = false;
-        toast.success("Status page updated successfully!");
+        toast.success("Monitor updated successfully!");
       } else {
         open = false;
         toast.error("Something went wrong. Please try again.");
