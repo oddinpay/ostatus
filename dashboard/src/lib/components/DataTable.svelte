@@ -1,6 +1,7 @@
 <script lang="ts">
   import ChevronLeft from "@lucide/svelte/icons/chevron-left";
   import { Search } from "lucide-svelte";
+  import { Skeleton } from "$lib/components/ui/skeleton/index.js";
   import ChevronRight from "@lucide/svelte/icons/chevron-right";
   import {
     type ColumnDef,
@@ -311,6 +312,17 @@
         {/each}
       </Table.Header>
       <Table.Body>
+        {#if monitors.isLoading}
+          {#each Array(1) as _}
+            <Table.Row>
+              {#each columns as _}
+                <Table.Cell class="border-b border-zinc-700 py-4">
+                  <Skeleton class="h-8 w-full bg-zinc-700/50" />
+                </Table.Cell>
+              {/each}
+            </Table.Row>
+          {/each}
+        {/if}
         {#each table.getRowModel().rows as row (row.id)}
           <Table.Row
             data-state={row.getIsSelected() && "selected"}
