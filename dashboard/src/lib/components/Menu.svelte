@@ -284,7 +284,11 @@
           });
         }}
       >
-        Delete
+        {#if !$submitting}
+          Delete
+        {:else}
+          <Loader2 class="size-4 animate-spin" />
+        {/if}
       </DropdownMenu.Item>
     </DropdownMenu.Group>
   </DropdownMenu.Content>
