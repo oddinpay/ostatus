@@ -31,7 +31,6 @@
   let siteLive = $state(false);
 
   const monitorCount = useQuery(api.status.count, {});
-
   let totalCount = $state(0);
 
   $effect(() => {

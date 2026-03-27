@@ -18,8 +18,24 @@
   import Monitor from "$lib/components/Monitor.svelte";
   import NotMonitor from "$lib/components/NotMonitor.svelte";
   import DataTable from "$lib/components/DataTable.svelte";
+  import { useQuery } from "convex-svelte";
+  import { api } from "../../convex/_generated/api";
+  import { Spinner } from "$lib/components/ui/spinner/index.js";
 
   let currentTab = "tab-1";
+
+  const monitorCount = useQuery(api.status.count, {});
+  const monitors = useQuery(api.status.get);
+
+  let totalCount = $state(0);
+
+  $effect(() => {
+    if (monitorCount.data !== undefined) {
+      totalCount = monitorCount.data;
+    } else {
+      totalCount = 0;
+    }
+  });
 </script>
 
 <div
@@ -107,9 +123,19 @@
                   Monitor
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="tab-1">
-                <!-- <NotMonitor /> -->
-                <DataTable />
+              <TabsContent
+                class="flex items-center hover:opacity-95 justify-center min-h-50"
+                value="tab-1"
+              >
+                {#if monitorCount.isLoading}
+                  <Spinner class="text-white size-8" />
+                {:else if monitorCount.error}
+                  failed to load: {monitorCount.error.toString()}
+                {:else if totalCount > 0}
+                  <DataTable />
+                {:else}
+                  <NotMonitor />
+                {/if}
               </TabsContent>
               <TabsContent value="tab-2">
                 <Monitor />
