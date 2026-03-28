@@ -295,6 +295,15 @@
       pointer-events: auto !important;
       opacity: 0.5;
     }
+
+    th:nth-child(1),
+    td:nth-child(1),
+    th:nth-child(2),
+    td:nth-child(2),
+    th:last-child,
+    td:last-child {
+      text-align: center;
+    }
   </style>
 </svelte:head>
 
