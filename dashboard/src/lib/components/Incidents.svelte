@@ -15,10 +15,10 @@
 	const id = $props.id();
 
 	const incidents = [
-		{ class: 'text-emerald-600', label: 'Resolved', value: 'i1' },
+		{ class: 'text-emerald-500', label: 'Resolved', value: 'i1' },
 		{ class: 'text-yellow-500', label: 'In Progress', value: 'i2' },
 		{ class: 'text-gray-500', label: 'Investigating', value: 'i3' },
-		{ class: 'text-white', label: 'Identified', value: 'i4' }
+		{ class: 'text-red-500', label: 'Identified', value: 'i4' }
 	] as const;
 
 	let value = $state('i4');
