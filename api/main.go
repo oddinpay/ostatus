@@ -456,7 +456,13 @@ func probeTCP(re HttpRequest) ProbeResult {
 	maxRetries := 5
 
 	for attempt := 1; attempt <= maxRetries; attempt++ {
-		conn, err := net.DialTimeout("tcp", re.Host, defaultTimeout)
+
+		host := re.Host
+		if !strings.Contains(host, ":") {
+			host = net.JoinHostPort(host, "80")
+		}
+
+		conn, err := net.DialTimeout("tcp", host, defaultTimeout)
 		if err != nil {
 			if attempt < maxRetries {
 				time.Sleep(200 * time.Millisecond)
