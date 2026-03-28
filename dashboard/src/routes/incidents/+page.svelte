@@ -14,9 +14,7 @@
     CalendarCheck,
   } from "lucide-svelte";
   import Header from "$lib/components/Header.svelte";
-  // import Incidents from '$lib/components/Incidents.svelte';
   import NotIncidents from "$lib/components/NotIncidents.svelte";
-  import { Gauge } from "$lib/components/ui/gauge";
   import Incidents from "$lib/components/Incidents.svelte";
 
   let currentTab = "tab-2";

@@ -14,7 +14,6 @@
   } from "lucide-svelte";
   import Header from "$lib/components/Header.svelte";
   import { goto } from "$app/navigation";
-  import Alerts from "$lib/components/Alerts.svelte";
   let currentTab = "tab-4";
 </script>
 
