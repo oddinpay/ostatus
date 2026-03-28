@@ -90,6 +90,9 @@ importers:
       svelte-sonner:
         specifier: ^1.0.5
         version: 1.1.0(svelte@5.53.12)
+      sveltekit-sse:
+        specifier: ^0.14.3
+        version: 0.14.3(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)
       sveltekit-superforms:
         specifier: ^2.28.0
         version: 2.30.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(@types/json-schema@7.0.15)(svelte@5.53.12)(typescript@5.9.3)
@@ -1886,6 +1889,12 @@ packages:
     resolution: {integrity: sha512-4x/uk4rQe/d7RhfvS8wemTfNjQ0bJbKvamIzRBfTe2eHHjzBZ7PZicUQrC2ryj83xxEacfA1zHKd1ephD1tAxA==}
     engines: {node: '>=18'}
 
+  sveltekit-sse@0.14.3:
+    resolution: {integrity: sha512-S7sACdaaHzU7FZgk5V0LnpHdyOKfbghOUrs8v0CK5kW5dr0m9kh73P1HAuSnGZ3AOkFHAlv3JiCsOnRFdVOgvw==}
+    peerDependencies:
+      '@sveltejs/kit': ^2.0.0
+      svelte: ^4.0.0 || ^5.0.0-next.0
+
   sveltekit-superforms@2.30.0:
     resolution: {integrity: sha512-EzXD7sHbi7yBU/eNtzVm6P6axcrVM8BArkbiT96Vdx48s5m4KXte/tbbp3UULtEW8Nk9wt2hYkGeq7nDBwVceg==}
     peerDependencies:
@@ -3602,6 +3611,11 @@ snapshots:
       locate-character: 3.0.0
       magic-string: 0.30.21
       zimmerframe: 1.1.4
+
+  sveltekit-sse@0.14.3(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12):
+    dependencies:
+      '@sveltejs/kit': 2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1))
+      svelte: 5.53.12
 
   sveltekit-superforms@2.30.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.53.12)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(svelte@5.53.12)(typescript@5.9.3)(vite@8.0.0(esbuild@0.27.0)(jiti@2.6.1)))(@types/json-schema@7.0.15)(svelte@5.53.12)(typescript@5.9.3):
     dependencies:

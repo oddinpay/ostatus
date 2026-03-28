@@ -57,7 +57,7 @@
     __order?: number;
   }
 
-  const oddinHost = env.PUBLIC_SSE_HOST;
+  const oddinHost = env.PUBLIC_ODDIN_HOST;
   let unsubscribe: (() => void) | undefined;
 
   onMount(() => {
