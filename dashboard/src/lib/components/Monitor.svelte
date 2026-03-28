@@ -51,9 +51,11 @@
     services.find((f) => f.value === $formData.monitorType)?.label ?? "HTTPS",
   );
 
-  if (!$formData.monitorType) {
-    $formData.monitorType = "https";
-  }
+  $effect(() => {
+    if (!$formData.monitorType) {
+      $formData.monitorType = "https";
+    }
+  });
 </script>
 
 <Toaster closeButton position="top-center" />
