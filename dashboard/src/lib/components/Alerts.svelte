@@ -138,7 +138,7 @@
                       {#each services as type (type.value)}
                         <Select.Item
                           id="{id}-monitorType"
-                          class="cursor-pointer  data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-300"
+                          class="cursor-pointer  data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-500"
                           value={type.value}
                           label={type.label}
                         >

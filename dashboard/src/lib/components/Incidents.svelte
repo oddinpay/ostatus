@@ -115,7 +115,7 @@
 									>
 										{#each incidents as item (item.value)}
 											<Select.Item
-												class="cursor-pointer data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-300"
+												class="cursor-pointer data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-500"
 												value={item.value}
 											>
 												{@render status(item)}

@@ -140,7 +140,7 @@
                       >
                         {#each services as type}
                           <Select.Item
-                            class="cursor-pointer"
+                            class="cursor-pointer data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-500"
                             value={type.value}
                             label={type.label}
                           >
