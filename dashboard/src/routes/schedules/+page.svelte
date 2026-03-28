@@ -16,7 +16,7 @@
   import Header from "$lib/components/Header.svelte";
   import Schedules from "$lib/components/Schedules.svelte";
   import NotSchedules from "$lib/components/NotSchedules.svelte";
-  let currentTab = "tab-4";
+  let currentTab = "tab-3";
 </script>
 
 <div
@@ -85,7 +85,7 @@
         <div
           class="relative col-span-1 rounded-lg border border-border bg-zinc-900 p-8 900:col-span-2 900:min-h-120 900:overflow-y-hidden"
         >
-          <TabsContent value="tab-4" class="h-auto min-h-75">
+          <TabsContent value="tab-3" class="h-auto min-h-75">
             <Tabs value="tab-5" class=" items-center">
               <TabsList
                 class="h-auto gap-2 rounded-full border-b border-border bg-zinc-800 px-10 py-2 text-zinc-400"
