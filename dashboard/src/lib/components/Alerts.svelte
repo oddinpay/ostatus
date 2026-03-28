@@ -25,9 +25,6 @@
     { value: "HTTP", label: "HTTP" },
     { value: "TCP", label: "TCP" },
     { value: "DNS", label: "DNS" },
-    { value: "REDIS", label: "REDIS" },
-    { value: "SMTP", label: "SMTP" },
-    { value: "PING", label: "PING" },
   ];
 
   let value = $state("i4");
