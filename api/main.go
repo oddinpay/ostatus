@@ -505,7 +505,7 @@ func probeTCP(req HttpRequest) ProbeResult {
 				Description: "no response after connect",
 				Timestamp:   time.Now().Format("15:04:05.000"),
 				Date:        getRecentDates(),
-				State:       []string{hr.Down},
+				State:       []string{hr.Up},
 			}
 		}
 
