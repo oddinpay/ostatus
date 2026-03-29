@@ -76,7 +76,12 @@
   $effect(() => {
     sites.forEach((site) => {
       let b64 = site.b64;
-      activeFavicon = `data:${detectImageTypeFromBase64(b64)};base64,${b64}`;
+      const type = detectImageTypeFromBase64(b64);
+      if (type === "image/svg+xml" && !b64.startsWith("PHN2Zy")) {
+        activeFavicon = `data:image/svg+xml;utf8,${encodeURIComponent(b64)}`;
+      } else {
+        activeFavicon = `data:${type};base64,${b64}`;
+      }
     });
   });
 </script>
