@@ -33,7 +33,7 @@
   );
 
   function detectImageTypeFromBase64(base64: string): string {
-    const firstChar = base64.trim();
+    const firstChar = base64.trim().charAt(0);
     switch (firstChar) {
       case "/":
         return "image/jpeg"; // JPEG
