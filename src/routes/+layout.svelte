@@ -14,8 +14,6 @@
   import { useQuery } from "convex-svelte";
   import { api } from "../../dashboard/src/convex/_generated/api";
 
-  const oddinHost = env.PUBLIC_ODDIN_HOST;
-
   const query = useQuery(api.site.get);
 
   const canonicalUrl = $derived(
