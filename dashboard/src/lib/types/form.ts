@@ -52,12 +52,13 @@ export const formUpdate = z.object({
 });
 
 export const formSchema = z.object({
-  image: z.string().trim().optional(),
   title: z
     .string()
     .trim()
     .min(2, "Title must be at least 2 characters long")
     .max(50, "Title must not exceed 50 characters"),
+
+  image: z.string().trim().optional(),
 
   description: z
     .string()
