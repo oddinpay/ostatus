@@ -33,7 +33,14 @@
   );
 
   function detectImageTypeFromBase64(base64: string): string {
+    const data = base64.trim();
+
+    if (data.startsWith("AAAA")) {
+      return "image/avif"; // AVIF
+    }
+
     const firstChar = base64.trim().charAt(0);
+
     switch (firstChar) {
       case "/":
         return "image/jpeg"; // JPEG
@@ -49,10 +56,8 @@
         return "image/tiff"; // TIFF
       case "Q":
         return "image/bmp"; // BMP
-      case "AAAA":
-        return "image/avif"; // AVIF
       default:
-        return ""; // Unknown
+        return "image/png"; // Default to PNG if unknown
     }
   }
 
