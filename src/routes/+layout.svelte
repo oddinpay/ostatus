@@ -32,7 +32,7 @@
     })(),
   );
 
-  function detectImageTypeFromBase64(base64: string): string {
+  function detectImageTypeFromBase64(base64: string): string | undefined {
     const firstChar = base64.trim();
     switch (firstChar) {
       case "/":
@@ -51,8 +51,6 @@
         return "image/bmp"; // BMP
       case "AAAA":
         return "image/avif"; // AVIF
-      default:
-        return ""; // Default fallback
     }
   }
 
