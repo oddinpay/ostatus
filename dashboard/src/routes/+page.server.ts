@@ -42,6 +42,7 @@ export const actions: Actions = {
         textLogo: form.data.textLogo ?? "",
         signupUrl: form.data.signup ?? "",
         signinUrl: form.data.signin ?? "",
+        image: form.data.image ?? "",
         slug: form.data.slug ?? "",
       });
     } catch (error) {
