@@ -62,7 +62,7 @@
 
       return {
         ...site,
-        faviconUrl: `data:${detectImageTypeFromBase64(b64)};base64,${b64}`,
+        b64,
       };
     }),
   );
@@ -71,7 +71,8 @@
 
   $effect(() => {
     sites.forEach((site) => {
-      activeFavicon = site.faviconUrl;
+      let b64 = site.b64;
+      activeFavicon = `data:${detectImageTypeFromBase64(b64)};base64,${b64}`;
       console.log("Site Title:", site.title, "| Favicon URL:", activeFavicon);
     });
   });
