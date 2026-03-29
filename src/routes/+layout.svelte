@@ -69,7 +69,11 @@
     }),
   );
 
-  $inspect(sites.map((s) => s.faviconUrl));
+  $effect(() => {
+    sites.forEach((site) => {
+      console.log("Site Title:", site.title, "| URL:", site.faviconUrl);
+    });
+  });
 </script>
 
 <svelte:head>
