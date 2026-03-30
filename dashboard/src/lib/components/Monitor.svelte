@@ -11,7 +11,7 @@
   import { page } from "$app/state";
   import { superForm } from "sveltekit-superforms";
   import { zod4 } from "sveltekit-superforms/adapters";
-  import { toast, Toaster } from "svelte-sonner";
+  import { toast } from "svelte-sonner";
   import { formCreate } from "$lib/types/form";
   import Loader2 from "@lucide/svelte/icons/loader-2";
 
