@@ -109,6 +109,7 @@
                   type="text"
                   {...props}
                   bind:value={id}
+                  disabled
                 />
               {/snippet}
             </Form.Control>
