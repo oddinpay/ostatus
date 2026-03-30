@@ -21,9 +21,6 @@
   ] as const;
 
   let value = $state("i4");
-
-  let types = $state("HTTPS");
-
   let name = $state("");
 
   const bioLimit = useCharacterLimit(180, "");
