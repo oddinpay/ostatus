@@ -1522,7 +1522,7 @@
     </div>
   </div>
 
-  {#if $page.url.hostname === "status.oddinpay.com"}
+  {#if page.url.hostname === "status.oddinpay.com"}
     <Footer
       privacy={"https://oddinpay.com/privacy"}
       site={"https://oddinpay.com"}
@@ -1537,7 +1537,7 @@
 {/if}
 
 <svelte:head>
-  {#if $page.url.hostname === "status.oddinpay.com"}
+  {#if page.url.hostname === "status.oddinpay.com"}
     <title>Status • OddinPay</title>
     <meta
       name="description"
