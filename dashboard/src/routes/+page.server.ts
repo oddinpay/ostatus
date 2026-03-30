@@ -37,13 +37,13 @@ export const actions: Actions = {
 
       await convex.mutation(api.site.post, {
         apiKey,
-        title: form.data.title ?? "",
-        description: form.data.description ?? "",
-        textLogo: form.data.textLogo ?? "",
-        signupUrl: form.data.signup ?? "",
-        signinUrl: form.data.signin ?? "",
-        image: form.data.image ?? "",
-        slug: form.data.slug ?? "",
+        title: form.data.title,
+        description: form.data.description,
+        textLogo: form.data.textLogo as string,
+        signupUrl: form.data.signup as string,
+        signinUrl: form.data.signin as string,
+        image: form.data.image as string,
+        slug: form.data.slug as string,
       });
     } catch (error) {
       return setError(form, "", "A site already exists");
