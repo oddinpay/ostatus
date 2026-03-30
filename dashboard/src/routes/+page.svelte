@@ -20,10 +20,12 @@
   import Card from "$lib/components/Card.svelte";
   import { useQuery } from "convex-svelte";
   import { api } from "../convex/_generated/api";
+  import { env } from "$env/dynamic/public";
   import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
-  import { page } from "$app/state";
 
-  let baseUrl = page.url.origin;
+  let baseUrl = env.PUBLIC_PAGE_URL
+    ? env.PUBLIC_PAGE_URL
+    : "https://status.oddinpay.com";
   let currentTab = "tab-0";
   const query = useQuery(api.site.get);
   let siteLive = $state(false);
