@@ -20,34 +20,44 @@
     { class: "text-gray-500", label: "Scheduled", value: "i4" },
   ] as const;
 
+  let monitors = [
+    { class: "text-emerald-600", label: "API", value: "s1" },
+    { class: "text-yellow-500", label: "In Progress", value: "s2" },
+    { class: "text-red-500", label: "Cancelled", value: "s3" },
+    { class: "text-gray-500", label: "Scheduled", value: "s4" },
+  ];
+
   let value = $state("i4");
+  let monitorValue = $state("s1");
   let name = $state("");
 
-  const bioLimit = useCharacterLimit(180, "");
+  let bioLimit = useCharacterLimit(180, "");
 
   function handleOnSubmit(e: Event) {
     e.preventDefault();
   }
 
   const selected = $derived(incidents.find((i) => i.value === value));
+  const selectedMonitor = $derived(
+    monitors.find((m) => m.value === monitorValue),
+  );
 
   $effect(() => {
     if (value === "i2") {
-      name =
+      bioLimit.value =
         "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
     }
 
     if (value === "i1") {
-      name =
-        "The scheduled maintenance has been completed.";
+      bioLimit.value = "The scheduled maintenance has been completed.";
     }
   });
 
   // Check if the input should be disabled
-  const isLocked = $derived(value === "i2");
+  const isLocked = $derived(value === "i2" || value === "i1");
 </script>
 
-{#snippet status(item: (typeof incidents)[number])}
+{#snippet status(item: (typeof incidents)[number] | (typeof monitors)[number])}
   <span class="flex items-center gap-2">
     <svg
       width="8"
@@ -103,6 +113,36 @@
           <form onsubmit={handleOnSubmit} class="space-y-5">
             <div class="space-y-4">
               <div class="space-y-2">
+                <div class="space-y-2">
+                  <Label class="font-bold text-gray-300" for="{id}-monitor"
+                    >Monitor</Label
+                  >
+                  <Select.Root type="single" bind:value={monitorValue}>
+                    <Select.Trigger
+                      {id}
+                      class="w-full cursor-pointer border-zinc-700 text-white [&_svg:not([class*='text-'])]:text-zinc-200 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0"
+                    >
+                      {#if selectedMonitor}
+                        {@render status(selectedMonitor)}
+                      {:else}
+                        Select a status
+                      {/if}
+                    </Select.Trigger>
+                    <Select.Content
+                      class="bg-zinc-800  text-white [&_*[data-select-item]]:ps-2 [&_*[data-select-item]]:pe-8 [&_*[data-select-item]>span]:start-auto [&_*[data-select-item]>span]:inset-e-2 [&_*[data-select-item]>span]:flex [&_*[data-select-item]>span]:items-center [&_*[data-select-item]>span]:gap-2 [&_*[data-select-item]>span>svg]:shrink-0"
+                    >
+                      {#each monitors as item (item.value)}
+                        <Select.Item
+                          class="cursor-pointer data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-500"
+                          value={item.value}
+                        >
+                          {@render status(item)}
+                        </Select.Item>
+                      {/each}
+                    </Select.Content>
+                  </Select.Root>
+                </div>
+
                 <Label class="font-bold text-gray-300" for="{id}-title"
                   >Title</Label
                 >
@@ -112,8 +152,6 @@
                   placeholder="Scheduled maintenance"
                   type="text"
                   bind:value={name}
-                  readonly={isLocked}
-                  required
                 />
               </div>
 
@@ -159,6 +197,7 @@
                     maxlength={bioLimit.maxLength}
                     placeholder="Write a few sentences about incident..."
                     aria-describedby="{id}-left-textarea"
+                    readonly={isLocked}
                     required
                   />
                   <p
