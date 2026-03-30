@@ -112,7 +112,6 @@
                   type="text"
                   {...props}
                   bind:value={$formData.name}
-                  required
                 />
               {/snippet}
             </Form.Control>
@@ -189,7 +188,6 @@
                   type="number"
                   {...props}
                   bind:value={$formData.interval}
-                  required
                 />
               {/snippet}
             </Form.Control>
