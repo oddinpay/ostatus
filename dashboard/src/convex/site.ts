@@ -44,8 +44,8 @@ export const post = mutation({
 
 export const patch = mutation({
   args: {
-    id: v.id("site"),
     apiKey: v.string(),
+    id: v.id("site"),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     textLogo: v.optional(v.string()),
