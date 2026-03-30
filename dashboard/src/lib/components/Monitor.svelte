@@ -128,6 +128,7 @@
                       type="single"
                       bind:value={$formData.monitorType}
                       name={props.name}
+                      required
                     >
                       <Select.Trigger
                         class="w-full cursor-pointer border-zinc-700 text-white"
@@ -170,6 +171,7 @@
                         ? "127.0.0.1:8080"
                         : "www.oddinpay.com"}
                       bind:value={$formData.url}
+                      required
                     />
                   {/snippet}
                 </Form.Control>
