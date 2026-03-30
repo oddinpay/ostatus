@@ -37,10 +37,10 @@ export const actions: Actions = {
 
       await convex.mutation(api.status.post, {
         apiKey,
-        host: form.data.host ?? "",
-        interval: form.data.interval ?? 0,
-        name: form.data.name ?? "",
-        protocol: form.data.protocol ?? "",
+        host: form.data.host,
+        interval: form.data.interval as number,
+        name: form.data.name,
+        protocol: form.data.protocol,
       });
     } catch (error) {
       return setError(form, "", "A site already exists");
@@ -62,9 +62,10 @@ export const actions: Actions = {
       }
 
       await convex.mutation(api.status.patch, {
+        apiKey,
         id: form.data._id as any,
         host: form.data.host,
-        interval: form.data.interval,
+        interval: form.data.interval as number,
         name: form.data.name,
         protocol: form.data.protocol,
       });
