@@ -113,7 +113,6 @@
           <form onsubmit={handleOnSubmit} class="space-y-5">
             <div class="space-y-4">
               <div class="space-y-2">
-                <div class="space-y-2">
                   <Label class="font-bold text-gray-300" for="{id}-monitor"
                     >Monitor</Label
                   >
@@ -213,7 +212,6 @@
                   </p>
                 </div>
               </div>
-            </div>
             <Button
               class="mt-2 w-full cursor-pointer"
               type="submit"
