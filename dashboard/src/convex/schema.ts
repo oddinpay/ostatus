@@ -17,4 +17,17 @@ export default defineSchema({
     image: v.optional(v.string()),
     slug: v.optional(v.string()),
   }),
+
+  incidents: defineTable({
+    title: v.string(),
+    status: v.string(),
+    description: v.string(),
+  }),
+
+  schedules: defineTable({
+    title: v.string(),
+    status: v.string(),
+    date: v.string(),
+    description: v.string(),
+  }),
 });
