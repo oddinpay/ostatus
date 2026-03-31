@@ -129,13 +129,6 @@
             <p class="text-base font-extralight text-zinc-200">
               Active Incidents
             </p>
-            <!-- <Gauge
-							colors={{ primary: 'stroke-green-700', secondary: 'stroke-green-200' }}
-							class="text-white"
-							show_value
-							size="lg"
-							value={100}
-						/> -->
           </TabsContent>
         </div>
         <div
@@ -145,13 +138,6 @@
             <p class="text-base font-extralight text-zinc-200">
               Recent Incidents
             </p>
-            <!-- <Gauge
-							colors={{ primary: 'stroke-yellow-700', secondary: 'stroke-yellow-200' }}
-							class="text-white"
-							show_value
-							size="lg"
-							value={100}
-						/> -->
           </TabsContent>
         </div>
       </div>
