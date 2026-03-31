@@ -171,7 +171,11 @@
     </div>
   </Empty.Content>
   <Button variant="link" class="text-gray-400" size="sm">
-    <a href="#/">
+    <a
+      href="https://github.com/oddinpay/oddin-status"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       Learn More <ArrowUpRightIcon class="inline" />
     </a>
   </Button>

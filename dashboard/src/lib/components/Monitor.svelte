@@ -207,7 +207,7 @@
                 >{#if $submitting}
                   <Loader2 class="size-4 animate-spin" />
                 {:else}
-                 Create 
+                  Create
                 {/if}
               </Form.Button>
             </div>
@@ -217,7 +217,11 @@
     </div>
   </Empty.Content>
   <Button variant="link" class="text-gray-400" size="sm">
-    <a href="#/">
+    <a
+      href="https://github.com/oddinpay/oddin-status"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       Learn More <ArrowUpRightIcon class="inline" />
     </a>
   </Button>
