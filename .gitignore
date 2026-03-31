@@ -200,4 +200,3 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-dashboard/src/routes/ani/+page.svelte

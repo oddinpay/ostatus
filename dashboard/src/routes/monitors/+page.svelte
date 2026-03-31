@@ -28,6 +28,8 @@
   let currentTab = "tab-1";
   let totalCount = $state(0);
   const monitorCount = useQuery(api.status.count, {});
+  let requestID: number;
+  let timer: ReturnType<typeof setTimeout>;
 
   $effect(() => {
     if (monitorCount.data !== undefined) {
@@ -120,15 +122,15 @@
           ctx.fill();
         }
       }
-      requestAnimationFrame(animate);
+      requestID = requestAnimationFrame(animate);
     };
-    requestAnimationFrame(animate);
+    requestID = requestAnimationFrame(animate);
   }
 
   onMount(() => {
-    animations.forEach((a) => a.setup());
-
     if (!browser) return;
+
+    animations.forEach((a) => a.setup());
 
     const json = source(`https://${oddinHost}/v1/sse`)
       .select("")
@@ -154,11 +156,19 @@
         uptime90: sla?.uptime90 ?? probeMap[id]?.uptime90 ?? "100.000%",
         __order: index ?? probeMap[id]?.__order ?? Infinity,
       };
+
+      timer = setTimeout(setupPulsingGrid, 60);
+      return () => {
+        if (timer) clearTimeout(timer);
+        if (requestID) cancelAnimationFrame(requestID);
+      };
     });
   });
 
   onDestroy(() => {
     unsubscribe?.();
+    if (timer) clearTimeout(timer);
+    if (requestID) cancelAnimationFrame(requestID);
   });
 
   type ProbeMap = Record<string, ApiData>;
