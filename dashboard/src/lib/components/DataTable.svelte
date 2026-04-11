@@ -272,7 +272,7 @@
                 });
 
                 if (response.ok) {
-                  toast.success("Deleted successfully.");
+                  toast.success(selectedRows[0].original.name + " deleted successfully.");
                 } else {
                   toast.error("Failed to delete.");
                 }
