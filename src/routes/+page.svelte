@@ -579,14 +579,14 @@
     );
 
     m.entries = m.entries
+
       .filter(
         (e) =>
           !(
-            (hasInProgress &&
-              !hasCancelled &&
-              !hasCompleted &&
-              e.status === Indicators.Scheduled) ||
-            (hasCancelled && hasCompleted && e.status === Indicators.Completed)
+            hasInProgress &&
+            !hasCancelled &&
+            !hasCompleted &&
+            e.status === Indicators.Scheduled
           ),
       )
       .sort(
