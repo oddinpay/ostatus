@@ -36,6 +36,8 @@
         "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
     } else if (value === "i1") {
       bioLimit.value = "The scheduled maintenance has been completed.";
+    } else if (value === "i3") {
+      bioLimit.value = "The scheduled maintenance has been cancelled.";
     } else {
       bioLimit.value = "";
     }
