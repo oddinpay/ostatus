@@ -566,6 +566,35 @@
     },
   ];
 
+  // maintenances.forEach((m) => {
+  //   const hasInProgress = m.entries.some(
+  //     (e) => e.status === Indicators.Inprogress,
+  //   );
+  //   const hasCompleted = m.entries.some(
+  //     (e) => e.status === Indicators.Completed,
+  //   );
+
+  //   const hasCancelled = m.entries.some(
+  //     (e) => e.status === Indicators.Cancelled,
+  //   );
+
+  //   m.entries = m.entries
+  //     .filter(
+  //       (e) =>
+  //         !(
+  //           hasInProgress &&
+  //           !hasCancelled &&
+  //           !hasCompleted &&
+  //           e.status === Indicators.Scheduled
+  //         ),
+  //     )
+  //     .sort(
+  //       (a, b) =>
+  //         (statusPriority.get(a.status) ?? Infinity) -
+  //         (statusPriority.get(b.status) ?? Infinity),
+  //     );
+  // });
+
   maintenances.forEach((m) => {
     const hasInProgress = m.entries.some(
       (e) => e.status === Indicators.Inprogress,
@@ -573,21 +602,25 @@
     const hasCompleted = m.entries.some(
       (e) => e.status === Indicators.Completed,
     );
-
     const hasCancelled = m.entries.some(
       (e) => e.status === Indicators.Cancelled,
     );
 
     m.entries = m.entries
-      .filter(
-        (e) =>
-          !(
-            hasInProgress &&
-            !hasCancelled &&
-            !hasCompleted &&
+      .filter((e) => {
+        if (hasCancelled) {
+          return (
+            e.status === Indicators.Cancelled ||
             e.status === Indicators.Scheduled
-          ),
-      )
+          );
+        }
+
+        return !(
+          hasInProgress &&
+          !hasCompleted &&
+          e.status === Indicators.Scheduled
+        );
+      })
       .sort(
         (a, b) =>
           (statusPriority.get(a.status) ?? Infinity) -
