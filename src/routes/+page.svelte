@@ -580,13 +580,6 @@
 
     m.entries = m.entries
 
-      .filter((e) => {
-        if (hasCompleted && e.status === Indicators.Cancelled) return false;
-        if (hasCancelled && e.status === Indicators.Completed) return false;
-
-        return true;
-      })
-
       .filter(
         (e) =>
           !(
