@@ -501,7 +501,7 @@
         },
         {
           time: "Sep 22, 2025 12:45 UTC",
-          status: Indicators.Cancelled,
+          status: Indicators.Completed,
           description:
             "We are investigating reports of increased errors on API.",
         },
