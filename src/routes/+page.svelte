@@ -507,7 +507,7 @@
         },
         {
           time: "Sep 22, 2025 20:14 UTC",
-          status: Indicators.Completed,
+          status: Indicators.Inprogress,
           description:
             "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
         },
