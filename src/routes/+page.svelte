@@ -362,6 +362,12 @@
       badge: "inprogress",
       statusLabel: "In Progress",
     },
+
+    Cancelled: {
+      badge: "cancelled",
+      statusLabel: "Cancelled",
+    },
+
     Completed: {
       badge: "completed",
       statusLabel: "Completed",
@@ -376,7 +382,9 @@
     description: string;
     status: Exclude<
       Indicator,
-      typeof Indicators.Completed | typeof Indicators.Scheduled
+      | typeof Indicators.Completed
+      | typeof Indicators.Scheduled
+      | typeof Indicators.Cancelled
     >;
   }
 
@@ -469,6 +477,7 @@
     [Indicators.Identified, 2],
     [Indicators.Investigating, 3],
     [Indicators.Scheduled, 3],
+    [Indicators.Cancelled, 4],
   ]);
 
   incidents.forEach((incident) => {
@@ -565,12 +574,17 @@
       (e) => e.status === Indicators.Completed,
     );
 
+    const hasCancelled = m.entries.some(
+      (e) => e.status === Indicators.Cancelled,
+    );
+
     m.entries = m.entries
       .filter(
         (e) =>
           !(
             hasInProgress &&
             !hasCompleted &&
+            !hasCancelled &&
             e.status === Indicators.Scheduled
           ),
       )
@@ -1831,6 +1845,13 @@
       color: #4b5563;
       font-weight: 600;
       border: 1px solid #cecece;
+    }
+
+    .badge.cancelled {
+      background: #ffe3e3;
+      color: #c92a2a;
+      font-weight: 600;
+      border: 1px solid #ffa8a8;
     }
 
     .badge2.completed {
