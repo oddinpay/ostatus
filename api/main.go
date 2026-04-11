@@ -756,6 +756,9 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 		runningTargets := make(map[string]HttpRequest)
 		probeCancels := make(map[string]context.CancelFunc)
 
+		missingStrikes := make(map[string]int)
+		const maxStrikes = 5
+
 		for {
 			refreshCache(ctx)
 			targetCache.RLock()
@@ -775,45 +778,51 @@ func startProbeManager(ctx context.Context, wg *sync.WaitGroup) {
 				}
 
 				if !found {
-					slog.Info("Target deleted from Convex, stopping worker", "name", id)
-					if cancel, ok := probeCancels[id]; ok {
-						cancel()
-						delete(probeCancels, id)
+					missingStrikes[id]++
+					slog.Warn("Target missing from cache, adding strike", "id", id, "count", missingStrikes[id])
+
+					if missingStrikes[id] >= maxStrikes {
+						slog.Info("Max strikes reached, deleting target", "id", id)
+
+						if cancel, ok := probeCancels[id]; ok {
+							cancel()
+							delete(probeCancels, id)
+						}
+
+						targetName := running.Name
+						go func() { kv.Delete(ctx, targetName) }()
+
+						globalHub.Broadcast(map[string]StatusPayload{
+							id: {Probe: ProbeResult{Id: id, Action: []string{"deleted"}}},
+						})
+
+						delete(slaTrackers.m, id)
+						delete(runningTargets, id)
+						delete(missingStrikes, id)
+					}
+				} else {
+					if missingStrikes[id] > 0 {
+						slog.Info("Target reappeared, resetting strikes", "id", id)
+						delete(missingStrikes, id)
 					}
 
-					// done := make(chan struct{})
+					if running.Host != updated.Host || running.Protocol != updated.Protocol || running.Name != updated.Name {
+						slog.Info("Target updated, restarting worker", "name", id)
+						if cancel, ok := probeCancels[id]; ok {
+							cancel()
+						}
 
-					// go func() {
-					// 	kv.Delete(ctx, running.Name)
-					// 	close(done)
-					// }()
+						globalHub.Broadcast(map[string]StatusPayload{
+							id: {Probe: ProbeResult{Id: id, Action: []string{"updated"}}},
+						})
 
-					// <-done
+						probeCtx, cancel := context.WithCancel(ctx)
+						probeCancels[id] = cancel
+						wg.Add(1)
+						go startProbeWorker(probeCtx, wg, updated)
 
-					globalHub.Broadcast(map[string]StatusPayload{
-						id: {Probe: ProbeResult{Id: id, Action: []string{"deleted"}}},
-					})
-
-					delete(slaTrackers.m, id)
-					delete(runningTargets, id)
-
-				} else if running.Host != updated.Host || running.Protocol != updated.Protocol || running.Name != updated.Name {
-					slog.Info("Target updated, restarting worker", "name", id)
-					if cancel, ok := probeCancels[id]; ok {
-						cancel()
+						runningTargets[id] = updated
 					}
-
-					globalHub.Broadcast(map[string]StatusPayload{
-						id: {Probe: ProbeResult{Id: id, Action: []string{"updated"}}},
-					})
-
-					probeCtx, cancel := context.WithCancel(ctx)
-					probeCancels[id] = cancel
-					wg.Add(1)
-					go startProbeWorker(probeCtx, wg, updated)
-
-					runningTargets[id] = updated
-
 				}
 			}
 			slaTrackers.Unlock()
