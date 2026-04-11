@@ -579,15 +579,21 @@
     );
 
     m.entries = m.entries
-      .filter(
-        (e) =>
-          !(
-            hasInProgress &&
-            !hasCompleted &&
-            !hasCancelled &&
+      .filter((e) => {
+        if (hasCancelled) {
+          return (
+            e.status === Indicators.Cancelled ||
             e.status === Indicators.Scheduled
-          ),
-      )
+          );
+        }
+
+        return !(
+          hasInProgress &&
+          !hasCompleted &&
+          !hasCancelled &&
+          e.status === Indicators.Scheduled
+        );
+      })
       .sort(
         (a, b) =>
           (statusPriority.get(a.status) ?? Infinity) -
