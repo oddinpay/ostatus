@@ -586,7 +586,9 @@
           e.status === Indicators.Scheduled;
 
         const isCompletedWhileCancelled =
-          hasCancelled && e.status === Indicators.Completed;
+          hasCancelled &&
+          (e.status === Indicators.Completed ||
+            e.status === Indicators.Inprogress);
 
         return !isScheduledWhileInProgress && !isCompletedWhileCancelled;
       })
