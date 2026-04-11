@@ -1415,11 +1415,11 @@
                             {/if}
                             <h2>Maintenance</h2>
                             <div class="maintenance-list">
-                              {#if maintenances.every( (incident) => incident.entries.some((entry) => entry.status === Indicators.Completed), )}
+                              {#if maintenances.every( (incident) => incident.entries.some((entry) => entry.status === Indicators.Completed || entry.status === Indicators.Cancelled), )}
                                 No maintenance windows available.
                               {:else}
                                 {#each maintenances as maintenance}
-                                  {#if !maintenance.entries.some((entry) => entry.status === Indicators.Completed)}
+                                  {#if !maintenance.entries.some((entry) => entry.status === Indicators.Completed || entry.status === Indicators.Cancelled)}
                                     {#each maintenance.entries as entry}
                                       <div
                                         class="flex justify-between items-center p-3 gap-4"
@@ -1482,7 +1482,7 @@
                         {/each}
 
                         {#each maintenances as maintenance}
-                          {#if maintenance.entries.some((entry) => entry.status === Indicators.Completed)}
+                          {#if maintenance.entries.some((entry) => entry.status === Indicators.Completed || entry.status === Indicators.Cancelled)}
                             <div class="incident-card mt-10">
                               <h2>
                                 Scheduled maintenance for {maintenance.service}
