@@ -272,7 +272,7 @@
                 });
 
                 if (response.ok) {
-                  toast.success(selectedRows[0].original.name + " deleted successfully.");
+                  toast.success("Monitor deleted successfully.");
                 } else {
                   toast.error("Failed to delete.");
                 }
