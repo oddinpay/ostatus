@@ -302,6 +302,7 @@
     get data() {
       return allData;
     },
+    getRowId: (row) => row.id,
     columns,
     state: {
       get pagination() {
