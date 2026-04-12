@@ -287,7 +287,7 @@
         });
       },
       cell: ({ row }) =>
-        renderComponent(DataTableActions, { id: row.original.id }),
+        renderComponent(DataTableActions, { id: row.original.id, name: row.original.name }),
       enableHiding: false,
     },
   ];

@@ -19,7 +19,7 @@
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import { SquareActivity } from "lucide-svelte";
 
-  let { id }: { id: string } = $props();
+  let { id, name }: { id: string; name: string } = $props();
 
   let open = $state(false);
 
@@ -252,7 +252,7 @@
               });
 
               if (response.ok) {
-                toast.success(`Monitors deleted successfully!`);
+                toast.success(`${name} deleted successfully!`);
               } else {
                 toast.error("Failed to delete.");
               }
