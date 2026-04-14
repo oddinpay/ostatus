@@ -863,64 +863,62 @@
       class="fixed w-full top-0 z-40 h-14 border-b border-black/5 backdrop-blur bg-white/50"
     >
       <div
-        class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 h-full flex items-center gap-3"
+        class="mx-auto max-w-screen-2xl grid h-full grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)_200px] items-center px-4 sm:px-6 lg:px-8"
       >
-        <button
-          id="navToggle"
-          class="xl:hidden p-2 rounded-lg hover:bg-black/5 dark:hover:bg:white/10"
-          aria-label="Toggle nav"
-        >
-          <span class="block w-5 h-0.5 bg-current mb-1"></span>
-          <span class="block w-5 h-0.5 bg-current mb-1"></span>
-          <span class="block w-5 h-0.5 bg-current"></span>
-        </button>
+        <div class="flex items-center gap-3">
+          <button
+            id="navToggle"
+            class="xl:hidden p-2 rounded-lg hover:bg-black/5"
+            aria-label="Toggle nav"
+          >
+            <span class="block w-5 h-0.5 bg-current mb-1"></span>
+            <span class="block w-5 h-0.5 bg-current mb-1"></span>
+            <span class="block w-5 h-0.5 bg-current"></span>
+          </button>
 
-        <div class="oddin-status hover:opacity-50">
-          {#if page.url.hostname === "status.oddinpay.com"}
-            <a href={slug} target="_blank" rel="noopener noreferrer">
-              {logo}
-            </a>
-          {:else if query.isLoading}
-            <Skeleton class="h-8 w-30 bg-gray-300 rounded-md" />
-          {:else if query.data}
-            {#each query.data as site}
-              <a href={site.slug} target="_blank" rel="noopener noreferrer">
-                {#if page.url.hostname === "status.oddinpay.com"}
-                  {logo}
-                {:else}
-                  {site.textLogo}
-                {/if}
-              </a>
-            {/each}
-          {/if}
+          <div class="oddin-status hover:opacity-50">
+            {#if page.url.hostname === "status.oddinpay.com"}
+              <a href={slug} target="_blank" rel="noopener noreferrer">{logo}</a
+              >
+            {:else if query.data}
+              {#each query.data as site}
+                <a href={site.slug} target="_blank" rel="noopener noreferrer">
+                  {page.url.hostname === "status.oddinpay.com"
+                    ? logo
+                    : site.textLogo}
+                </a>
+              {/each}
+            {/if}
+          </div>
         </div>
 
-        <div id="themeBtn" class="ml-auto"></div>
-        {#if page.url.hostname === "status.oddinpay.com"}
-          <Button
-            id="change"
-            onclick={() => window.open(signin, "_blank")}
-            class="text-black hidden stm:block cursor-pointer hover:text-green-700"
-            variant="ghost"
-          >
-            Sign in
-          </Button>
-          <Buttong url={signup} />
-        {:else if query.isLoading}
-          <Skeleton class="h-8 w-20 bg-gray-300 rounded-md" />
-        {:else if query.data}
-          {#each query.data as site}
+        <div class="hidden xl:block"></div>
+
+        <div class="flex items-center justify-end gap-2 ml-auto xl:ml-0">
+          <div id="themeBtn"></div>
+
+          {#if page.url.hostname === "status.oddinpay.com"}
             <Button
-              id="change"
-              onclick={() => window.open(site.signinUrl, "_blank")}
+              onclick={() => window.open(signin, "_blank")}
               class="text-black hidden stm:block cursor-pointer hover:text-green-700"
               variant="ghost"
             >
               Sign in
             </Button>
-            <Buttong url={site.signupUrl} />
-          {/each}
-        {/if}
+            <Buttong url={signup} />
+          {:else if query.data}
+            {#each query.data as site}
+              <Button
+                onclick={() => window.open(site.signinUrl, "_blank")}
+                class="text-black hidden stm:block cursor-pointer hover:text-green-700"
+                variant="ghost"
+              >
+                Sign in
+              </Button>
+              <Buttong url={site.signupUrl} />
+            {/each}
+          {/if}
+        </div>
       </div>
     </header>
     <div id="navBackdrop" class="hidden fixed inset-0 bg-black/40 z-40"></div>
