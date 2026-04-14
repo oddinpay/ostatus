@@ -494,6 +494,8 @@ body {
     "rlig" 1,
     "calt" 1;
   line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
   width: 100%;
   margin: 0;
   padding: 0;
