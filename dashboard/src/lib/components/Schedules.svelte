@@ -146,27 +146,44 @@
           <form method="POST" class="space-y-5" use:enhance>
             <div class="space-y-4">
               <div class="space-y-2">
-                <Label class="font-bold text-gray-300" for="service"
-                  >Service</Label
-                >
-                <Input
-                  class=" border-zinc-700 text-white"
-                  id="service"
-                  placeholder="API"
-                  type="text"
-                  bind:value={service}
-                />
+                <Form.Field {form} name="service">
+                  <Form.Control>
+                    {#snippet children({ props })}
+                      <Form.Label class="font-bold text-gray-300" for="service"
+                        >Service</Form.Label
+                      >
+                      <Input
+                        class=" border-zinc-700 text-white"
+                        placeholder="API"
+                        type="text"
+                        {...props}
+                        bind:value={service}
+                      />
+                    {/snippet}
+                  </Form.Control>
+                  <Form.FieldErrors />
+                </Form.Field>
               </div>
 
               <div class="space-y-2">
-                <Label class="font-bold text-gray-300">Title</Label>
-                <Input
-                  class=" border-zinc-700 text-white"
-                  placeholder="Scheduled maintenance for API"
-                  type="text"
-                  readonly
-                  bind:value={name}
-                />
+                <Form.Field {form} name="title">
+                  <Form.Control>
+                    {#snippet children({ props })}
+                      <Form.Label class="font-bold text-gray-300" for="title"
+                        >Title</Form.Label
+                      >
+                      <Input
+                        class=" border-zinc-700 text-white"
+                        placeholder="Scheduled maintenance for API"
+                        type="text"
+                        readonly
+                        {...props}
+                        bind:value={name}
+                      />
+                    {/snippet}
+                  </Form.Control>
+                  <Form.FieldErrors />
+                </Form.Field>
               </div>
 
               <div class="space-y-2">
