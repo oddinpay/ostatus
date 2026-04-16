@@ -119,7 +119,7 @@
   </Empty.Header>
   <Empty.Content>
     <div class="flex gap-2">
-      <Dialog.Root>
+      <Dialog.Root bind:open>
         <Dialog.Trigger
           class={cn("cursor-pointer", buttonVariants({ variant: "outline" }))}
           >Create schedule</Dialog.Trigger
