@@ -124,7 +124,7 @@
           <Form.Control>
             {#snippet children({ props })}
               <Form.Label class="font-bold text-gray-300"
-                >Monitor Type</Form.Label
+                >Protocol</Form.Label
               >
               <Select.Root
                 type="single"

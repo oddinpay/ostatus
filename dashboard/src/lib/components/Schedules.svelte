@@ -22,6 +22,7 @@
 
   let value = $state("i4");
   let name = $state("");
+  let service = $state("");
 
   let bioLimit = useCharacterLimit(180, "");
 
@@ -31,6 +32,8 @@
 
   const selected = $derived(incidents.find((i) => i.value === value));
   $effect(() => {
+    const name = service.trim().toUpperCase() || "{{SERVICE}}";
+
     if (value === "i2") {
       bioLimit.value =
         "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
@@ -39,7 +42,7 @@
     } else if (value === "i3") {
       bioLimit.value = "The scheduled maintenance has been cancelled.";
     } else {
-      bioLimit.value = "";
+      bioLimit.value = `${name} has an upcoming scheduled maintenance. We will provide updates as necessary.`;
     }
   });
 
@@ -103,12 +106,10 @@
           <form onsubmit={handleOnSubmit} class="space-y-5">
             <div class="space-y-4">
               <div class="space-y-2">
-                <Label class="font-bold text-gray-300" for="{id}-title"
-                  >Title</Label
-                >
+                <Label class="font-bold text-gray-300" for="title">Title</Label>
                 <Input
                   class=" border-zinc-700 text-white"
-                  id="{id}-title"
+                  id="title"
                   placeholder="Scheduled maintenance"
                   type="text"
                   bind:value={name}
@@ -116,12 +117,25 @@
               </div>
 
               <div class="space-y-2">
-                <Label class="font-bold text-gray-300" for="{id}-status"
+                <Label class="font-bold text-gray-300" for="service"
+                  >Service</Label
+                >
+                <Input
+                  class=" border-zinc-700 text-white"
+                  id="service"
+                  placeholder="API"
+                  type="text"
+                  bind:value={service}
+                />
+              </div>
+
+              <div class="space-y-2">
+                <Label class="font-bold text-gray-300" for="status"
                   >Status</Label
                 >
                 <Select.Root type="single" bind:value>
                   <Select.Trigger
-                    {id}
+                    id="status"
                     class="w-full cursor-pointer border-zinc-700 text-white [&_svg:not([class*='text-'])]:text-zinc-200 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0"
                   >
                     {#if selected}
