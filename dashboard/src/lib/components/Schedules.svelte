@@ -190,8 +190,8 @@
                 <Form.Field {form} name="status">
                   <Form.Control>
                     {#snippet children({ props })}
-                      <Label class="font-bold text-gray-300" for="status"
-                        >Status</Label
+                      <Form.Label class="font-bold text-gray-300" for="status"
+                        >Status</Form.Label
                       >
                       <Select.Root type="single" bind:value={$formData.status}>
                         <Select.Trigger
