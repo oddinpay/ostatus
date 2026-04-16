@@ -37,7 +37,7 @@
   );
 
   $effect(() => {
-    const serviceName = service.trim();
+    const serviceName = service.trim().toUpperCase();
     if (serviceName) {
       name = `Scheduled maintenance for ${serviceName}`;
     } else {
