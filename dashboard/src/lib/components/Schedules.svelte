@@ -21,10 +21,10 @@
   const id = $props.id();
 
   const incidents = [
-    { class: "text-emerald-600", label: "Completed", value: "i1" },
-    { class: "text-yellow-500", label: "In Progress", value: "i2" },
-    { class: "text-red-500", label: "Cancelled", value: "i3" },
-    { class: "text-gray-500", label: "Scheduled", value: "i4" },
+    { class: "text-gray-500", label: "Scheduled", value: "scheduled" },
+    { class: "text-yellow-500", label: "In Progress", value: "in-progress" },
+    { class: "text-emerald-600", label: "Completed", value: "completed" },
+    { class: "text-red-500", label: "Cancelled", value: "cancelled" },
   ] as const;
 
   let open = $state(false);
@@ -36,18 +36,18 @@
     e.preventDefault();
   }
 
-  let value = $state("i4");
+  let value = $state("scheduled");
 
   const selected = $derived(incidents.find((i) => i.value === value));
   $effect(() => {
     const name = service.trim().toUpperCase() || "API";
 
-    if (value === "i2") {
+    if (value === "in-progress") {
       bioLimit.value =
         "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
-    } else if (value === "i1") {
+    } else if (value === "completed") {
       bioLimit.value = "The scheduled maintenance has been completed.";
-    } else if (value === "i3") {
+    } else if (value === "cancelled") {
       bioLimit.value = "The scheduled maintenance has been cancelled.";
     } else {
       bioLimit.value = `${name} has an upcoming scheduled maintenance. We will provide updates as necessary.`;
@@ -55,7 +55,7 @@
   });
 
   // Check if the input should be disabled
-  const isLocked = $derived(value === "i2" || value === "i1");
+  const isLocked = $derived(value === "in-progress" || value === "completed");
 
   const form = superForm(page.data.form, {
     id: "create-schedule",
@@ -164,7 +164,7 @@
                 <Label class="font-bold text-gray-300" for="status"
                   >Status</Label
                 >
-                <Select.Root type="single" bind:value>
+                <Select.Root type="single" bind:value={$formData.status}>
                   <Select.Trigger
                     id="status"
                     class="w-full cursor-pointer border-zinc-700 text-white [&_svg:not([class*='text-'])]:text-zinc-200 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0"
