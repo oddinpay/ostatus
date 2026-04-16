@@ -38,7 +38,7 @@
 
   let value = $state("scheduled");
 
-  const selected = $derived(incidents.find((i) => i.value === value));
+  const selected = $derived(incidents.find((i) => i.value === $formData.status));
   $effect(() => {
     const name = service.trim().toUpperCase() || "API";
 
