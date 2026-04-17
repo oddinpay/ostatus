@@ -87,7 +87,8 @@
   const isLocked = $derived(
     $formData.status === "in_progress" ||
       $formData.status === "completed" ||
-      $formData.status === "cancelled",
+      $formData.status === "cancelled" ||
+      $formData.status === "scheduled",
   );
 
   $effect(() => {
