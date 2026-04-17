@@ -38,11 +38,12 @@
 
   $effect(() => {
     const serviceName = service.trim().toUpperCase();
-    if (serviceName) {
-      name = `Scheduled maintenance for ${serviceName}`;
-    } else {
-      name = "Scheduled maintenance for API";
-    }
+    name = serviceName
+      ? `Scheduled maintenance for ${serviceName}`
+      : "Scheduled maintenance for API";
+
+    $formData.title = name;
+    $formData.service = service;
   });
 
   $effect(() => {
