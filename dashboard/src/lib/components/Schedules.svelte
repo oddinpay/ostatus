@@ -89,6 +89,10 @@
       $formData.status === "completed" ||
       $formData.status === "cancelled",
   );
+
+  $effect(() => {
+    $formData.note = bioLimit.value;
+  });
 </script>
 
 {#snippet status(item: (typeof incidents)[number])}
@@ -227,12 +231,13 @@
               <div class="space-y-2">
                 <Form.Field {form} name="note">
                   <Form.Control>
-                    {#snippet children()}
+                    {#snippet children({ props })}
                       <div class="*:not-first:mt-2">
                         <Label class="font-bold text-gray-300" for="note"
                           >Note</Label
                         >
                         <Textarea
+                          {...props}
                           id="note"
                           class=" border-zinc-700 text-white"
                           bind:value={bioLimit.value}
