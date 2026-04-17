@@ -199,6 +199,12 @@
                       <Form.Label class="font-bold text-gray-300" for="status"
                         >Status</Form.Label
                       >
+
+                      <input
+                        type="hidden"
+                        name="status"
+                        bind:value={$formData.status}
+                      />
                       <Select.Root type="single" bind:value={$formData.status}>
                         <Select.Trigger
                           {...props}
