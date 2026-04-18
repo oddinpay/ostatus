@@ -23,7 +23,7 @@
   let signin = "https://oddinpay.com/signin";
   let signup = "https://oddinpay.com/signup";
   let slug = "https://oddinpay.com";
-  let logo = "oddin status";
+  let logo = "ostatus";
   let ready = $state(false);
   const badge = "Last updated";
 
