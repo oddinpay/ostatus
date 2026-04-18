@@ -4,6 +4,14 @@ import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { TableAggregate } from "@convex-dev/aggregate";
 
+export const monitorAggregate = new TableAggregate<{
+  Key: string;
+  DataModel: DataModel;
+  TableName: "schedules";
+}>(components.monitorCount, {
+  sortKey: (doc) => doc.service,
+});
+
 export const post = mutation({
   args: {
     apiKey: v.string(),
