@@ -12,7 +12,7 @@
     <div class="footer-left">
       <div class="logo gap-2">
         <a
-          href="https://github.com/oddinpay/oddin-status"
+          href="https://github.com/oddinpay/ostatus"
           target="_blank"
           rel="noopener noreferrer">{brand}</a
         >
