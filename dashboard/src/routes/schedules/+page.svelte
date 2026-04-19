@@ -23,11 +23,12 @@
   let currentTab = "tab-3";
 
   let totalCount = $state(0);
-  const monitorCount = useQuery(api.schedules.count, {});
+  const scheduleCount = useQuery(api.schedules.count, {});
+  const statusCounts = useQuery(api.schedules.getStatusCounts, {});
 
   $effect(() => {
-    if (monitorCount.data !== undefined) {
-      totalCount = monitorCount.data;
+    if (scheduleCount.data !== undefined) {
+      totalCount = scheduleCount.data;
     } else {
       totalCount = 0;
     }
@@ -138,13 +139,13 @@
 
             <Gauge
               colors={{
-                primary: "stroke-red-700",
-                secondary: "stroke-red-200",
+                primary: "stroke-yellow-700",
+                secondary: "stroke-yellow-200",
               }}
               class="text-white"
               show_value
               size="lg"
-              value={totalCount}
+              value={statusCounts.data?.inprogress ?? 0}
             />
           </TabsContent>
         </div>
@@ -156,6 +157,17 @@
             <p class="text-base font-extralight text-zinc-200">
               Upcoming Schedules
             </p>
+
+            <Gauge
+              colors={{
+                primary: "stroke-gray-700",
+                secondary: "stroke-gray-200",
+              }}
+              class="text-white"
+              show_value
+              size="lg"
+              value={statusCounts.data?.scheduled ?? 0}
+            />
           </TabsContent>
         </div>
       </div>

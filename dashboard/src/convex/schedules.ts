@@ -57,6 +57,16 @@ export const count = query({
   },
 });
 
+export const getStatusCounts = query({
+  handler: async (ctx) => {
+    const all = await ctx.db.query("schedules").collect();
+    return {
+      inprogress: all.filter(s => s.status === "inprogress").length,
+      scheduled: all.filter(s => s.status === "scheduled").length,
+      total: all.length
+    };
+  }
+});
 
 export const backfill = mutation({
   handler: async (ctx) => {
