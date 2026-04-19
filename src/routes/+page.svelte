@@ -15,7 +15,7 @@
   import timer from "$lib/timer";
   import { env } from "$env/dynamic/public";
   import { useQuery } from "convex-svelte";
-  import {api} from "../convex/_generated/api"
+  import { api } from "../convex/_generated/api";
   import { page } from "$app/state";
 
   const query = useQuery(api.site.get);
@@ -876,8 +876,10 @@
               <a href={site.slug} target="_blank" rel="noopener noreferrer">
                 {#if page.url.hostname === "status.oddinpay.com"}
                   {logo}
-                {:else}
+                {:else if site.textLogo}
                   {site.textLogo}
+                {:else}
+                  {logo}
                 {/if}
               </a>
             {/each}
