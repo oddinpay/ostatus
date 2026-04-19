@@ -61,8 +61,8 @@ export const getStatusCounts = query({
   handler: async (ctx) => {
     const all = await ctx.db.query("schedules").collect();
     return {
-      inprogress: all.filter(s => s.status === "inprogress").length,
-      scheduled: all.filter(s => s.status === "scheduled").length,
+      inprogress: all.filter(s => s.status === "Inprogress").length,
+      scheduled: all.filter(s => s.status === "Scheduled").length,
       total: all.length
     };
   }
