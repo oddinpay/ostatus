@@ -471,8 +471,6 @@
     // },
   ];
 
-  $inspect(schedulesQuery.data);
-
   const statusPriority = new Map<Indicator, number>([
     [Indicators.Completed, 0],
     [Indicators.Resolved, 0],
@@ -491,83 +489,6 @@
       );
     });
   });
-
-  // let maintenances: Maintenance[] = [
-  // {
-  //   service: "API 2",
-  //   entries: [
-  //     {
-  //       time: "Sep 22, 2025 13:05 UTC",
-  //       status: Indicators.Scheduled,
-  //       description:
-  //         "We are investigating reports of increased errors on API.",
-  //     },
-  //     {
-  //       time: "Sep 22, 2025 12:45 UTC",
-  //       status: Indicators.Completed,
-  //       description:
-  //         "We are investigating reports of increased errors on API.",
-  //     },
-  //     {
-  //       time: "Sep 22, 2025 20:14 UTC",
-  //       status: Indicators.Inprogress,
-  //       description:
-  //         "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
-  //     },
-  //   ],
-  // },
-  // {
-  //   service: "API errors",
-  //   entries: [
-  //     {
-  //       time: "Sep 22, 2025 13:05 UTC",
-  //       status: Indicators.Scheduled,
-  //       description:
-  //         "We are investigating reports of increased errors on API.",
-  //     },
-  //     {
-  //       time: "Sep 22, 2025 12:45 UTC",
-  //       status: Indicators.Inprogress,
-  //       description:
-  //         "We are investigating reports of increased errors on API.",
-  //     },
-  //     {
-  //       time: "Sep 22, 2025 20:14 UTC",
-  //       status: Indicators.Completed,
-  //       description:
-  //         "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
-  //     },
-  //   ],
-  // },
-  // {
-  //   service: "Shop errors",
-  //   entries: [
-  //     {
-  //       time: "Sep 22, 2025 13:05 UTC",
-  //       status: Indicators.Scheduled,
-  //       description:
-  //         "We are investigating reports of increased errors on Shop.",
-  //     },
-  //     {
-  //       time: "Sep 23, 2025 12:45 UTC",
-  //       status: Indicators.Inprogress,
-  //       description:
-  //         "We are investigating reports of increased errors on Shop.",
-  //     },
-  //   ],
-  // },
-  // {
-  //   service: "Site errors",
-  //   entries: [
-  //     {
-  //       time: "Sep 22, 2025 13:05 UTC",
-  //       status: Indicators.Scheduled,
-  //       description:
-  //         "We are investigating reports of increased errors on Shop.",
-  //     },
-  //   ],
-  // },
-  // ];
 
   let maintenances: Maintenance[] = $derived.by(() => {
     if (!schedulesQuery.data) return [];
