@@ -916,7 +916,7 @@
     <div
       class="mx-auto max-w-screen-2xl grid grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)_200px] items-start"
     >
-      <aside></aside>
+      <div></div>
 
       <!-- MAIN CONTENT -->
       <main class="min-w-0">
