@@ -914,10 +914,8 @@
     </header>
     <div id="navBackdrop" class="hidden fixed inset-0 bg-black/40 z-40"></div>
     <div
-      class="mx-auto max-w-screen-2xl grid grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)_200px] items-start"
+      class="mx-auto max-w-screen-2xl grid grid-cols-1 xl:grid-cols-[180px_minmax(0,2fr)_200px] items-start"
     >
-      <div></div>
-
       <!-- MAIN CONTENT -->
       <main class="min-w-0">
         <div class="relative p-5">
