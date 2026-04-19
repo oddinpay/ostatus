@@ -916,19 +916,6 @@
     <div
       class="mx-auto max-w-screen-2xl grid grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)_200px] items-start"
     >
-      <!-- LEFT NAV -->
-      <aside
-        id="leftNav"
-        class="relative xl:sticky xl:top-14 xl:h-221.25 overflow-auto border-gray-100 px-4 py-6 hidden xl:block"
-      >
-        <div class="absolute right-0 top-0 h-full w-1 bg-gray-100">
-          <span
-            aria-hidden="true"
-            class="absolute bottom-[20em] -translate-y-1/2 h-10 w-full bg-linear-to-b from-green-400 via-green-600 to-green-500 rounded-md shadow-md"
-          ></span>
-        </div>
-      </aside>
-
       <!-- MAIN CONTENT -->
       <main class="min-w-0">
         <div class="relative p-5">
@@ -1509,23 +1496,6 @@
           <div aria-hidden="true" class="h-37.5"></div>
         </div>
       </main>
-
-      <!-- RIGHT ToC -->
-      <aside
-        class="xl:sticky xl:h-[calc(100vh-56px)] top-14 px-6 py-8 border-l border-black/5 z-30"
-      >
-        <div class="text-xs uppercase tracking-wider text-gray-500 mb-4"></div>
-        <div
-          id="toc-scroll"
-          class="relative h-[calc(100%-1rem)] overflow-auto pr-2"
-        >
-          <span
-            id="toc-rail"
-            class="pointer-events-none absolute left-5 w-0.5 bg-linear-to-b from-black/5 via-black/5 to-black/5"
-          ></span>
-          <ul id="toc-list" class="relative pl-7 space-y-2"></ul>
-        </div>
-      </aside>
     </div>
   </div>
 
