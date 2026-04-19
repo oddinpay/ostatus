@@ -1,6 +1,6 @@
 <script>
   const year = new Date().getFullYear();
-  const brand = "OSTATUS";
+  const brand = "OHSTATUS";
   const company = "ODDINPAY";
   const entity = "LLC";
   export let privacy;
@@ -12,7 +12,7 @@
     <div class="footer-left">
       <div class="logo gap-2">
         <a
-          href="https://github.com/oddinpay/ostatus"
+          href="https://github.com/oddinpay/ohstatus"
           target="_blank"
           rel="noopener noreferrer">{brand}</a
         >

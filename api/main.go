@@ -1386,14 +1386,14 @@ func main() {
 	}
 
 	go func() {
-		slog.Info("Ostatus API server running", "url", fmt.Sprintf("http://%s:%s", Host, Port))
+		slog.Info("Ohstatus API server running", "url", fmt.Sprintf("http://%s:%s", Host, Port))
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			slog.Error("Server failed to start", "error", err)
 			stop()
 		}
 	}()
 
-	slog.Info("Ostatus is now active and monitoring services.")
+	slog.Info("Ohstatus is now active and monitoring services.")
 
 	<-ctx.Done()
 

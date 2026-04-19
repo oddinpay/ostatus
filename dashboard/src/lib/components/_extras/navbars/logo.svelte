@@ -7,4 +7,4 @@
   </g>
 </svg>
 
-<span class="sr-only">ostatus</span>
+<span class="sr-only">ohstatus</span>

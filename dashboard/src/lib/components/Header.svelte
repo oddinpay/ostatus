@@ -8,7 +8,7 @@
   } from "$lib/components/_extras/navbars";
   import { Popover, PopoverTrigger } from "$lib/components/ui/popover";
 
-  const title = "Ostatus - Dashboard";
+  const title = "Ohstatus - Dashboard";
 </script>
 
 <svelte:head>

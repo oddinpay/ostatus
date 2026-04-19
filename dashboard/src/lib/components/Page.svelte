@@ -187,7 +187,7 @@
                       >
                       <Input
                         class="border-zinc-700 text-white"
-                        placeholder="ostatus"
+                        placeholder="ohstatus"
                         type="text"
                         {...props}
                         bind:value={$formData.textLogo}
@@ -257,7 +257,7 @@
   </Empty.Content>
   <Button variant="link" class="text-gray-400" size="sm">
     <a
-      href="https://github.com/oddinpay/ostatus"
+      href="https://github.com/oddinpay/ohstatus"
       target="_blank"
       rel="noopener noreferrer"
     >

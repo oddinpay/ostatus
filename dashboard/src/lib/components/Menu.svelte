@@ -182,7 +182,7 @@
                 >
                 <Input
                   class="border-zinc-700 bg-transparent text-white"
-                  placeholder="ostatus"
+                  placeholder="ohstatus"
                   type="text"
                   {...props}
                   bind:value={$formData.textLogo}

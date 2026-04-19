@@ -1,4 +1,4 @@
-# ostatus
+# ohstatus
 
 🚨 Beautiful status page & uptime monitor. Ready for production out of the box. Easily deploy to Cloudflare in just one click.**
 
@@ -12,8 +12,8 @@
 - Real-time API **(SSE).**
 - Lightweight **(~140 KB memory per monitor)**.
 
-## More about ostatus
+## More about ohstatus
 
 Built for serverless environments like Cloudflare workers, ensures high availability and real-time monitoring for production workloads and critical services.
 
-The ostatus dashboard runs locally, decoupled from the serverless environment. By communicating securely through Cloudflare D1, your admin interface remains completely private and never exposed to the public internet.
+The ohstatus dashboard runs locally, decoupled from the serverless environment. By communicating securely through Cloudflare D1, your admin interface remains completely private and never exposed to the public internet.
