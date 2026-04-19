@@ -17,6 +17,7 @@
   import { useQuery } from "convex-svelte";
   import { api } from "../convex/_generated/api";
   import { page } from "$app/state";
+  import Loader from "$lib/components/Loader.svelte";
 
   const query = useQuery(api.site.get);
   const schedulesQuery = useQuery(api.schedules.get);
@@ -492,115 +493,176 @@
     });
   });
 
-  let maintenances: Maintenance[] = [
-    // {
-    //   service: "API 2",
-    //   entries: [
-    //     {
-    //       time: "Sep 22, 2025 13:05 UTC",
-    //       status: Indicators.Scheduled,
-    //       description:
-    //         "We are investigating reports of increased errors on API.",
-    //     },
-    //     {
-    //       time: "Sep 22, 2025 12:45 UTC",
-    //       status: Indicators.Completed,
-    //       description:
-    //         "We are investigating reports of increased errors on API.",
-    //     },
-    //     {
-    //       time: "Sep 22, 2025 20:14 UTC",
-    //       status: Indicators.Inprogress,
-    //       description:
-    //         "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
-    //     },
-    //   ],
-    // },
-    // {
-    //   service: "API errors",
-    //   entries: [
-    //     {
-    //       time: "Sep 22, 2025 13:05 UTC",
-    //       status: Indicators.Scheduled,
-    //       description:
-    //         "We are investigating reports of increased errors on API.",
-    //     },
-    //     {
-    //       time: "Sep 22, 2025 12:45 UTC",
-    //       status: Indicators.Inprogress,
-    //       description:
-    //         "We are investigating reports of increased errors on API.",
-    //     },
-    //     {
-    //       time: "Sep 22, 2025 20:14 UTC",
-    //       status: Indicators.Completed,
-    //       description:
-    //         "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
-    //     },
-    //   ],
-    // },
-    // {
-    //   service: "Shop errors",
-    //   entries: [
-    //     {
-    //       time: "Sep 22, 2025 13:05 UTC",
-    //       status: Indicators.Scheduled,
-    //       description:
-    //         "We are investigating reports of increased errors on Shop.",
-    //     },
-    //     {
-    //       time: "Sep 23, 2025 12:45 UTC",
-    //       status: Indicators.Inprogress,
-    //       description:
-    //         "We are investigating reports of increased errors on Shop.",
-    //     },
-    //   ],
-    // },
-    // {
-    //   service: "Site errors",
-    //   entries: [
-    //     {
-    //       time: "Sep 22, 2025 13:05 UTC",
-    //       status: Indicators.Scheduled,
-    //       description:
-    //         "We are investigating reports of increased errors on Shop.",
-    //     },
-    //   ],
-    // },
-  ];
+  // let maintenances: Maintenance[] = [
+  // {
+  //   service: "API 2",
+  //   entries: [
+  //     {
+  //       time: "Sep 22, 2025 13:05 UTC",
+  //       status: Indicators.Scheduled,
+  //       description:
+  //         "We are investigating reports of increased errors on API.",
+  //     },
+  //     {
+  //       time: "Sep 22, 2025 12:45 UTC",
+  //       status: Indicators.Completed,
+  //       description:
+  //         "We are investigating reports of increased errors on API.",
+  //     },
+  //     {
+  //       time: "Sep 22, 2025 20:14 UTC",
+  //       status: Indicators.Inprogress,
+  //       description:
+  //         "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
+  //     },
+  //   ],
+  // },
+  // {
+  //   service: "API errors",
+  //   entries: [
+  //     {
+  //       time: "Sep 22, 2025 13:05 UTC",
+  //       status: Indicators.Scheduled,
+  //       description:
+  //         "We are investigating reports of increased errors on API.",
+  //     },
+  //     {
+  //       time: "Sep 22, 2025 12:45 UTC",
+  //       status: Indicators.Inprogress,
+  //       description:
+  //         "We are investigating reports of increased errors on API.",
+  //     },
+  //     {
+  //       time: "Sep 22, 2025 20:14 UTC",
+  //       status: Indicators.Completed,
+  //       description:
+  //         "From 13:05–19:15 UTC, we saw elevated errors on API. This is now resolved.",
+  //     },
+  //   ],
+  // },
+  // {
+  //   service: "Shop errors",
+  //   entries: [
+  //     {
+  //       time: "Sep 22, 2025 13:05 UTC",
+  //       status: Indicators.Scheduled,
+  //       description:
+  //         "We are investigating reports of increased errors on Shop.",
+  //     },
+  //     {
+  //       time: "Sep 23, 2025 12:45 UTC",
+  //       status: Indicators.Inprogress,
+  //       description:
+  //         "We are investigating reports of increased errors on Shop.",
+  //     },
+  //   ],
+  // },
+  // {
+  //   service: "Site errors",
+  //   entries: [
+  //     {
+  //       time: "Sep 22, 2025 13:05 UTC",
+  //       status: Indicators.Scheduled,
+  //       description:
+  //         "We are investigating reports of increased errors on Shop.",
+  //     },
+  //   ],
+  // },
+  // ];
 
-  maintenances.forEach((m) => {
-    const hasInProgress = m.entries.some(
-      (e) => e.status === Indicators.Inprogress,
-    );
-    const hasCompleted = m.entries.some(
-      (e) => e.status === Indicators.Completed,
-    );
-    const hasCancelled = m.entries.some(
-      (e) => e.status === Indicators.Cancelled,
-    );
+  let maintenances: Maintenance[] = $derived.by(() => {
+    if (!schedulesQuery.data) return [];
 
-    m.entries = m.entries
-      .filter((e) => {
-        const isScheduledWhileInProgress =
-          hasInProgress &&
-          !hasCancelled &&
-          !hasCompleted &&
-          e.status === Indicators.Scheduled;
+    const rawList = schedulesQuery.data.map((sched) => {
+      const statusKey = sched.status as keyof typeof Indicators;
+      const indicator = Indicators[statusKey];
+      return {
+        service: sched.service,
+        entries: [
+          {
+            time: new Date().toLocaleString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              timeZone: "UTC",
+              timeZoneName: "short",
+            }),
+            description: sched.note,
+            status: indicator as MaintenanceEntry["status"],
+          },
+        ],
+      };
+    });
 
-        const isCompletedWhileCancelled =
-          hasCancelled &&
-          (e.status === Indicators.Completed ||
-            e.status === Indicators.Inprogress);
-
-        return !isScheduledWhileInProgress && !isCompletedWhileCancelled;
-      })
-      .sort(
-        (a, b) =>
-          (statusPriority.get(a.status) ?? Infinity) -
-          (statusPriority.get(b.status) ?? Infinity),
+    rawList.forEach((m) => {
+      const hasInProgress = m.entries.some(
+        (e) => e.status === Indicators.Inprogress,
       );
+      const hasCompleted = m.entries.some(
+        (e) => e.status === Indicators.Completed,
+      );
+      const hasCancelled = m.entries.some(
+        (e) => e.status === Indicators.Cancelled,
+      );
+
+      m.entries = m.entries
+        .filter((e) => {
+          const isScheduledWhileInProgress =
+            hasInProgress &&
+            !hasCancelled &&
+            !hasCompleted &&
+            e.status === Indicators.Scheduled;
+
+          const isCompletedWhileCancelled =
+            hasCancelled &&
+            (e.status === Indicators.Completed ||
+              e.status === Indicators.Inprogress);
+
+          return !isScheduledWhileInProgress && !isCompletedWhileCancelled;
+        })
+        .sort(
+          (a, b) =>
+            (statusPriority.get(a.status) ?? Infinity) -
+            (statusPriority.get(b.status) ?? Infinity),
+        );
+    });
+    return rawList;
   });
+
+  // maintenances.forEach((m) => {
+  //   const hasInProgress = m.entries.some(
+  //     (e) => e.status === Indicators.Inprogress,
+  //   );
+  //   const hasCompleted = m.entries.some(
+  //     (e) => e.status === Indicators.Completed,
+  //   );
+  //   const hasCancelled = m.entries.some(
+  //     (e) => e.status === Indicators.Cancelled,
+  //   );
+
+  //   m.entries = m.entries
+  //     .filter((e) => {
+  //       const isScheduledWhileInProgress =
+  //         hasInProgress &&
+  //         !hasCancelled &&
+  //         !hasCompleted &&
+  //         e.status === Indicators.Scheduled;
+
+  //       const isCompletedWhileCancelled =
+  //         hasCancelled &&
+  //         (e.status === Indicators.Completed ||
+  //           e.status === Indicators.Inprogress);
+
+  //       return !isScheduledWhileInProgress && !isCompletedWhileCancelled;
+  //     })
+  //     .sort(
+  //       (a, b) =>
+  //         (statusPriority.get(a.status) ?? Infinity) -
+  //         (statusPriority.get(b.status) ?? Infinity),
+  //     );
+  // });
 
   type AccordionItem = {
     value: string;
