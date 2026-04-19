@@ -1,8 +1,6 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button/index.js";
   import Buttong from "$lib/components/Buttong.svelte";
-
-  import spinner from "$lib/assets/spinner.svg";
   import { Skeleton } from "$lib/components/ui/skeleton/index.js";
   import Footer from "$lib/components/Footer.svelte";
   import {
