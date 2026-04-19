@@ -916,11 +916,7 @@
     <div
       class="mx-auto max-w-screen-2xl grid grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)_200px] items-start"
     >
-      <!-- LEFT NAV -->
-      <aside
-        id="leftNav"
-        class="relative xl:sticky xl:top-14 xl:h-221.25 overflow-auto border-gray-100 px-4 py-6 hidden xl:block"
-      ></aside>
+      <aside></aside>
 
       <!-- MAIN CONTENT -->
       <main class="min-w-0">
