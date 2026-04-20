@@ -303,7 +303,6 @@ func getRecentDates() []string {
 }
 
 // -------------------- BROADCAST HUB --------------------
-
 type Hub struct {
 	clients atomic.Value
 	cache   map[string]StatusPayload
@@ -373,7 +372,6 @@ func slaId() string {
 }
 
 // -------------------- PROBES --------------------
-
 func probeHTTP(re HttpRequest) ProbeResult {
 
 	url := fmt.Sprintf("%s://%s", re.Protocol, re.Host)
