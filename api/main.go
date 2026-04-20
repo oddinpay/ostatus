@@ -146,7 +146,8 @@ func fetchTargets(ctx context.Context) []HttpRequest {
 			Name:     u.Name,
 			Protocol: u.Protocol,
 			Host:     u.Host,
-			Interval: time.Duration(u.Interval) * time.Second,
+			// Interval: time.Duration(u.Interval) * time.Second,
+			Interval:  1 * time.Second,
 		})
 	}
 
