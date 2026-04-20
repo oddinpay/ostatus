@@ -67,7 +67,6 @@ const (
 )
 
 // ----------- DB / CACHE CONNECTIONS -----------
-
 var (
 	jwt              = os.Getenv("NATS_JWT")
 	seed             = os.Getenv("NATS_SEED")
@@ -98,7 +97,6 @@ var (
 )
 
 // -------------------- GLOBAL SLA MAP --------------------
-
 var targetCache = struct {
 	sync.RWMutex
 	targets []HttpRequest
@@ -179,7 +177,6 @@ func refreshCache(ctx context.Context) {
 }
 
 // -------------------- MODELS --------------------
-
 type HttpRequest struct {
 	ID       string        `json:"id,omitempty"`
 	Host     string        `json:"host,omitempty"`
@@ -889,7 +886,6 @@ func hydrateSnapshotFromKV(ctx context.Context) {
 }
 
 // -------------------- SSE HANDLER --------------------
-
 type UnboundedChan[T any] struct {
 	InCh  chan T
 	OutCh chan T
