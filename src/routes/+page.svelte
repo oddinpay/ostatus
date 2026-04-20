@@ -299,23 +299,11 @@
       ...monitors.map((monitor) => asStatus(monitor.status)),
     ];
 
-    if (browser && allStatuses.length === 0) {
-      // const stored = statusStore.get();
-      // statusStore.set([]);
-      // return stored ? stored[0] : undefined;
-    }
-
     const computed = pickStatus(allStatuses);
-    // const storedStatuses = statusStore.get() ?? [];
-    // const currentStoredStatus = storedStatuses[0];
 
     if (computed !== computed) {
-      // && currentStoredStatus
-      // statusStore.set([computed]);
       return computed;
     }
-
-    // ?? currentStoredStatus
 
     return computed;
   });
@@ -323,24 +311,6 @@
   const dayIndex = Math.floor(
     (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
   );
-
-  function getStartLabelForDays(days: number): string {
-    const tempStart = new Date(end);
-    tempStart.setDate(end.getDate() - days);
-    return tempStart.toLocaleString(undefined, {
-      month: "short",
-      day: "numeric",
-    });
-  }
-
-  const startLabel90 = getStartLabelForDays(89);
-  const startLabel60 = getStartLabelForDays(59);
-  const startLabel30 = getStartLabelForDays(29);
-  const startLabel15 = getStartLabelForDays(14);
-  const endLabel = end.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
 
   const Indicators = {
     Resolved: {
@@ -375,7 +345,6 @@
     },
   } as const;
 
-  // Each value inside Indicators
   type Indicator = (typeof Indicators)[keyof typeof Indicators];
 
   interface IncidentEntry {
@@ -420,32 +389,7 @@
     [Indicators.Cancelled, 0],
   ]);
 
-  type AccordionItem = {
-    value: string;
-    date: string;
-    title: string;
-    content: string;
-    PageTitle: string;
-    cover: string;
-    active: boolean;
-    features: string[];
-  };
-
   // --- types ---
-  type AccordionItemNoVal = Omit<AccordionItem, "value">;
-
-  interface RoadmapProps {
-    sections?: AccordionItemNoVal[];
-    badge?: string;
-    status?: string;
-    logo?: string;
-    slug?: string;
-    cover?: string;
-    title?: string;
-    description?: string;
-    features?: string[];
-  }
-
   let activeTab = $state("tab-1");
   let direction = $state<"right" | "left">("right");
 
