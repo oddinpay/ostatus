@@ -1339,8 +1339,7 @@ func main() {
 	if err != nil {
 		kv, err = js.CreateKeyValue(context.Background(), jetstream.KeyValueConfig{
 			Bucket:   "BEEP_STATUS",
-			MaxBytes: 1024 * 1024 * 50, // 50MB
-			History:  5,
+			MaxBytes: 2 * 1024 * 1024 * 1024,
 			Storage:  jetstream.FileStorage,
 		})
 
