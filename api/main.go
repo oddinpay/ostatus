@@ -1130,8 +1130,6 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 					"uptime90":           freshSLA["uptime90"],
 				}
 
-				s.Reset()
-
 				if oldHist, ok := oldPayload.SLA["history"].([]any); ok {
 					payload.SLA["history"] = append([]any{newSnapshot}, oldHist...)
 				} else {
