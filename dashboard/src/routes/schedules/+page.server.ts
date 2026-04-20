@@ -39,7 +39,7 @@ export const actions: Actions = {
 
       await convex.mutation(api.schedules.post, {
         apiKey,
-        parentId: typeid("sc"),
+        parentId: typeid("sc").toString(),
         title: form.data.title,
         service: form.data.service,
         status: form.data.status,
