@@ -1003,7 +1003,6 @@ func sendUpdateToConn(ctx context.Context, conn *sse.Conn, update map[string]Sta
 }
 
 // -------------------- SLA RESET HANDLER --------------------
-
 func ResetHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != MethodGet {
 		http.Error(w, "Method not allowed", StatusMethodNotAllowed)
