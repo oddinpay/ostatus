@@ -157,20 +157,44 @@
   }
 
   function parseDate(dateString: string | Date): Date {
-    if (dateString instanceof Date) return dateString;
+    if (dateString instanceof Date) {
+      return new Date(
+        Date.UTC(
+          dateString.getUTCFullYear(),
+          dateString.getUTCMonth(),
+          dateString.getUTCDate(),
+        ),
+      );
+    }
+
     if (typeof dateString !== "string") return new Date(String(dateString));
+
     const dateOnly = dateString.split(" ")[0];
     const parts = dateOnly.split("/");
-    if (parts.length !== 3) return new Date(dateString);
-    const [day, month, year] = parts;
-    return new Date(`${year}-${month}-${day}`);
+
+    if (parts.length === 3) {
+      const [day, month, year] = parts.map((n) => parseInt(n, 10));
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    // Fallback for standard ISO strings
+    const fallback = new Date(dateString);
+    return new Date(
+      Date.UTC(
+        fallback.getUTCFullYear(),
+        fallback.getUTCMonth(),
+        fallback.getUTCDate(),
+      ),
+    );
   }
 
   function normalizeDates(rawDate: unknown): string[] {
     if (!rawDate) return [];
 
+    const toDateKey = (d: any) => parseDate(d).toISOString().split("T")[0];
+
     if (Array.isArray(rawDate)) {
-      return rawDate.map((d) => parseDate(d).toLocaleDateString());
+      return rawDate.map(toDateKey);
     }
 
     if (typeof rawDate === "string") {
@@ -178,10 +202,10 @@
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean)
-        .map((s) => parseDate(s).toLocaleDateString());
+        .map(toDateKey);
     }
 
-    return [parseDate(rawDate as Date | string).toLocaleDateString()];
+    return [toDateKey(rawDate)];
   }
 
   let mockData = $derived.by(() => {
@@ -213,7 +237,9 @@
         (_, i) => {
           const tempDate = new Date(start);
           tempDate.setUTCDate(start.getUTCDate() + i);
-          const key = tempDate.toLocaleDateString();
+
+          const key = tempDate.toISOString().split("T")[0];
+          
           const resolved = datesMap.get(key) ?? "default";
           return {
             date: tempDate,
