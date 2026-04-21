@@ -10,6 +10,7 @@ import (
 	"log"
 	"log/slog"
 	"maps"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -1200,16 +1201,29 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		gz.Close()
 
 		var updateErr error
-		if revision > 0 {
-			_, updateErr = kv.Update(ctx, name, buf.Bytes(), revision)
-		} else {
-			_, updateErr = kv.Create(ctx, name, buf.Bytes())
-		}
+		maxRetries := 10
+		for i := range maxRetries {
 
-		if updateErr == nil {
-			return
+			if revision > 0 {
+				_, updateErr = kv.Update(ctx, name, buf.Bytes(), revision)
+			} else {
+				_, updateErr = kv.Create(ctx, name, buf.Bytes())
+			}
+
+			if updateErr == nil {
+				return
+			}
+
+			waitTime := time.Duration(i+1) * 10 * time.Millisecond
+			jitter := time.Duration(rand.Intn(20)) * time.Millisecond
+
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(waitTime + jitter):
+				continue
+			}
 		}
-		time.Sleep(50 * time.Millisecond)
 	}
 }
 
