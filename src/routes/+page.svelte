@@ -1207,7 +1207,7 @@
                               </path>
                             </svg>
                           {:else if monitors.length === 0}
-                            No monitors available.
+                            No monitors available
                           {:else}
                             {#each monitors as status}
                               <div class="status-card">
