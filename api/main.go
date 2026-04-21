@@ -1348,6 +1348,7 @@ func main() {
 			Bucket:   "BEEP_STATUS",
 			MaxBytes: 2 * 1024 * 1024 * 1024,
 			Storage:  jetstream.FileStorage,
+			History:  5,
 		})
 
 		if err != nil {
