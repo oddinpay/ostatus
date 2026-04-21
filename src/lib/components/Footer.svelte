@@ -40,7 +40,7 @@
     position: relative;
     background: white;
     color: #1a1f36;
-    padding: 60px 40px 30px;
+    width: 100%;
     overflow: hidden;
     border-top: 1px solid #eee;
   }
@@ -60,6 +60,7 @@
     max-width: 1200px;
     margin: auto;
     display: flex;
+    padding: 60px 40px 30px;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
