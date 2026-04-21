@@ -40,6 +40,7 @@
     position: relative;
     background: white;
     color: #1a1f36;
+    padding: 60px 40px 30px;
     overflow: hidden;
     border-top: 1px solid #eee;
   }
@@ -56,6 +57,7 @@
   }
 
   .footer-content {
+    max-width: 1200px;
     margin: auto;
     display: flex;
     justify-content: space-between;
