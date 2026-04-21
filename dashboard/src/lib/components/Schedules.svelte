@@ -22,9 +22,9 @@
 
   const incidents = [
     { class: "text-gray-500", label: "Scheduled", value: "Scheduled" },
-    { class: "text-yellow-500", label: "In Progress", value: "Inprogress" },
-    { class: "text-emerald-600", label: "Completed", value: "Completed" },
-    { class: "text-red-500", label: "Cancelled", value: "Cancelled" },
+    // { class: "text-yellow-500", label: "In Progress", value: "Inprogress" },
+    // { class: "text-emerald-600", label: "Completed", value: "Completed" },
+    // { class: "text-red-500", label: "Cancelled", value: "Cancelled" },
   ] as const;
 
   let open = $state(false);
