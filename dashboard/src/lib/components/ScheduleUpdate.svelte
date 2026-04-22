@@ -83,6 +83,7 @@
     });
 
     const { form: formData, submitting, enhance } = form;
+    $formData.status = "Inprogress";
 
     const isLocked = $derived(
         $formData.status === "Inprogress" ||
