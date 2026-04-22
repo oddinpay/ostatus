@@ -29,7 +29,6 @@
   const scheduleCount = useQuery(api.schedules.count, {});
   const statusCounts = useQuery(api.schedules.getStatusCounts, {});
   let timer: ReturnType<typeof setTimeout>;
-  let unsubscribe: (() => void) | undefined;
 
   $effect(() => {
     if (scheduleCount.data !== undefined) {
