@@ -95,6 +95,7 @@
                   {...props}
                   bind:value={id}
                   readonly
+                  disabled
                 />
               {/snippet}
             </Form.Control>

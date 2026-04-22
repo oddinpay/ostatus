@@ -169,6 +169,7 @@
                                     placeholder="Scheduled maintenance for API"
                                     type="text"
                                     readonly
+                                    disabled
                                     {...props}
                                     bind:value={name}
                                 />
