@@ -199,9 +199,9 @@
                         return {
                             render: () => `
                 <div class="flex justify-center items-center">
-                  <span class="relative flex size-3">
+                  <span class="relative flex size-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 ${theme.ping}"></span>
-                    <span class="relative inline-flex rounded-full size-3 ${theme.base}"></span>
+                    <span class="relative inline-flex rounded-full size-2 ${theme.base}"></span>
                   </span>
                 </div>
               `,
