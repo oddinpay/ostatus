@@ -40,69 +40,6 @@
     import { api } from "../../convex/_generated/api";
     import { env } from "$env/dynamic/public";
     import { toast } from "svelte-sonner";
-    import { source } from "sveltekit-sse";
-    import { onMount, onDestroy } from "svelte";
-    import { browser } from "$app/environment";
-
-    const oddinHost = env.PUBLIC_SSE_HOST;
-    let unsubscribe: (() => void) | undefined;
-
-    type StatusType = "up" | "down" | "warn" | "default";
-
-    interface StatusEntry {
-        date: Date;
-        status: StatusType;
-    }
-
-    interface ApiData {
-        id?: string;
-        name?: string;
-        date?: string[];
-        state?: string[];
-        statuses: StatusEntry[];
-        uptime15: string;
-        uptime30: string;
-        uptime60: string;
-        uptime90: string;
-        __order?: number;
-    }
-
-    onMount(() => {
-        if (!browser) return;
-
-        const json = source(`https://${oddinHost}/v1/sse`)
-            .select("")
-            .json<ApiData>();
-
-        unsubscribe = json.subscribe((msg: any) => {
-            const probe = msg?.payload?.probe;
-            const sla = msg?.payload?.sla;
-            const index = msg?.index;
-
-            if (!probe?.id) return;
-
-            const id = probe.id;
-
-            if (probe.action?.[0] === "deleted") {
-                delete probeMap[id];
-                return;
-            }
-
-            probeMap[id] = {
-                ...probeMap[id],
-                ...probe,
-                uptime90: sla?.uptime90 ?? probeMap[id]?.uptime90 ?? "100.000%",
-                __order: index ?? probeMap[id]?.__order ?? Infinity,
-            };
-        });
-    });
-
-    onDestroy(() => {
-        unsubscribe?.();
-    });
-
-    type ProbeMap = Record<string, ApiData>;
-    let probeMap = $state<ProbeMap>({});
 
     const scheduleCount = useQuery(api.schedules.count, {});
     let totalCount = $state(0);
@@ -115,34 +52,37 @@
         }
     });
 
-    type Payment = {
+    type Schedule = {
         id: string;
         name: string;
+        status: string;
     };
 
     type ConvexMonitor = {
         _id: string;
         name: string;
+        status: string;
     };
 
-    type TableRow = Payment & Partial<ConvexMonitor>;
+    type TableRow = Schedule & Partial<ConvexMonitor>;
 
     const apiKey = env.PUBLIC_API_KEY;
     const schedule = useQuery(api.schedules.get, {
         apiKey,
     });
 
-    const data: Payment[] = [];
+    const data: Schedule[] = [];
     const allData = $derived<TableRow[]>([
         ...data,
         ...(schedule.data ?? []).map((m) => ({
             ...m,
             id: m._id,
             name: m.service,
+            status: m.status,
         })),
     ]);
 
-    const columns: ColumnDef<Payment>[] = [
+    const columns: ColumnDef<Schedule>[] = [
         {
             id: "select",
             header: ({ table }) =>
@@ -170,12 +110,7 @@
             accessorKey: "status",
             header: "Status",
             cell: ({ row }) => {
-                const id = row.original.id;
-                const currentProbe = probeMap[id];
-
-                const statusValue = Array.isArray(currentProbe?.state)
-                    ? currentProbe.state[0]
-                    : (currentProbe?.state ?? "default");
+                const statusValue = row.original.status;
 
                 const statusSnippet = createRawSnippet<[{ status: string }]>(
                     (getStatus) => {
@@ -183,15 +118,25 @@
 
                         const themeMap: Record<
                             string,
-                            { base: string; ping: string }
+                            { dot: string; ping: string }
                         > = {
-                            up: { base: "bg-green-500", ping: "bg-green-400" },
-                            down: { base: "bg-red-500", ping: "bg-red-400" },
-                            warn: {
-                                base: "bg-yellow-500",
+                            Scheduled: {
+                                dot: "bg-gray-500",
+                                ping: "bg-gray-400",
+                            },
+                            Inprogress: {
+                                dot: "bg-yellow-500",
                                 ping: "bg-yellow-400",
                             },
-                            default: { base: "bg-white", ping: "bg-zinc-300" },
+                            Completed: {
+                                dot: "bg-emerald-600",
+                                ping: "bg-emerald-400",
+                            },
+                            Cancelled: {
+                                dot: "bg-red-500",
+                                ping: "bg-red-400",
+                            },
+                            default: { dot: "bg-white", ping: "bg-zinc-300" },
                         };
 
                         const theme = themeMap[status] ?? themeMap.default;
@@ -201,7 +146,7 @@
                 <div class="flex justify-center items-center">
                   <span class="relative flex size-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 ${theme.ping}"></span>
-                    <span class="relative inline-flex rounded-full size-2 ${theme.base}"></span>
+                    <span class="relative inline-flex rounded-full size-2 ${theme.dot}"></span>
                   </span>
                 </div>
               `,
