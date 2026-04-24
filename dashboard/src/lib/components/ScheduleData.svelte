@@ -136,7 +136,10 @@
                                 dot: "bg-red-500",
                                 ping: "bg-red-400",
                             },
-                            default: { dot: "bg-white", ping: "bg-zinc-300" },
+                            default: {
+                                dot: "bg-white",
+                                ping: "bg-zinc-300",
+                            },
                         };
 
                         const theme = themeMap[status] ?? themeMap.default;
