@@ -1,4 +1,4 @@
-name = "oddin-status-api"
+name = "ohstatus"
 main = "./build/worker.mjs"
 compatibility_date = "2025-11-17"
 
