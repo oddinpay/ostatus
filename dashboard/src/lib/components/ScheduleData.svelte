@@ -117,7 +117,7 @@
 
     type Payment = {
         id: string;
-        name: string;
+        service: string;
     };
 
     type ConvexMonitor = {
@@ -138,7 +138,7 @@
         ...(schedule.data ?? []).map((m) => ({
             ...m,
             id: m._id,
-            name: m.service,
+            service: m.service,
         })),
     ]);
 
@@ -232,7 +232,7 @@
                 );
 
                 return renderSnippet(emailSnippet, {
-                    name: row.original.name,
+                    name: row.original.service,
                 });
             },
         },
@@ -305,7 +305,7 @@
             cell: ({ row }) =>
                 renderComponent(DataTableActions, {
                     id: row.original.id,
-                    name: row.original.name,
+                    name: row.original.service,
                 }),
             enableHiding: false,
         },
