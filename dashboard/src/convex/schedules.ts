@@ -15,9 +15,7 @@ export const scheduleAggregate = new TableAggregate<{
 
 
 export const get = query({
-  args: { apiKey: v.string() },
-  handler: async (ctx, args) => {
-    if (args.apiKey !== process.env.API_KEY) throw new Error("Unauthorized");
+  handler: async (ctx) => {
     return await ctx.db.query("schedules").collect();
   },
 });
