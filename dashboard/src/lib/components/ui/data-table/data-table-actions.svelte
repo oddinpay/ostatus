@@ -89,7 +89,7 @@
               {#snippet children({ props })}
                 <Form.Label class="font-bold text-gray-300">ID</Form.Label>
                 <Input
-                  class="border-zinc-700  disabled:pointer-events-none disabled:cursor-all-scroll bg-transparent text-white"
+                  class="border-zinc-700  disabled:pointer-events-none disabled:cursor-all-scroll bg-transparent text-zinc-300"
                   placeholder="60f5a3c2e1b2c3d4e5f67890"
                   type="text"
                   readonly
