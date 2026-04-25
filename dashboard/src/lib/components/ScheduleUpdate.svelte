@@ -3,7 +3,6 @@
     import Input from "$lib/components/ui/input.svelte";
     import Label from "$lib/components/ui/label.svelte";
     import * as Dialog from "$lib/components/ui/dialog";
-    import { cn } from "$lib/utils";
     import * as Form from "$lib/components/ui/form/index.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { CalendarCheck } from "lucide-svelte";
@@ -28,9 +27,9 @@
         { class: "text-red-500", label: "Cancelled", value: "Cancelled" },
     ] as const;
 
-    let { id, name }: { id: string; name: string } = $props();
+    let { id, name, service }: { id: string; name: string; service: string } =
+        $props();
     let open = $state(false);
-    let service = $state("");
     let bioLimit = useCharacterLimit(180, "");
 
     const selected = $derived(
@@ -125,10 +124,10 @@
 
             <Dialog.Header>
                 <Dialog.Title class=" text-gray-300 sm:text-center"
-                    >Create New Schedule</Dialog.Title
+                    >Update Schedule</Dialog.Title
                 >
                 <Dialog.Description class="text-gray-400 sm:text-center">
-                    Create a schedule to inform future events.
+                    Update your schedule settings.
                 </Dialog.Description>
             </Dialog.Header>
         </div>
@@ -155,28 +154,6 @@
                         <Form.FieldErrors />
                     </Form.Field>
                 </div>
-
-                <!-- <div class="space-y-2">
-                    <Form.Field {form} name="title">
-                        <Form.Control>
-                            {#snippet children({ props })}
-                                <Form.Label
-                                    class="font-bold text-gray-300"
-                                    for="title">Title</Form.Label
-                                >
-                                <Input
-                                    class="border-zinc-700 text-white"
-                                    placeholder="Scheduled maintenance for API"
-                                    type="text"
-                                    readonly
-                                    {...props}
-                                    bind:value={name}
-                                />
-                            {/snippet}
-                        </Form.Control>
-                        <Form.FieldErrors />
-                    </Form.Field>
-                </div> -->
 
                 <div class="space-y-2">
                     <Form.Field {form} name="status">

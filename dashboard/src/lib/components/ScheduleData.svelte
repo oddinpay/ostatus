@@ -53,6 +53,7 @@
         id: string;
         name: string;
         status: string;
+        service: string;
     };
 
     type ConvexMonitor = {
@@ -249,6 +250,7 @@
                 renderComponent(DataTableActions, {
                     id: row.original.id,
                     name: row.original.name,
+                    service: row.original.service,
                 }),
             enableHiding: false,
         },
