@@ -98,7 +98,7 @@ export const actions: Actions = {
         );
       }
 
-      await convex.mutation(api.status.deleteById, {
+      await convex.mutation(api.schedules.deleteById, {
         apiKey,
         id: formData.get("_id") as any,
       });
