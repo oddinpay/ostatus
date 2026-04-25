@@ -71,6 +71,23 @@ export const getStatusCounts = query({
   }
 });
 
+export const patch = mutation({
+  args: {
+    id: v.id("schedules"),
+    apiKey: v.string(),
+    service: v.string(),
+    status: v.string(),
+    note: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (args.apiKey !== process.env.API_KEY) {
+      throw new Error("Unauthorized");
+    }
+    const { id, apiKey, ...rest } = args;
+    await ctx.db.patch(id, rest);
+  },
+});
+
 export const deleteById = mutation({
   args: { id: v.id("schedules"), apiKey: v.string() },
   handler: async (ctx, args) => {

@@ -183,3 +183,28 @@ export const scheduleCreate = z.object({
     .min(1, "Note must be at least 1 character long")
     .max(180, "Note must not exceed 180 characters")
 });
+
+
+
+export const scheduleUpdate = z.object({
+  _id: z.string().trim().optional(),
+  service: z
+    .string()
+    .trim()
+    .min(1, "Service must be at least 1 character long")
+    .max(50, "Service must not exceed 50 characters")
+    .optional(),
+
+  status: z
+    .enum(["Inprogress", "Completed", "Cancelled"], {
+      message: "Status must be one of: In Progress, Completed, Cancelled",
+    })
+    .default("Inprogress"),
+
+  note: z
+    .string()
+    .trim()
+    .min(1, "Note must be at least 1 character long")
+    .max(180, "Note must not exceed 180 characters")
+    .optional(),
+});

@@ -1,5 +1,5 @@
 import { zod4 } from "sveltekit-superforms/adapters";
-import { scheduleCreate, monitorUpdate } from "$lib/types/form";
+import { scheduleCreate, scheduleUpdate } from "$lib/types/form";
 import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { setError, superValidate } from "sveltekit-superforms";
@@ -53,7 +53,7 @@ export const actions: Actions = {
   },
 
   update: async (e) => {
-    const form = await superValidate(e, zod4(monitorUpdate));
+    const form = await superValidate(e, zod4(scheduleUpdate));
     if (!form.valid) return fail(400, { form });
 
     try {
@@ -64,13 +64,12 @@ export const actions: Actions = {
         return setError(form, "", "API_KEY environment variable is not set");
       }
 
-      await convex.mutation(api.status.patch, {
-        apiKey,
+      await convex.mutation(api.schedules.patch, {
         id: form.data._id as any,
-        host: form.data.host,
-        interval: form.data.interval as number,
-        name: form.data.name,
-        protocol: form.data.protocol,
+        apiKey,
+        service: form.data.service as string,
+        status: form.data.status as string,
+        note: form.data.note as string,
       });
     } catch (error) {
       return setError(form, "", "Failed to update");
