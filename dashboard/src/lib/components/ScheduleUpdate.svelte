@@ -148,7 +148,7 @@
                                     for="parentId">ID</Form.Label
                                 >
                                 <Input
-                                    class=" border-zinc-700 text-gray-400"
+                                    class=" border-zinc-700 text-zinc-300"
                                     placeholder="sc_23kq140p62ena8trgd66m8342n"
                                     type="text"
                                     readonly
@@ -170,7 +170,7 @@
                                     for="service">Service</Form.Label
                                 >
                                 <Input
-                                    class=" border-zinc-700 text-gray-400"
+                                    class=" border-zinc-700 text-zinc-300"
                                     placeholder="API"
                                     type="text"
                                     readonly
