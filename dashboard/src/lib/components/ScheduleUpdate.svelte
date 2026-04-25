@@ -148,9 +148,10 @@
                                     for="parentId">ID</Form.Label
                                 >
                                 <Input
-                                    class=" border-zinc-700 text-white"
+                                    class=" border-zinc-700 text-gray-400"
                                     placeholder="sc_23kq140p62ena8trgd66m8342n"
                                     type="text"
+                                    readonly
                                     {...props}
                                     bind:value={parentId}
                                 />
@@ -169,9 +170,10 @@
                                     for="service">Service</Form.Label
                                 >
                                 <Input
-                                    class=" border-zinc-700 text-white"
+                                    class=" border-zinc-700 text-gray-400"
                                     placeholder="API"
                                     type="text"
+                                    readonly
                                     {...props}
                                     bind:value={service}
                                 />
