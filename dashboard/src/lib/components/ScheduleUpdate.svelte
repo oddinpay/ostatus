@@ -90,7 +90,18 @@
             (s) => s.status === "Cancelled",
         );
 
-        return hasCompleted || hasCancelled || (hasInProgress && hasCompleted);
+        const groupIsActiveOrDone =
+            hasInProgress || hasCompleted || hasCancelled;
+
+        if (statusProp === "Scheduled" && groupIsActiveOrDone) {
+            return true;
+        }
+
+        if (statusProp === "Inprogress" && hasCompleted) {
+            return true;
+        }
+
+        return statusProp === "Completed" || statusProp === "Cancelled";
     });
 
     const selected = $derived(
