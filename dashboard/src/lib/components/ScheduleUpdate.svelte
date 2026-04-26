@@ -91,7 +91,6 @@
     });
 
     const uid = $props.id();
-
     const form = superForm(page.data.form, {
         id: `update-schedule-${uid}`,
         resetForm: true,
