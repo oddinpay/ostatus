@@ -551,7 +551,11 @@
     return finalMaintenanceList.filter(
       (m) =>
         m.entries.length > 0 &&
-        m.entries.some((e) => e.status === Indicators.Scheduled),
+        m.entries.some(
+          (e) =>
+            e.status === Indicators.Scheduled ||
+            e.status === Indicators.Inprogress,
+        ),
     );
   });
 
