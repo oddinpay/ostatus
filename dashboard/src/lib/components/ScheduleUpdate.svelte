@@ -32,11 +32,13 @@
         name,
         service,
         parentId,
-    }: { id: string; name: string; service: string; parentId: string } =
-        $props();
+        status,
+    }: { id: string; name: string; service: string; parentId: string, status: string } = $props();
+    
+    
     let open = $state(false);
     let bioLimit = useCharacterLimit(180, "");
-
+    
     const selected = $derived(
         incidents.find((i) => i.value === $formData.status),
     );
