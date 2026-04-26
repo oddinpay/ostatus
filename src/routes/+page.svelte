@@ -548,17 +548,7 @@
         );
     });
 
-    return finalMaintenanceList
-      .filter((m) =>
-        m.entries.some(
-          (e) =>
-            e.status === Indicators.Scheduled ||
-            e.status === Indicators.Inprogress ||
-            e.status === Indicators.Cancelled ||
-            e.status === Indicators.Completed,
-        ),
-      )
-      .filter((m) => m.entries.length > 0);
+    return finalMaintenanceList.filter((m) => m.entries.length > 0);
   });
 
   // --- styles ---
