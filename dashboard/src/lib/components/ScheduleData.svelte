@@ -310,7 +310,8 @@
                     id: row.original.id,
                     name: row.original.name,
                     service: row.original.service,
-                    parentId: row.original.parentId
+                    parentId: row.original.parentId,
+                    status: row.original.status,
                 }),
 
             enableHiding: false,

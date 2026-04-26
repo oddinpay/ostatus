@@ -32,12 +32,33 @@
         name,
         service,
         parentId,
+        status: statusProp,
     }: {
         id: string;
         name: string;
         service: string;
         parentId: string;
+        status: string;
     } = $props();
+
+    $effect(() => {
+        if (statusProp === "Scheduled") {
+            $formData.status = "Inprogress";
+        } else if (statusProp) {
+            $formData.status = statusProp;
+        }
+    });
+
+    const visibleIncidents = $derived(() => {
+        if (statusProp === "Inprogress") {
+            return incidents.filter((i) => i.value === "Completed");
+        } else if (statusProp === "Scheduled") {
+            return incidents;
+        } else if (statusProp === "Cancelled") {
+            return incidents.filter((i) => i.value === "Cancelled");
+        }
+        return incidents;
+    });
 
     let open = $state(false);
     let bioLimit = useCharacterLimit(180, "");
@@ -219,7 +240,7 @@
                                     <Select.Content
                                         class="bg-zinc-800  text-white [&_*[data-select-item]]:ps-2 [&_*[data-select-item]]:pe-8 [&_*[data-select-item]>span]:start-auto [&_*[data-select-item]>span]:inset-e-2 [&_*[data-select-item]>span]:flex [&_*[data-select-item]>span]:items-center [&_*[data-select-item]>span]:gap-2 [&_*[data-select-item]>span>svg]:shrink-0"
                                     >
-                                        {#each incidents as item (item.value)}
+                                        {#each visibleIncidents() as item (item.value)}
                                             <Select.Item
                                                 class="cursor-pointer data-highlighted:bg-zinc-700 data-highlighted:text-white [&_svg:not([class*='text-'])]:text-gray-500"
                                                 value={item.value}
