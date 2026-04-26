@@ -44,16 +44,6 @@
         status: string;
     } = $props();
 
-    $effect(() => {
-        if (statusProp === "Scheduled") {
-            $formData.status = "Inprogress";
-        } else if (statusProp === "Inprogress") {
-            $formData.status = "Completed";
-        } else if (statusProp) {
-            $formData.status = statusProp;
-        }
-    });
-
     const visibleIncidents = $derived(() => {
         if (statusProp === "Inprogress") {
             return incidents.filter((i) => i.value === "Completed");
@@ -102,6 +92,16 @@
         }
 
         return statusProp === "Completed" || statusProp === "Cancelled";
+    });
+
+    $effect(() => {
+        if (statusProp === "Scheduled") {
+            $formData.status = "Inprogress";
+        } else if (statusProp === "Inprogress") {
+            $formData.status = "Completed";
+        } else if (statusProp) {
+            $formData.status = statusProp;
+        }
     });
 
     const selected = $derived(
