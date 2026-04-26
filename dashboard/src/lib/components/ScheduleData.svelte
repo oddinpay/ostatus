@@ -16,6 +16,10 @@
         getSortedRowModel,
     } from "@tanstack/table-core";
 
+    import {
+        ConfirmDeleteDialog,
+        confirmDelete,
+    } from "$lib/components/ui/confirm-delete-dialog";
     import { createRawSnippet } from "svelte";
     import DataTableCheckbox from "$lib/components/ui/data-table/data-table-checkbox.svelte";
     import DataTableEmailButton from "$lib/components/ui/data-table/data-table-schedule.svelte";
@@ -24,10 +28,6 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
-    import {
-        ConfirmDeleteDialog,
-        confirmDelete,
-    } from "$lib/components/ui/confirm-delete-dialog";
     import {
         FlexRender,
         createSvelteTable,
