@@ -48,7 +48,7 @@
         if (statusProp === "Scheduled") {
             $formData.status = "Inprogress";
         } else if (statusProp === "Inprogress") {
-            $formData.status = "Scheduled";
+            $formData.status = "Completed";
         } else if (statusProp) {
             $formData.status = statusProp;
         }
