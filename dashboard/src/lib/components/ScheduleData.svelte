@@ -207,7 +207,6 @@
 
         {
             accessorKey: "name",
-
             header: ({ column }) =>
                 renderComponent(DataTableEmailButton, {
                     onclick: column.getToggleSortingHandler(),
