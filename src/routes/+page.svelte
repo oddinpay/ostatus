@@ -1449,7 +1449,7 @@
                         </svg>
                       {/if}
 
-                      {#if (incidents.length === 0 && maintenances.length === 0) || (!incidents.some( (i) => i.entries.some((e) => e.status === Indicators.Resolved), ) && !maintenances.some( (m) => m.entries.some((e) => e.status === Indicators.Completed || e.status === Indicators.Cancelled), ))}
+                      {:else if (incidents.length === 0 && maintenances.length === 0) || (!incidents.some( (i) => i.entries.some((e) => e.status === Indicators.Resolved), ) && !maintenances.some( (m) => m.entries.some((e) => e.status === Indicators.Completed || e.status === Indicators.Cancelled), ))}
                         <p
                           class="p-10 text-black text-center"
                           style="font-size: 16px"
