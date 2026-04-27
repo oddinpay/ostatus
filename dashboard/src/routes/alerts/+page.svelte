@@ -112,7 +112,7 @@
                   Content for Tab 4
                 </p>
               </TabsContent>
-              <TabsContent value="tab-3">
+              <!-- <TabsContent value="tab-3">
                 <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div
                     class="flex h-80 w-30 360:w-60 xl:w-80 flex-col overflow-hidden rounded-xl border border-zinc-700 shadow-sm"
@@ -143,7 +143,7 @@
                     <div class="mt-auto border-t p-4"></div>
                   </div>
                 </div>
-              </TabsContent>
+              </TabsContent> -->
             </Tabs>
           </TabsContent>
         </div>
