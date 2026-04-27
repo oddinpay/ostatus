@@ -101,17 +101,20 @@
                   value="tab-3"
                   class="relative cursor-pointer after:absolute  after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5  hover:text-white hover:after:bg-white data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:after:bg-white data-[state=active]:hover:text-white"
                 >
-                  Integrations
+                  Overview
                 </TabsTrigger>
               </TabsList>
+
               <!-- <TabsContent value="tab-3">
                 <Alerts />
               </TabsContent> -->
-              <TabsContent value="tab-4">
+
+              <!-- <TabsContent value="tab-4">
                 <p class="p-4 text-center text-xs text-white">
                   Content for Tab 4
                 </p>
-              </TabsContent>
+              </TabsContent> -->
+
               <!-- <TabsContent value="tab-3">
                 <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div
