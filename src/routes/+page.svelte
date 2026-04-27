@@ -1449,42 +1449,18 @@
                             </circle>
                           </svg>
                         </div>
+                      {:else if (incidents.length === 0 && maintenances.length === 0) || (!incidents.some( (i) => i.entries.some((e) => e.status === Indicators.Resolved), ) && !maintenances.some( (m) => m.entries.some((e) => e.status === Indicators.Completed || e.status === Indicators.Cancelled), ))}
+                        <p
+                          class="p-10 text-black text-center"
+                          style="font-size: 16px"
+                        >
+                          No historical data available.
+                        </p>
                       {/if}
-                    {:else if (incidents.length === 0 && maintenances.length === 0) || (!incidents.some( (i) => i.entries.some((e) => e.status === Indicators.Resolved), ) && !maintenances.some( (m) => m.entries.some((e) => e.status === Indicators.Completed || e.status === Indicators.Cancelled), ))}
-                      <p
-                        class="p-10 text-black text-center"
-                        style="font-size: 16px"
-                      >
-                        No historical data available.
-                      </p>
-                    {/if}
-                    {#each incidents as incident}
-                      <div class="incident-card mt-10">
-                        <h2>{incident.title}</h2>
-                        {#each incident.entries as entry}
-                          <div class="status-entry">
-                            <span class="time font-bold">{entry.time}</span>
-                            <span class="badge mt-1 {entry.status.badge}">
-                              {entry.status.statusLabel}
-                            </span>
-                            <p
-                              class="mt-2 text-gray-600"
-                              style="font-size: 16px"
-                            >
-                              {entry.description}
-                            </p>
-                          </div>
-                        {/each}
-                      </div>
-                    {/each}
-
-                    {#each maintenances as maintenance}
-                      {#if maintenance.entries.some((entry) => entry.status === Indicators.Completed || entry.status === Indicators.Cancelled)}
+                      {#each incidents as incident}
                         <div class="incident-card mt-10">
-                          <h2>
-                            Scheduled maintenance for {maintenance.service}
-                          </h2>
-                          {#each maintenance.entries as entry}
+                          <h2>{incident.title}</h2>
+                          {#each incident.entries as entry}
                             <div class="status-entry">
                               <span class="time font-bold">{entry.time}</span>
                               <span class="badge mt-1 {entry.status.badge}">
@@ -1494,13 +1470,37 @@
                                 class="mt-2 text-gray-600"
                                 style="font-size: 16px"
                               >
-                                System affected: {maintenance.service}
+                                {entry.description}
                               </p>
                             </div>
                           {/each}
                         </div>
-                      {/if}
-                    {/each}
+                      {/each}
+
+                      {#each maintenances as maintenance}
+                        {#if maintenance.entries.some((entry) => entry.status === Indicators.Completed || entry.status === Indicators.Cancelled)}
+                          <div class="incident-card mt-10">
+                            <h2>
+                              Scheduled maintenance for {maintenance.service}
+                            </h2>
+                            {#each maintenance.entries as entry}
+                              <div class="status-entry">
+                                <span class="time font-bold">{entry.time}</span>
+                                <span class="badge mt-1 {entry.status.badge}">
+                                  {entry.status.statusLabel}
+                                </span>
+                                <p
+                                  class="mt-2 text-gray-600"
+                                  style="font-size: 16px"
+                                >
+                                  System affected: {maintenance.service}
+                                </p>
+                              </div>
+                            {/each}
+                          </div>
+                        {/if}
+                      {/each}
+                    {/if}
                   </TabsContent>
                 {/each}
               </Tabs>
