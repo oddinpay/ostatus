@@ -1,5 +1,7 @@
 import adapter from "@sveltejs/adapter-node";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import { preprocessMeltUI, sequence } from '@melt-ui/pp'
+
 // import path from 'node:path';
 // import { fileURLToPath } from 'node:url';
 
@@ -9,8 +11,10 @@ const adapterOptions = { precompress: true };
 
 const config = {
   extensions: [".svelte", ".svx", ".md"],
-  preprocess: [vitePreprocess()],
-
+  preprocess: sequence([
+    vitePreprocess(),
+    preprocessMeltUI() 
+  ]),
   kit: {
     adapter: adapter(adapterOptions),
     alias: {
