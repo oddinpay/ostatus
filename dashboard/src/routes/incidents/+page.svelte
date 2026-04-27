@@ -150,8 +150,8 @@
             <p class="text-base font-extralight text-zinc-200">Incidents</p>
             <Gauge
               colors={{
-                primary: "stroke-green-700",
-                secondary: "stroke-green-200",
+                primary: "stroke-zinc-700",
+                secondary: "stroke-zinc-200",
               }}
               class="text-white"
               show_value
