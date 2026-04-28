@@ -501,7 +501,7 @@
             minute: "2-digit",
             hour12: false,
           })
-          .replace(/^\d{4} /, ""),
+          .replace(/(\d{4}),/, "$1"),
         status: indicator as MaintenanceEntry["status"],
         description: sched.note,
       });
