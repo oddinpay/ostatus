@@ -553,7 +553,7 @@
         m.entries.length > 0 &&
         m.entries.some(
           (e) =>
-            (e.status === Indicators.Scheduled && Indicators.Inprogress) ||
+            e.status === Indicators.Scheduled ||
             e.status === Indicators.Inprogress,
         ),
     );
