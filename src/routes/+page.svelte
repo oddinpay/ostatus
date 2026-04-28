@@ -509,10 +509,6 @@
     const finalMaintenanceList = Array.from(grouped.values());
 
     finalMaintenanceList.forEach((m) => {
-      const hasScheduled = m.entries.some(
-        (e) => e.status === Indicators.Scheduled,
-      );
-
       const hasInProgress = m.entries.some(
         (e) => e.status === Indicators.Inprogress,
       );
@@ -525,14 +521,6 @@
 
       m.entries = m.entries
         .filter((e) => {
-          if (
-            (e.status === Indicators.Inprogress ||
-              e.status === Indicators.Completed) &&
-            !hasScheduled
-          ) {
-            return false;
-          }
-
           if (e.status === Indicators.Cancelled) {
             const wasScheduled = m.entries.some(
               (entry) => entry.status === Indicators.Scheduled,
