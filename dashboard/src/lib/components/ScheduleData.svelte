@@ -524,7 +524,7 @@
 
             <Table.Body>
                 {#if schedule.isLoading}
-                    {#each Array(Math.min(totalCount || 4, 4)) as _}
+                    {#each Array(Math.min(totalCount, 4)) as _}
                         <Table.Row>
                             {#each columns as _}
                                 <Table.Cell
