@@ -257,7 +257,7 @@
                   <DateRangePicker.Content
                     side="left"
                     align="center"
-                    sideOffset={-30}
+                    sideOffset={-35}
                     class="z-50  ipse:data-[state=open]:scale-85 md:data-[state=open]:scale-95 data-[state=open]:scale-85"
                   >
                     <DateRangePicker.Calendar
