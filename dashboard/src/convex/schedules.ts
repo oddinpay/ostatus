@@ -143,3 +143,17 @@ export const backfill = mutation({
   },
 });
 
+export const cleanup = mutation({
+  handler: async (ctx) => {
+    const ninetyDaysAgo = Date.now() - (60 * 1000);
+
+    const oldItems = await ctx.db
+      .query("schedules")
+      .filter((q) => q.lt(q.field("_creationTime"), ninetyDaysAgo))
+      .collect();
+
+    for (const item of oldItems) {
+      await ctx.db.delete(item._id);
+    }
+  },
+});
