@@ -474,11 +474,12 @@
   });
 
   let maintenances: Maintenance[] = $derived.by(() => {
-    if (!schedulesQuery.data) return [];
+    const rawData = schedulesQuery.data;
 
+    if (!rawData) return [];
     const grouped = new Map<string, Maintenance>();
 
-    schedulesQuery.data.forEach((sched) => {
+    rawData.forEach((sched) => {
       const statusKey = sched.status as keyof typeof Indicators;
       const indicator = Indicators[statusKey];
       const groupId = sched.parentId;
