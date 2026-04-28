@@ -145,7 +145,7 @@ export const backfill = mutation({
 
 export const cleanup = mutation({
   handler: async (ctx) => {
-    const ninetyDaysAgo = Date.now() - (60 * 1000);
+    const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
 
     const oldItems = await ctx.db
       .query("schedules")
