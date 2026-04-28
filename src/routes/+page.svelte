@@ -509,6 +509,10 @@
     const finalMaintenanceList = Array.from(grouped.values());
 
     finalMaintenanceList.forEach((m) => {
+      const hasScheduled = m.entries.some(
+        (e) => e.status === Indicators.Scheduled,
+      );
+
       const hasInProgress = m.entries.some(
         (e) => e.status === Indicators.Inprogress,
       );
@@ -521,6 +525,8 @@
 
       m.entries = m.entries
         .filter((e) => {
+          if (!hasScheduled) return false;
+
           if (e.status === Indicators.Cancelled) {
             const wasScheduled = m.entries.some(
               (entry) => entry.status === Indicators.Scheduled,
@@ -548,15 +554,17 @@
         );
     });
 
-    return finalMaintenanceList.filter(
-      (m) =>
-        m.entries.length > 0 &&
-        m.entries.some(
-          (e) =>
-            e.status === Indicators.Scheduled ||
-            e.status === Indicators.Inprogress,
-        ),
-    );
+    // return finalMaintenanceList.filter(
+    //   (m) =>
+    //     m.entries.length > 0 &&
+    //     m.entries.some(
+    //       (e) =>
+    //         e.status === Indicators.Scheduled ||
+    //         e.status === Indicators.Inprogress,
+    //     ),
+    // );
+
+    return finalMaintenanceList.filter((m) => m.entries.length > 0);
   });
 
   // --- styles ---
