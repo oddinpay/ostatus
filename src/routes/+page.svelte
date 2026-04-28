@@ -1493,11 +1493,7 @@
                             </h2>
                             {#each maintenance.entries as entry}
                               <div class="status-entry">
-                                {#each schedulesQuery.data as sc}
-                                  <span class="time font-bold"
-                                    >{sc._creationTime}</span
-                                  >
-                                {/each}
+                                <span class="time font-bold">{entry.time}</span>
                                 <span class="badge mt-1 {entry.status.badge}">
                                   {entry.status.statusLabel}
                                 </span>
