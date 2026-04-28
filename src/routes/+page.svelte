@@ -548,15 +548,27 @@
         );
     });
 
-    return finalMaintenanceList.filter(
-      (m) =>
-        m.entries.length > 0 &&
-        m.entries.some(
-          (e) =>
-            e.status === Indicators.Scheduled ||
-            e.status === Indicators.Inprogress,
-        ),
-    );
+    // return finalMaintenanceList.filter(
+    //   (m) =>
+    //     m.entries.length > 0 &&
+    //     m.entries.some(
+    //       (e) =>
+    //         e.status === Indicators.Scheduled ||
+    //         e.status === Indicators.Inprogress,
+    //     ),
+    // );
+
+    return finalMaintenanceList.filter((m) => {
+      if (m.entries.some((e) => e.status === Indicators.Scheduled)) return true;
+
+      if (
+        activeTab === "tab-1" &&
+        m.entries.some((e) => e.status === Indicators.Inprogress)
+      )
+        return true;
+
+      return false;
+    });
   });
 
   // --- styles ---
