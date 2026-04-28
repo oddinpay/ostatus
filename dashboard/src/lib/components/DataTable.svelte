@@ -287,7 +287,10 @@
         });
       },
       cell: ({ row }) =>
-        renderComponent(DataTableActions, { id: row.original.id, name: row.original.name }),
+        renderComponent(DataTableActions, {
+          id: row.original.id,
+          name: row.original.name,
+        }),
       enableHiding: false,
     },
   ];
@@ -474,7 +477,7 @@
       </Table.Header>
       <Table.Body>
         {#if monitors.isLoading}
-          {#each Array(totalCount) as _}
+          {#each Array(Math.min(totalCount, 4)) as _}
             <Table.Row>
               {#each columns as _}
                 <Table.Cell
