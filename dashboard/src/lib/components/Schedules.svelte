@@ -247,7 +247,7 @@
                     {/each}
 
                     <DateRangePicker.Trigger
-                      class="  text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-5px transition-all"
+                      class=" text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-5px transition-all"
                     >
                       <CalendarBlank
                         class="size-6 cursor-pointer text-white hover:text-black"
