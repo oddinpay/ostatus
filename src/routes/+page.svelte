@@ -527,6 +527,8 @@
         .filter((e) => {
           if (!hasScheduled) return false;
 
+          if (hasCompleted && !hasInProgress) return false;
+
           if (e.status === Indicators.Cancelled) {
             const wasScheduled = m.entries.some(
               (entry) => entry.status === Indicators.Scheduled,
