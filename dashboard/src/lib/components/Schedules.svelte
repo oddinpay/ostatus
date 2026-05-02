@@ -128,6 +128,7 @@
 
   $effect(() => {
     $formData.note = autoNote;
+    bioLimit.value = autoNote;
   });
 </script>
 
@@ -439,7 +440,7 @@
                           {...props}
                           id="note"
                           class=" border-zinc-700 text-white"
-                          bind:value={$formData.note}
+                          bind:value={bioLimit.value}
                           maxlength={bioLimit.maxLength}
                           placeholder="Write a few sentences about incident..."
                           aria-describedby="{id}-left-textarea"
