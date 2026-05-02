@@ -107,7 +107,6 @@
       if (f.valid) {
         service = "";
         name = "";
-        bioLimit.value = "";
         open = false;
         toast.success("Schedule created successfully!");
       } else {
@@ -456,7 +455,7 @@
                         >
                           <span class="tabular-nums"
                             >{bioLimit.maxLength -
-                              bioLimit.characterCount}</span
+                              ($formData.note?.length || 0)}</span
                           >
                           characters left
                         </p>
