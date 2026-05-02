@@ -17,11 +17,10 @@
   import { toast } from "svelte-sonner";
   import { scheduleCreate } from "$lib/types/form";
   import Loader2 from "@lucide/svelte/icons/loader-2";
-  import { DateField, DateRangePicker } from "bits-ui";
+  import { TimeRangeField, DateField, DateRangePicker } from "bits-ui";
   import CalendarBlank from "phosphor-svelte/lib/CalendarBlankIcon";
   import CaretLeft from "phosphor-svelte/lib/CaretLeftIcon";
   import CaretRight from "phosphor-svelte/lib/CaretRightIcon";
-  import { TimeRangeField } from "bits-ui";
 
   const id = $props.id();
 
