@@ -117,7 +117,10 @@
     id: "create-schedule",
     resetForm: true,
     validators: zod4(scheduleCreate),
-    onSubmit: async () => {
+    onSubmit: async ({ formData }) => {
+      formData.delete("date");
+      formData.set("date", dateRangeString);
+
       await new Promise((resolve) => setTimeout(resolve, 800));
     },
     onUpdate: async ({ form: f }) => {
