@@ -110,7 +110,6 @@
             } else if (statusProp === "Cancelled") {
                 $formData.status = "Cancelled";
             }
-
             return;
         }
 
