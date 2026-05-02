@@ -273,7 +273,19 @@
                     side="left"
                     align="center"
                     sideOffset={-35}
-                    class="z-50 cursor-pointer ipse:data-[state=open]:scale-85 md:data-[state=open]:scale-95 data-[state=open]:scale-85"
+                    class="
+                          /* Entry Animation */
+                          data-[state=open]:animate-in 
+                          data-[state=open]:fade-in-0 
+                          data-[state=open]:zoom-in-95 
+
+                          /* Exit Animation */
+                          data-[state=closed]:animate-out 
+                          data-[state=closed]:fade-out-0 
+                          data-[state=closed]:zoom-out-95 
+
+                          /* Origin and timing */
+                          fill-mode-forwards duration-200 ease-in-out cursor-pointer z-50 ipse:data-[state=open]:scale-85 md:data-[state=open]:scale-95 data-[state=open]:scale-85"
                   >
                     <DateRangePicker.Calendar
                       class="rounded-15px border-dark-10 bg-background-alt shadow-popover mt-6 border stm:p-5 p-2"
