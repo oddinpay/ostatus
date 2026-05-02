@@ -222,7 +222,7 @@
                         weekdayFormat="short"
                         fixedWeeks={true}
                         bind:value={$formData.date}
-                        class="flex w-full max-w-85  flex-col gap-1.5"
+                        class="flex w-full max-w-full flex-col gap-1.5"
                       >
                         <Form.Label
                           for="date"
@@ -288,10 +288,10 @@
                           /* Exit Animation */
                           data-[state=closed]:animate-out 
                           data-[state=closed]:fade-out-0 
-                          data-[state=closed]:zoom-out-95 
+                          data-[state=closed]:zoom-out-95
 
                           /* Origin and timing */
-                          fill-mode-forwards duration-200 ease-in-out cursor-pointer z-50 ipse:data-[state=open]:scale-85 md:data-[state=open]:scale-95 data-[state=open]:scale-85"
+                          fill-mode-forwards duration-200 ease-in-out cursor-pointer z-50 data-[state=open]:scale-95"
                         >
                           <DateRangePicker.Calendar
                             class="rounded-15px border-dark-10 bg-background-alt shadow-popover mt-6 border stm:p-5 p-2"
