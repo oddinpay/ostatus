@@ -26,7 +26,25 @@
 
   function formatDate(d: any) {
     if (!d) return "";
-    return `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`;
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const monthName = monthNames[d.month - 1] || "";
+
+    return `${monthName} ${String(d.day).padStart(2, "0")}, ${d.year}`;
   }
 
   const dateRangeString = $derived.by(() => {
