@@ -104,6 +104,7 @@
       if (f.valid) {
         service = "";
         name = "";
+        bioLimit.value = "";
         open = false;
         toast.success("Schedule created successfully!");
       } else {
