@@ -234,7 +234,6 @@
               </div>
 
               <div class="space-y-2">
-                <input type="hidden" name="date" value={dateRangeString} />
                 <Form.Field {form} name="date">
                   <Form.Control>
                     {#snippet children({ props })}
@@ -390,7 +389,7 @@
                   <Form.FieldErrors />
                 </Form.Field>
               </div>
-
+              <input type="hidden" name="date" value={dateRangeString} />
               <div class="space-y-2">
                 <Form.Field {form} name="status">
                   <Form.Control>
