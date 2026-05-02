@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { date } from "zod/v4";
 
 export default defineSchema({
   status: defineTable({
@@ -28,7 +29,9 @@ export default defineSchema({
     parentId: v.string(),
     title: v.string(),
     service: v.string(),
+    date: v.string(),
     status: v.string(),
     note: v.string(),
+
   }),
 });

@@ -24,6 +24,25 @@
 
   const id = $props.id();
 
+  function formatDate(d: any) {
+    if (!d) return "";
+    return `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`;
+  }
+
+  const dateRangeString = $derived.by(() => {
+    const start = $formData.date?.start;
+    const end = $formData.date?.end;
+
+    if (start && end) {
+      return `${formatDate(start)} - ${formatDate(end)}`;
+    }
+    return "";
+  });
+
+  $effect(() => {
+    $formData.dateRange = dateRangeString;
+  });
+
   const incidents = [
     { class: "text-gray-500", label: "Scheduled", value: "Scheduled" },
     // { class: "text-yellow-500", label: "In Progress", value: "Inprogress" },
@@ -215,7 +234,8 @@
               </div>
 
               <div class="space-y-2">
-                <Form.Field {form} name="date">
+                <input type="hidden" name="date" value={dateRangeString} />
+                <Form.Field {form} name="">
                   <Form.Control>
                     {#snippet children({ props })}
                       <DateRangePicker.Root
@@ -225,7 +245,7 @@
                         class="flex w-full max-w-full flex-col gap-1.5"
                       >
                         <Form.Label
-                          for="date"
+                          for=""
                           class="block font-bold text-gray-300 select-none text-sm"
                           >Date</Form.Label
                         >
