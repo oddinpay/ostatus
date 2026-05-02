@@ -54,10 +54,6 @@
     return "";
   });
 
-  $effect(() => {
-    $formData.dateRange = dateRangeString;
-  });
-
   const incidents = [
     { class: "text-gray-500", label: "Scheduled", value: "Scheduled" },
     // { class: "text-yellow-500", label: "In Progress", value: "Inprogress" },
