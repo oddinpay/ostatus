@@ -18,11 +18,8 @@
   import { api } from "../convex/_generated/api";
   import { page } from "$app/state";
   import {
-    Time,
     today,
     getLocalTimeZone,
-    toZoned,
-    toCalendarDateTime,
     parseAbsoluteToLocal,
   } from "@internationalized/date";
 
@@ -517,13 +514,16 @@
         });
       }
 
-      const localStartDate = sched.date;
       const localRangeTime = sched.time;
+
+      const localStartDate = sched.date.split(" - ")[0];
+      const localEndDate = sched.date.split(" - ")[1];
+
       const localStartTime = convertUtcToLocal(localRangeTime.split(" - ")[0]);
       const localEndTime = convertUtcToLocal(localRangeTime.split(" - ")[1]);
 
       grouped.get(groupId)!.entries.push({
-        time: `${localStartDate} ${localStartTime} - ${localEndTime}`,
+        time: `${localStartDate} ${localStartTime} - ${localEndDate} ${localEndTime}`,
         status: indicator as MaintenanceEntry["status"],
         description: sched.note,
       });
