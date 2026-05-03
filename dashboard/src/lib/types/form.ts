@@ -186,6 +186,11 @@ export const scheduleCreate = z.object({
       message: "Date is required and cannot be empty",
     }),
 
+  time: z.any()
+    .refine((val) => val !== undefined && val !== null && val !== "", {
+      message: "Time is required and cannot be empty",
+    }),
+
 });
 
 
