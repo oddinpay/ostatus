@@ -29,6 +29,7 @@ export default defineSchema({
     title: v.string(),
     service: v.string(),
     date: v.string(),
+    time: v.string(),
     status: v.string(),
     note: v.string(),
   }),
