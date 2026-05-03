@@ -1156,12 +1156,10 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		}
 
 		var rootTotal, rootDown int64
-		if h, ok := payload.SLA["history"].([]any); ok {
-			for _, hEntry := range h {
-				if m, ok := hEntry.(map[string]any); ok {
-					rootTotal += parseDurationToSecs(m["total_time_seconds"].(string))
-					rootDown += parseDurationToSecs(m["down_time_seconds"].(string))
-				}
+		if h, ok := payload.SLA["history"].([]any); ok && len(h) > 0 {
+			if m, ok := h[0].(map[string]any); ok {
+				rootTotal = parseDurationToSecs(m["total_time_seconds"].(string))
+				rootDown = parseDurationToSecs(m["down_time_seconds"].(string))
 			}
 		}
 
