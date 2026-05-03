@@ -43,7 +43,7 @@ export const post = mutation({
       status: args.status,
       note: args.note,
       date: args.date,
-      time: args.date,
+      time: args.time,
     });
 
     const doc = await ctx.db.get(id);
@@ -90,9 +90,9 @@ export const update = mutation({
       parentId: args.parentId,
       service: args.service,
       date: "",
+      time: "",
       status: args.status,
       note: args.note,
-      time: "",
     });
 
     const doc = await ctx.db.get(id);
