@@ -77,7 +77,7 @@
       const utcEnd = convertToUTC24(endD, endT);
       const utcRange = `${utcStart} - ${utcEnd}`;
 
-      return ` ${utcRange}`;
+      return `${utcRange}`;
     }
     return "";
   });
