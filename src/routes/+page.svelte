@@ -35,6 +35,7 @@
 
   onMount(() => (ready = true));
   const clock = timer();
+
   const TOTAL_DAYS = 90;
   const todays = new Date();
   const end = new Date(
