@@ -137,6 +137,8 @@
     });
 
     $effect(() => {
+        if (!open || $submitting) return;
+
         if ($formData.status === "Inprogress") {
             bioLimit.value =
                 "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
@@ -163,6 +165,7 @@
                 name = "";
                 bioLimit.value = "";
                 open = false;
+                form.reset();
                 toast.success("Schedule updated successfully!");
             } else {
                 open = false;
