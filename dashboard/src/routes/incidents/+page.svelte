@@ -17,8 +17,12 @@
   import NotIncidents from "$lib/components/NotIncidents.svelte";
   import Incidents from "$lib/components/Incidents.svelte";
   import { Gauge } from "$lib/components/ui/gauge";
+  import { useQuery } from "convex-svelte";
+  import { api } from "../../convex/_generated/api";
 
   let currentTab = "tab-2";
+
+  const statusCounts = useQuery(api.incidents.getStatusCounts, {});
 </script>
 
 <div
@@ -136,8 +140,7 @@
               class="text-white"
               show_value
               size="lg"
-              // value={statusCounts.data?.inprogress ?? 0}
-              value={0}
+              value={statusCounts.data?.identified ?? 0}
             />
           </TabsContent>
         </div>
@@ -154,8 +157,7 @@
               class="text-white"
               show_value
               size="lg"
-              // value={statusCounts.data?.inprogress ?? 0}
-              value={0}
+              value={statusCounts.data?.incidents ?? 0}
             />
           </TabsContent>
         </div>
