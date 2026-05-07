@@ -647,12 +647,12 @@ func (s *SlidingSLA) Snapshot() map[string]any {
 
 	if total <= 0 {
 		return map[string]any{
-			"sla_target":              "99.999%",
-			"uptime90":                "100.000%",
-			"total_up_time_seconds":   formatDurationFull(0),
-			"total_down_time_seconds": formatDurationFull(0),
-			"total_time_seconds":      formatDurationFull(0),
-			"sla_breached":            false,
+			"sla_target":     "99.999%",
+			"uptime90":       "100.000%",
+			"total_uptime":   formatDurationFull(0),
+			"total_downtime": formatDurationFull(0),
+			"total_time":     formatDurationFull(0),
+			"sla_breached":   false,
 		}
 	}
 
@@ -668,12 +668,12 @@ func (s *SlidingSLA) Snapshot() map[string]any {
 	up := total - down
 
 	return map[string]any{
-		"sla_target":              "99.999%",
-		"uptime90":                uptimeStr,
-		"total_up_time_seconds":   formatDurationFull(up),
-		"total_down_time_seconds": formatDurationFull(down),
-		"total_time_seconds":      formatDurationFull(total),
-		"sla_breached":            breached,
+		"sla_target":     "99.999%",
+		"uptime90":       uptimeStr,
+		"total_uptime":   formatDurationFull(up),
+		"total_downtime": formatDurationFull(down),
+		"total_time":     formatDurationFull(total),
+		"sla_breached":   breached,
 	}
 }
 
@@ -714,8 +714,13 @@ func startProbeWorker(ctx context.Context, wg *sync.WaitGroup, t HttpRequest) {
 					if history, ok := sla["history"].([]any); ok && len(history) > 0 {
 						if first, ok := history[0].(map[string]any); ok {
 
-							tStr, okT := first["total_time_seconds"].(string)
-							dStr, okD := first["total_down_time_seconds"].(string)
+							tStr, okT := first["total_time"].(string)
+							dStr, okD := first["total_downtime"].(string)
+
+							if !okT {
+								tStr, okT = first["total_time_seconds"].(string)
+							}
+
 							if !okD {
 								dStr, okD = first["down_time_seconds"].(string)
 							}
@@ -1115,11 +1120,11 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		}
 
 		dailySnapshot := map[string]any{
-			"sla_breached":      downToday > 0,
-			"sla_target":        fmt.Sprintf("%.3f%%", s.Target*100),
-			"down_time_seconds": formatDurationFull(downToday),
-			"up_time_seconds":   formatDurationFull(totalToday - downToday),
-			"uptime90":          fmt.Sprintf("%.3f%%", availToday*100),
+			"sla_breached": downToday > 0,
+			"sla_target":   fmt.Sprintf("%.3f%%", s.Target*100),
+			"downtime":     formatDurationFull(downToday),
+			"uptime":       formatDurationFull(totalToday - downToday),
+			"uptime90":     fmt.Sprintf("%.3f%%", availToday*100),
 		}
 
 		if getErr == nil && len(oldPayload.Probe.Date) > 0 {
@@ -1149,9 +1154,9 @@ func publishToNATS(ctx context.Context, name string, payload *StatusPayload, s *
 		payload.Probe.Date = capSlice(payload.Probe.Date, 90)
 		payload.Probe.State = capSlice(payload.Probe.State, 90)
 
-		payload.SLA["total_time_seconds"] = overallSLA["total_time_seconds"]
-		payload.SLA["total_down_time_seconds"] = overallSLA["total_down_time_seconds"]
-		payload.SLA["total_up_time_seconds"] = overallSLA["total_up_time_seconds"]
+		payload.SLA["total_time"] = overallSLA["total_time"]
+		payload.SLA["total_downtime"] = overallSLA["total_downtime"]
+		payload.SLA["total_uptime"] = overallSLA["total_uptime"]
 		payload.SLA["uptime90"] = overallSLA["uptime90"]
 		payload.SLA["sla_breached"] = overallSLA["sla_breached"]
 
