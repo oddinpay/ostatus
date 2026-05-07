@@ -711,21 +711,42 @@ func startProbeWorker(ctx context.Context, wg *sync.WaitGroup, t HttpRequest) {
 		if err := json.Unmarshal(existingData, &wrapped); err == nil {
 			if p, ok := wrapped["payload"].(map[string]any); ok {
 				if sla, ok := p["sla"].(map[string]any); ok {
-					if history, ok := sla["history"].([]any); ok && len(history) > 0 {
-						if first, ok := history[0].(map[string]any); ok {
+					if history, ok := sla["history"].([]any); ok {
 
-							tStr, okT := first["total_time"].(string)
-							dStr, okD := first["total_downtime"].(string)
+						for i := len(history) - 1; i >= 0; i-- {
+							if day, ok := history[i].(map[string]any); ok {
 
-							if okT && okD {
-								tSec := parseDurationToSecs(tStr)
-								dSec := parseDurationToSecs(dStr)
-								tracker.SetState(tSec, dSec)
-								slog.Info("Hydrated existing state", "name", t.Name)
-							} else {
-								slog.Warn("Hydration skipped: data format invalid or missing", "name", t.Name)
+								tStr, _ := day["total_time_seconds"].(string)
+								if tStr == "" {
+									tStr, _ = day["total_time"].(string)
+								}
+								if tStr == "" {
+									tStr, _ = day["uptime"].(string)
+								}
+
+								dStr, _ := day["down_time_seconds"].(string)
+								if dStr == "" {
+									dStr, _ = day["total_downtime"].(string)
+								}
+								if dStr == "" {
+									dStr, _ = day["downtime"].(string)
+								}
+
+								if tStr != "" && dStr != "" {
+									tSec := parseDurationToSecs(tStr)
+									dSec := parseDurationToSecs(dStr)
+
+									tracker.SetState(tSec, dSec)
+
+									if i > 0 {
+										tracker.mu.Lock()
+										tracker.idx = (tracker.idx + 1) % days90
+										tracker.mu.Unlock()
+									}
+								}
 							}
 						}
+						slog.Info("Memory synced with full history", "name", t.Name)
 					}
 				}
 			}
