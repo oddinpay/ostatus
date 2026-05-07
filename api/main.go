@@ -712,11 +712,23 @@ func startProbeWorker(ctx context.Context, wg *sync.WaitGroup, t HttpRequest) {
 			if p, ok := wrapped["payload"].(map[string]any); ok {
 				if sla, ok := p["sla"].(map[string]any); ok {
 					if history, ok := sla["history"].([]any); ok && len(history) > 0 {
-						first := history[0].(map[string]any)
-						tSec := parseDurationToSecs(first["total_time_seconds"].(string))
-						dSec := parseDurationToSecs(first["total_down_time_seconds"].(string))
-						tracker.SetState(tSec, dSec)
-						slog.Info("Hydrated existing state", "name", t.Name, "uptime", first["uptime90"])
+						if first, ok := history[0].(map[string]any); ok {
+
+							tStr, okT := first["total_time_seconds"].(string)
+							dStr, okD := first["total_down_time_seconds"].(string)
+							if !okD {
+								dStr, okD = first["down_time_seconds"].(string)
+							}
+
+							if okT && okD {
+								tSec := parseDurationToSecs(tStr)
+								dSec := parseDurationToSecs(dStr)
+								tracker.SetState(tSec, dSec)
+								slog.Info("Hydrated existing state", "name", t.Name)
+							} else {
+								slog.Warn("Hydration skipped: data format invalid or missing", "name", t.Name)
+							}
+						}
 					}
 				}
 			}
