@@ -736,6 +736,13 @@ func startProbeWorker(ctx context.Context, wg *sync.WaitGroup, t HttpRequest) {
 									tSec := parseDurationToSecs(tStr)
 									dSec := parseDurationToSecs(dStr)
 
+									if tSec > 86400 {
+										tSec = 86400
+									}
+									if dSec > tSec {
+										dSec = tSec
+									}
+
 									tracker.SetState(tSec, dSec)
 
 									if i > 0 {
