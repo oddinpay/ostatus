@@ -716,14 +716,14 @@ func startProbeWorker(ctx context.Context, wg *sync.WaitGroup, t HttpRequest) {
 						for i := len(history) - 1; i >= 0; i-- {
 							if day, ok := history[i].(map[string]any); ok {
 
-								tStr, _ := day["total_time_seconds"].(string)
+								tStr, _ := day["total_time"].(string)
 								if tStr == "" {
-									tStr, _ = day["total_time"].(string)
+									tStr, _ = day["total_time_seconds"].(string)
 								}
 
-								dStr, _ := day["down_time_seconds"].(string)
+								dStr, _ := day["total_downtime"].(string)
 								if dStr == "" {
-									dStr, _ = day["total_downtime"].(string)
+									dStr, _ = day["down_time_seconds"].(string)
 								}
 
 								if tStr != "" && dStr != "" {
